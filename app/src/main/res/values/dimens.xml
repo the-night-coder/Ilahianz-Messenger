@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sign_btn_size_h">40dp</dimen>
+    <dimen name="register_btn_size_w">300dp</dimen>
+    <dimen name="register_btn_size_h">40dp</dimen>
+    <dimen name="left_image_margin_top_register">25dp</dimen>
+</resources>

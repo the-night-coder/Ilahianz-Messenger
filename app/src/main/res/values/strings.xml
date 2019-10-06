@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">Ilahianz Messenger</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome">Welcome</string>
+    <string name="log_in">Log In</string>
+    <string name="create_account">Create an Account</string>
+    <string name="messenger_by_nightcoders">Ilahianz by NightCoders</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="app_name_upper">ILAHIANZ</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="gender">Gender</string>
+    <string name="other">Other</string>
+    <string name="city">City</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="birthday">Birthday</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="phone_optional">Phone (Optional)</string>
+    <string name="who_are_you">Who are you ?</string>
+    <string name="verify_you">Verify you</string>
 </resources>
