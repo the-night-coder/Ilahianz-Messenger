@@ -1,4 +1,4 @@
-package com.nightcoder.ilahianz.Listeners;
+package com.nightcoder.ilahianz.Listeners.FragmentListeners;
 
 public interface SignInFragmentListener {
 

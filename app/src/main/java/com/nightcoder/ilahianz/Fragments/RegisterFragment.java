@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.nightcoder.ilahianz.Listeners.FragmentListeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.Listeners.QRCodeListener;
-import com.nightcoder.ilahianz.Listeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
 
@@ -30,6 +31,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
+import static android.provider.Telephony.Carriers.PASSWORD;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_DAY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_MONTH;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
@@ -52,15 +54,16 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
     private ScrollView scrollView;
     private RadioGroup gender;
     private View view;
-    private int birthDay, birthMonth, birthYear;
+    private int birthDay = 0, birthMonth = 0, birthYear = 0;
     private int nowDay, nowMonth, nowYear;
     private RegisterFragmentListener listener;
     private RadioButton student, teacher, otherStaff;
     private EditText department;
     private View bottomLine;
     private Button verify;
-    private String departmentText, categoryText;
-    private boolean verified;
+    private String departmentText = "Student",
+            categoryText = "Student";
+    private boolean verified = true;
 
 
     public RegisterFragment(Context context) {
@@ -168,14 +171,10 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         nowMonth = calendar.get(Calendar.MONTH);
         nowDay = calendar.get(Calendar.DAY_OF_MONTH);
         nowYear = 2000;
-        birthDay = birthMonth = birthYear = 0;
         student.setChecked(true);
         department.setVisibility(View.VISIBLE);
         bottomLine.setVisibility(View.VISIBLE);
         verify.setVisibility(View.GONE);
-        categoryText = "Student";
-        departmentText = "Student";
-        verified = true;
     }
 
     private void registerUser() {
@@ -229,9 +228,24 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
             hashMap.put(KEY_BIRTH_DAY, birthDay);
             hashMap.put(KEY_BIRTH_YEAR, birthYear);
             hashMap.put(KEY_BIRTH_MONTH, birthMonth);
+            hashMap.put(PASSWORD, password.getText().toString());
             hashMap.put(KEY_PH_NUMBER, phone.getText().toString().isEmpty() ?
                     "Not Provided" : phone.getText().toString());
-            listener.OnRegisterButtonClicked(hashMap);
+            listener.OnRegisterButtonClicked(hashMap,
+                    email.getText().toString(), password.getText().toString());
+            Log.d(KEY_USERNAME, fullName);
+            Log.d(KEY_SEARCH, fullName.toLowerCase());
+            Log.d(KEY_IMAGE_URL, "default");
+            Log.d(KEY_DEPARTMENT, departmentText);
+            Log.d(KEY_CATEGORY, categoryText);
+            Log.d(KEY_GENDER, genderText);
+            Log.d(KEY_EMAIL, email.getText().toString());
+            Log.d(KEY_CITY, cityText);
+            Log.d(KEY_BIRTH_DAY, String.valueOf(birthDay));
+            Log.d(KEY_BIRTH_YEAR, String.valueOf(birthYear));
+            Log.d(KEY_BIRTH_MONTH, String.valueOf(birthMonth));
+            Log.d(KEY_PH_NUMBER, phone.getText().toString().isEmpty() ?
+                    "Not Provided" : phone.getText().toString());
         }
 
     }
@@ -269,9 +283,11 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
     @Override
     public void OnQRCodeResultOK(String result) {
         verified = true;
-        categoryText = "Teacher";
-        Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
-        verify.setText("Verified");
+        if (result.equals("ILAHIANZ:-{TEACHER}")) {
+            categoryText = "Teacher";
+            verify.setText("Verified");
+            verify.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -1,18 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".Fragments.VerifyFragment">
+
+    <ImageView
+        android:id="@+id/gif"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/btn_verify"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="20dp"
         android:background="@color/blue_dark"
+        android:fontFamily="@font/roboto_bold"
         android:text="Verify"
+        android:textAllCaps="false"
         android:textColor="@color/white"
         tools:ignore="HardcodedText" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/go_back_button"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/circle_fill_green"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/go_back"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>

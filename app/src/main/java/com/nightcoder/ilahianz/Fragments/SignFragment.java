@@ -2,7 +2,6 @@ package com.nightcoder.ilahianz.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,11 +15,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.nightcoder.ilahianz.Listeners.SignInFragmentListener;
+import com.nightcoder.ilahianz.Listeners.FragmentListeners.SignInFragmentListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
-
-import java.util.HashMap;
 
 
 public class SignFragment extends Fragment {

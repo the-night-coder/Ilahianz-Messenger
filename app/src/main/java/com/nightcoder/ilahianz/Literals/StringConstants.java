@@ -4,11 +4,15 @@ public final class StringConstants {
 
     public static final String SIGN_FRAGMENT_TAG = "SIGN_FRAGMENT_TAG";
     public static final String REG_FRAGMENT_TAG = "REG_FRAGMENT_TAG";
+    public static final String LOADING_FRAGMENT_TAG = "LOADING_FRAGMENT_TAG";
+    public static final String VERIFY_FRAGMENT_TAG = "VERIFY_FRAGMENT_TAG";
     public static final String QR_CODE_FRAGMENT_TAG = "QR_CODE_FRAGMENT_TAG";
     public static final String QR_CODE_RESULT_KEY = "QR_CODE_RESULT";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PH_NUMBER = "phone";
     public static final String KEY_GENDER = "gender";
+    public static final String KEY_STATUS = "status";
+    public static final String KEY_LAST_SEEN_DATE = "lastSeen";
     public static final String KEY_CLASS_NAME = "className";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_BIRTH_DAY = "Birthday";
