@@ -21,8 +21,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.nightcoder.ilahianz.Listeners.QRCodeListener;
 import com.nightcoder.ilahianz.Listeners.RegisterFragmentListener;
-import com.nightcoder.ilahianz.Listeners.SignInFragmentListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
 
@@ -30,7 +30,20 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class RegisterFragment extends Fragment {
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_DAY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_MONTH;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CATEGORY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CITY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DEPARTMENT;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_EMAIL;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_GENDER;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_IMAGE_URL;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PH_NUMBER;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_SEARCH;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
+
+public class RegisterFragment extends Fragment implements QRCodeListener {
 
     private Context mContext;
     private EditText email, phone, fName, lName, password,
@@ -42,6 +55,13 @@ public class RegisterFragment extends Fragment {
     private int birthDay, birthMonth, birthYear;
     private int nowDay, nowMonth, nowYear;
     private RegisterFragmentListener listener;
+    private RadioButton student, teacher, otherStaff;
+    private EditText department;
+    private View bottomLine;
+    private Button verify;
+    private String departmentText, categoryText;
+    private boolean verified;
+
 
     public RegisterFragment(Context context) {
         this.mContext = context;
@@ -50,7 +70,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         view = inflater.inflate(R.layout.fragment_register, container, false);
         ImageView right = view.findViewById(R.id.right_drawable);
         ImageView left = view.findViewById(R.id.left_drawable);
@@ -59,7 +79,6 @@ public class RegisterFragment extends Fragment {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 (dimen[0] / 2), (dimen[0] / 2)
         );
-
         params.setMargins(0, (dimen[1] / 20), 0, 0);
         right.setLayoutParams(params);
         left.setLayoutParams(new LinearLayout.LayoutParams((dimen[0] / 2), (dimen[0] / 2)));
@@ -76,6 +95,46 @@ public class RegisterFragment extends Fragment {
             }
         });
 
+        student.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                department.setVisibility(View.VISIBLE);
+                bottomLine.setVisibility(View.VISIBLE);
+                verify.setVisibility(View.GONE);
+                categoryText = "Student";
+                departmentText = "Student";
+                verified = true;
+            }
+        });
+        teacher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                department.setVisibility(View.VISIBLE);
+                bottomLine.setVisibility(View.VISIBLE);
+                verify.setVisibility(View.VISIBLE);
+                categoryText = "Teacher";
+                departmentText = "Teacher";
+                verified = false;
+            }
+        });
+        otherStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                department.setVisibility(View.GONE);
+                bottomLine.setVisibility(View.GONE);
+                verify.setVisibility(View.GONE);
+                categoryText = "Staff";
+                departmentText = "Staff";
+                verified = true;
+            }
+        });
+
+        verify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.OnScannerRequest();
+            }
+        });
         return view;
     }
 
@@ -95,15 +154,28 @@ public class RegisterFragment extends Fragment {
         cityName = view.findViewById(R.id.city);
         email = view.findViewById(R.id.email);
         phone = view.findViewById(R.id.phone);
+        student = view.findViewById(R.id.radio_student);
+        teacher = view.findViewById(R.id.radio_teacher);
+        otherStaff = view.findViewById(R.id.radio_staff);
         registerButton = view.findViewById(R.id.btn_register);
         scrollView = view.findViewById(R.id.form_scroll);
         gender = view.findViewById(R.id.radio_gender);
         birthday = view.findViewById(R.id.birthday);
+        verify = view.findViewById(R.id.btn_verify);
+        department = view.findViewById(R.id.department);
+        bottomLine = view.findViewById(R.id.view_department);
         Calendar calendar = Calendar.getInstance();
         nowMonth = calendar.get(Calendar.MONTH);
         nowDay = calendar.get(Calendar.DAY_OF_MONTH);
         nowYear = 2000;
         birthDay = birthMonth = birthYear = 0;
+        student.setChecked(true);
+        department.setVisibility(View.VISIBLE);
+        bottomLine.setVisibility(View.VISIBLE);
+        verify.setVisibility(View.GONE);
+        categoryText = "Student";
+        departmentText = "Student";
+        verified = true;
     }
 
     private void registerUser() {
@@ -112,9 +184,11 @@ public class RegisterFragment extends Fragment {
         String cPass = cPassword.getText().toString();
         String cityText = cityName.getText().toString();
         String genderText = getGender();
-        if (fullName.isEmpty()) {
+        if (!(departmentText.equals("Staff"))) {
+            departmentText = department.getText().toString();
+        }
+        if (fName.getText().toString().isEmpty()) {
             fName.setError("Required");
-            lName.setError("Required");
             scrollView.smoothScrollTo(0, 0);
         } else if (genderText == null) {
             Toast.makeText(mContext, "Please Specify your Gender", Toast.LENGTH_SHORT).show();
@@ -138,33 +212,25 @@ public class RegisterFragment extends Fragment {
         } else if (!pass.equals(cPass)) {
             Toast.makeText(mContext, "Password not match", Toast.LENGTH_SHORT).show();
             cPassword.setError("Not match");
+        } else if (!departmentText.equals("Staff") && department.getText().toString().isEmpty()) {
+            Toast.makeText(mContext, "Provide your department", Toast.LENGTH_SHORT).show();
+        } else if (!verified) {
+            Toast.makeText(mContext, "Please verify you!", Toast.LENGTH_SHORT).show();
         } else {
             HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("username", fullName);
-            hashMap.put("search", fullName.toLowerCase());
-            hashMap.put("imageURL", "default");
-            hashMap.put("LastSeenPrivacy", "Everyone");
-            hashMap.put("ProfilePrivacy", "Everyone");
-            hashMap.put("AboutPrivacy", "Everyone");
-            hashMap.put("LocationPrivacy", "Everyone");
-            hashMap.put("EmailPrivacy", "Everyone");
-            hashMap.put("PhonePrivacy", "Everyone");
-            hashMap.put("BirthdayPrivacy", "Everyone");
-            hashMap.put("PhoneNumber", phone.getText().toString().isEmpty() ?
+            hashMap.put(KEY_USERNAME, fullName);
+            hashMap.put(KEY_SEARCH, fullName.toLowerCase());
+            hashMap.put(KEY_IMAGE_URL, "default");
+            hashMap.put(KEY_DEPARTMENT, departmentText);
+            hashMap.put(KEY_CATEGORY, categoryText);
+            hashMap.put(KEY_GENDER, genderText);
+            hashMap.put(KEY_EMAIL, email.getText().toString());
+            hashMap.put(KEY_CITY, cityText);
+            hashMap.put(KEY_BIRTH_DAY, birthDay);
+            hashMap.put(KEY_BIRTH_YEAR, birthYear);
+            hashMap.put(KEY_BIRTH_MONTH, birthMonth);
+            hashMap.put(KEY_PH_NUMBER, phone.getText().toString().isEmpty() ?
                     "Not Provided" : phone.getText().toString());
-            hashMap.put("gender", genderText);
-            hashMap.put("Latitude", "Not Provided");
-            hashMap.put("Longitude", "Not Provided");
-            hashMap.put("thumbnailURL", "default");
-            hashMap.put("email", email.getText().toString());
-            hashMap.put("Description", "Hey Ilahianz");
-            hashMap.put("city", cityText);
-            hashMap.put("district", "Not Provided");
-            hashMap.put("bio", "Not Provided");
-            hashMap.put("Birthday", birthDay);
-            hashMap.put("BirthYear", birthYear);
-            hashMap.put("BirthMonth", birthMonth);
-
             listener.OnRegisterButtonClicked(hashMap);
         }
 
@@ -199,4 +265,17 @@ public class RegisterFragment extends Fragment {
         dialog.show();
     }
 
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void OnQRCodeResultOK(String result) {
+        verified = true;
+        categoryText = "Teacher";
+        Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
+        verify.setText("Verified");
+    }
+
+    @Override
+    public void OnQRCodeResultCancelled() {
+        verified = false;
+    }
 }

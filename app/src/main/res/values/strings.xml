@@ -27,4 +27,9 @@
     <string name="phone_optional">Phone (Optional)</string>
     <string name="who_are_you">Who are you ?</string>
     <string name="verify_you">Verify you</string>
+    <string name="other_staff">Other Staff</string>
+    <string name="teacher">Teacher</string>
+    <string name="student">Student</string>
+    <string name="who_you_are">Who you are ?</string>
+    <string name="department">Department</string>
 </resources>
