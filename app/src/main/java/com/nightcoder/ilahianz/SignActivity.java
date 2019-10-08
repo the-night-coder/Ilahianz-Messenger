@@ -33,10 +33,12 @@ import com.nightcoder.ilahianz.Fragments.LoadingFragment;
 import com.nightcoder.ilahianz.Fragments.RegisterFragment;
 import com.nightcoder.ilahianz.Fragments.SignFragment;
 import com.nightcoder.ilahianz.Fragments.VerifyFragment;
+import com.nightcoder.ilahianz.Listeners.FragmentListeners.LoadingFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.SignInFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.VFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.VerifyFragmentListener;
+import com.nightcoder.ilahianz.Listeners.LogInCompleteCallback;
 import com.nightcoder.ilahianz.Listeners.QRCodeListener;
 import com.nightcoder.ilahianz.Supports.Network;
 
@@ -66,7 +68,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.SIGN_FRAGMENT_TAG
 import static com.nightcoder.ilahianz.Literals.StringConstants.VERIFY_FRAGMENT_TAG;
 
 public class SignActivity extends AppCompatActivity implements SignInFragmentListener,
-        RegisterFragmentListener, VerifyFragmentListener {
+        RegisterFragmentListener, VerifyFragmentListener, LoadingFragmentListener {
 
     private QRCodeListener QRListener;
     private FirebaseAuth auth;
@@ -74,6 +76,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     private Dialog progressBar;
     private VFragmentListener vFragmentListener;
     private DatabaseReference reference;
+    private LogInCompleteCallback callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,20 +180,21 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             hashMap.put(KEY_LONGITUDE, "Not Provided");
                             hashMap.put(KEY_THUMBNAIL, "default");
                             Log.d("LOGIN", "Complete");
+                            callback.onRegistered();
                             reference.setValue(hashMap)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isComplete()) {
                                                 Log.d("LOGIN PUSH", "Complete");
-                                                openLoginFragment();
+                                                callback.logInComplete();
                                                 Toast.makeText(SignActivity.this, "Complete", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    onBackPressed();
+                                    callback.logInIncomplete();
                                     Log.d("LOGIN PUSH", "Failed");
                                 }
                             });
@@ -201,7 +205,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                onBackPressed();
+                callback.onFailed();
                 Log.d("LOGIN", "Failed");
             }
         });
@@ -351,6 +355,8 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                 .attach(loadingFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+
+        callback = loadingFragment;
     }
 
     private Fragment getFragment(String tag) {
@@ -369,6 +375,21 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
 
     @Override
     public void onCompleteButtonClicked() {
+        onBackPressed();
+    }
+
+    @Override
+    public void onProcessComplete() {
+        openLoginFragment();
+    }
+
+    @Override
+    public void onProcessFailed() {
+        onBackPressed();
+    }
+
+    @Override
+    public void onProcessIncomplete() {
         onBackPressed();
     }
 }
