@@ -40,6 +40,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CITY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DEPARTMENT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_EMAIL;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_GENDER;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID_NUMBER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_IMAGE_URL;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PH_NUMBER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_SEARCH;
@@ -58,9 +59,9 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
     private int nowDay, nowMonth, nowYear;
     private RegisterFragmentListener listener;
     private RadioButton student, teacher, otherStaff;
-    private EditText department;
+    private EditText department, idNumber;
     private View bottomLine;
-    private Button verify;
+    private Button scanButton;
     private String departmentText = "Student",
             categoryText = "Student";
     private boolean verified = true;
@@ -70,6 +71,7 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         this.mContext = context;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         view = inflater.inflate(R.layout.fragment_register, container, false);
         ImageView right = view.findViewById(R.id.right_drawable);
         ImageView left = view.findViewById(R.id.left_drawable);
+        scanButton = view.findViewById(R.id.scan_button);
         int[] dimen = Graphics.getResolution(mContext);
         init();
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -94,16 +97,27 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerUser();
+                if (registerButton.getText().equals(getResources().getString(R.string.create_account)))
+                    registerUser();
+                else
+                    listener.OnScannerRequest();
+            }
+        });
+
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
         student.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 department.setVisibility(View.VISIBLE);
                 bottomLine.setVisibility(View.VISIBLE);
-                verify.setVisibility(View.GONE);
+                registerButton.setText(getResources().getString(R.string.create_account));
                 categoryText = "Student";
                 departmentText = "Student";
                 verified = true;
@@ -114,7 +128,7 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
             public void onClick(View v) {
                 department.setVisibility(View.VISIBLE);
                 bottomLine.setVisibility(View.VISIBLE);
-                verify.setVisibility(View.VISIBLE);
+                registerButton.setText(getResources().getString(R.string.verify_you));
                 categoryText = "Teacher";
                 departmentText = "Teacher";
                 verified = false;
@@ -125,19 +139,13 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
             public void onClick(View v) {
                 department.setVisibility(View.GONE);
                 bottomLine.setVisibility(View.GONE);
-                verify.setVisibility(View.GONE);
+                registerButton.setText(getResources().getString(R.string.create_account));
                 categoryText = "Staff";
                 departmentText = "Staff";
                 verified = true;
             }
         });
 
-        verify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.OnScannerRequest();
-            }
-        });
         return view;
     }
 
@@ -164,17 +172,15 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         scrollView = view.findViewById(R.id.form_scroll);
         gender = view.findViewById(R.id.radio_gender);
         birthday = view.findViewById(R.id.birthday);
-        verify = view.findViewById(R.id.btn_verify);
         department = view.findViewById(R.id.department);
+        idNumber = view.findViewById(R.id.id);
         bottomLine = view.findViewById(R.id.view_department);
         Calendar calendar = Calendar.getInstance();
         nowMonth = calendar.get(Calendar.MONTH);
         nowDay = calendar.get(Calendar.DAY_OF_MONTH);
         nowYear = 2000;
-        student.setChecked(true);
-        department.setVisibility(View.VISIBLE);
-        bottomLine.setVisibility(View.VISIBLE);
-        verify.setVisibility(View.GONE);
+        department.setVisibility(View.GONE);
+        bottomLine.setVisibility(View.GONE);
     }
 
     private void registerUser() {
@@ -219,15 +225,16 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put(KEY_USERNAME, fullName);
             hashMap.put(KEY_SEARCH, fullName.toLowerCase());
+            hashMap.put(KEY_ID_NUMBER, fullName.toLowerCase());
             hashMap.put(KEY_IMAGE_URL, "default");
             hashMap.put(KEY_DEPARTMENT, departmentText);
             hashMap.put(KEY_CATEGORY, categoryText);
             hashMap.put(KEY_GENDER, genderText);
             hashMap.put(KEY_EMAIL, email.getText().toString());
             hashMap.put(KEY_CITY, cityText);
-            hashMap.put(KEY_BIRTH_DAY, birthDay);
-            hashMap.put(KEY_BIRTH_YEAR, birthYear);
-            hashMap.put(KEY_BIRTH_MONTH, birthMonth);
+            hashMap.put(KEY_BIRTH_DAY, String.valueOf(birthDay));
+            hashMap.put(KEY_BIRTH_YEAR, String.valueOf(birthYear));
+            hashMap.put(KEY_BIRTH_MONTH, String.valueOf(birthMonth));
             hashMap.put(PASSWORD, password.getText().toString());
             hashMap.put(KEY_PH_NUMBER, phone.getText().toString().isEmpty() ?
                     "Not Provided" : phone.getText().toString());
@@ -285,13 +292,15 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         verified = true;
         if (result.equals("ILAHIANZ:-{TEACHER}")) {
             categoryText = "Teacher";
-            verify.setText("Verified");
-            verify.setVisibility(View.VISIBLE);
+            registerButton.setText(getResources().getString(R.string.create_account));
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void OnQRCodeResultCancelled() {
         verified = false;
+        registerButton.setText(getResources().getString(R.string.create_account));
+        teacher.setChecked(false);
     }
 }

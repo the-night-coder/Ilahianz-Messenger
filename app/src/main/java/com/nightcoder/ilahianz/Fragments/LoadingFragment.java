@@ -8,22 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.LoadingFragmentListener;
 import com.nightcoder.ilahianz.Listeners.LogInCompleteCallback;
 import com.nightcoder.ilahianz.R;
+import com.nightcoder.ilahianz.Supports.Graphics;
+import com.tomer.fadingtextview.FadingTextView;
 
 public class LoadingFragment extends Fragment implements LogInCompleteCallback {
 
     private Context mContext;
-    private ImageView imageView;
     private LoadingFragmentListener listener;
-    private TextView textView;
+    private FadingTextView textView;
 
     public LoadingFragment(Context context) {
         this.mContext = context;
@@ -34,9 +33,32 @@ public class LoadingFragment extends Fragment implements LogInCompleteCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_loading, container, false);
-        imageView = view.findViewById(R.id.gif);
+        ImageView imageView = view.findViewById(R.id.gif);
         textView = view.findViewById(R.id.text);
-        new CountDownTimer(1000, 1000) {
+        String[] array = {
+                "We just passing your information to our Witch!",
+                "She will carry your information in our cloud"};
+        textView.setTexts(array);
+        textView.setTimeout(1500, FadingTextView.MILLISECONDS);
+        Graphics.setGifImage(mContext, R.raw.giphy, imageView);
+
+        return view;
+    }
+
+    @Override
+    public void onRegistered() {
+
+    }
+
+    @Override
+    public void onFailed() {
+        String[] array = {
+                "Witch can't carry your information at this moment",
+                "We are sorry for the interruption",
+                "Try again later"};
+        textView.setTexts(array);
+        textView.setTimeout(2000, FadingTextView.MILLISECONDS);
+        new CountDownTimer(6000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -44,25 +66,31 @@ public class LoadingFragment extends Fragment implements LogInCompleteCallback {
 
             @Override
             public void onFinish() {
-                Glide.with(mContext).load(R.raw.giphy).asGif().into(imageView);
+                listener.onProcessFailed();
             }
         }.start();
-
-        return view;
     }
 
-    @Override
-    public void onRegistered() {
-    }
-
-    @Override
-    public void onFailed() {
-        listener.onProcessFailed();
-    }
-
+    @SuppressWarnings("deprecation")
     @Override
     public void logInComplete() {
-        listener.onProcessIncomplete();
+        String[] array = {
+                "Great",
+                "You are all Set",
+                "Fall back to log in.."};
+        textView.setTexts(array);
+        textView.setTimeout(2000, FadingTextView.MILLISECONDS);
+        new CountDownTimer(6000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                listener.onProcessComplete();
+            }
+        }.start();
     }
 
     @Override

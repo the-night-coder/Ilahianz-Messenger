@@ -341,6 +341,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
+                    android:layout_marginBottom="5dp"
                     android:fontFamily="@font/roboto_bold"
                     android:text="@string/who_you_are"
                     android:textColor="@color/blue_dark" />
@@ -387,12 +388,13 @@
                             android:text="@string/other_staff" />
                     </RadioGroup>
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical">
 
                         <EditText
                             android:id="@+id/department"
@@ -410,25 +412,57 @@
                             android:id="@+id/view_department"
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
-                            android:layout_below="@id/department"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:background="@color/view_color" />
 
-                        <Button
-                            android:id="@+id/btn_verify"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:layout_below="@id/view_department"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="5dp"
-                            android:background="@color/dd_green"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:text="@string/verify_you"
-                            android:textColor="@color/white"
-                            android:visibility="visible" />
-                    </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:id="@+id/id_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_toStartOf="@+id/scan_button"
+                                android:orientation="vertical">
+
+                                <EditText
+                                    android:id="@+id/id"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@android:color/transparent"
+                                    android:editable="false"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:hint="@string/id_no"
+                                    android:inputType="text"
+                                    android:padding="5dp" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0.5dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@color/view_color" />
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/scan_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_margin="10dp"
+                                android:background="@drawable/material_rect_outline_green"
+                                android:fontFamily="@font/roboto_bold"
+                                android:padding="3dp"
+                                android:text="@string/scan"
+                                android:textAllCaps="false"
+                                android:textColor="@color/dd_green" />
+                        </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <Button
@@ -437,7 +471,7 @@
                     android:layout_height="40dp"
                     android:layout_marginStart="25dp"
                     android:layout_marginEnd="25dp"
-                    android:layout_marginBottom="25dp"
+                    android:layout_marginBottom="40dp"
                     android:background="@color/register_btn_color"
                     android:fontFamily="@font/roboto_bold"
                     android:text="@string/create_account"

@@ -1,10 +1,13 @@
 package com.nightcoder.ilahianz;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.nightcoder.ilahianz.Supports.Graphics;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -21,8 +24,11 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        ImageView imageView = findViewById(R.id.imageView);
 
-        handler.postDelayed(runnable, 2000);
+        Graphics.setGifImage(this, R.raw.icon_fffff, imageView);
+
+        handler.postDelayed(runnable, 13000);
 
     }
 }

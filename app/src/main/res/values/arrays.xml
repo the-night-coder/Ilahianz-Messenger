@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="start_logo_text">
+        <item>Hi</item>
+        <item>Introducing a Messenger</item>
+        <item>for Ilahianz from Ilahianz</item>
+        <item>To make Better Community</item>
+        <item>Friendships.</item>
+        <item>OK</item>
+        <item>Lets Go.</item>
+    </string-array>
+    <string-array name="qr_code_verification">
+        <item>Scan the QR Code</item>
+        <item>To Verify Who you are</item>
+        <item>QR Code usually in the Department</item>
+        <item>Face any problem</item>
+        <item>Contact the developer</item>
+    </string-array>
+
+</resources>

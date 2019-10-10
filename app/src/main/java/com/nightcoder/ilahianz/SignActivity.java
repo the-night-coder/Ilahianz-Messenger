@@ -1,21 +1,28 @@
 package com.nightcoder.ilahianz;
 
 import android.Manifest;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,8 +34,11 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.Fragments.LoadingFragment;
 import com.nightcoder.ilahianz.Fragments.RegisterFragment;
 import com.nightcoder.ilahianz.Fragments.SignFragment;
@@ -40,13 +50,19 @@ import com.nightcoder.ilahianz.Listeners.FragmentListeners.VFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.VerifyFragmentListener;
 import com.nightcoder.ilahianz.Listeners.LogInCompleteCallback;
 import com.nightcoder.ilahianz.Listeners.QRCodeListener;
+import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.Supports.Network;
+import com.tomer.fadingtextview.FadingTextView;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import cdflynn.android.library.checkview.CheckView;
 
 import static com.nightcoder.ilahianz.Literals.IntegerConstats.CAMERA_REQUEST;
 import static com.nightcoder.ilahianz.Literals.IntegerConstats.REQUEST_QR_CODE_RESULT;
+import static com.nightcoder.ilahianz.Literals.StringConstants.DEFAULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ABOUT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIO;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTHDAY_PRIVACY;
@@ -58,6 +74,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LAST_SEEN_DAT
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LATITUDE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LOCATION_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LONGITUDE;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_NICKNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PHONE_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PROFILE_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_THUMBNAIL;
@@ -74,15 +91,19 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     private FirebaseAuth auth;
     private boolean threadAlive = true;
     private Dialog progressBar;
+    private ProgressBar progress;
     private VFragmentListener vFragmentListener;
     private DatabaseReference reference;
     private LogInCompleteCallback callback;
+    private CheckView checkView;
+    private RelativeLayout container;
+    private LinearLayout background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign);
-        LinearLayout container = findViewById(R.id.container);
+        container = findViewById(R.id.container);
         openLoginFragment();
         // full screen
         container.setSystemUiVisibility(
@@ -99,6 +120,8 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
 
         auth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference();
+        background = findViewById(R.id.background_sign);
+        background.setVisibility(View.GONE);
         checkConnectionSync();
         ////
     }
@@ -107,6 +130,8 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     public void OnSignInButtonClicked(String email, String password) {
         progressBar = new Dialog(this);
         progressBar.setContentView(R.layout.loading_progressbar_circle);
+        checkView = progressBar.findViewById(R.id.check_view);
+        progress = progressBar.findViewById(R.id.progressbar);
         Objects.requireNonNull(progressBar.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         progressBar.setCancelable(false);
         logInUser(email, password);
@@ -123,7 +148,6 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
 
     @Override
     public void OnRegisterButtonClicked(HashMap<String, Object> hashMap, String email, String password) {
-        Toast.makeText(this, "Registered", Toast.LENGTH_SHORT).show();
         registerUser(hashMap, email, password);
     }
 
@@ -178,7 +202,8 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             hashMap.put(KEY_ABOUT, "Hey Ilahianz");
                             hashMap.put(KEY_LATITUDE, "Not Provided");
                             hashMap.put(KEY_LONGITUDE, "Not Provided");
-                            hashMap.put(KEY_THUMBNAIL, "default");
+                            hashMap.put(KEY_THUMBNAIL, DEFAULT);
+                            hashMap.put(KEY_NICKNAME, "Not Provided");
                             Log.d("LOGIN", "Complete");
                             callback.onRegistered();
                             reference.setValue(hashMap)
@@ -188,7 +213,6 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                                             if (task.isComplete()) {
                                                 Log.d("LOGIN PUSH", "Complete");
                                                 callback.logInComplete();
-                                                Toast.makeText(SignActivity.this, "Complete", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
@@ -217,8 +241,9 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         SignFragment signFragment = new SignFragment(this);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.frame, signFragment, SIGN_FRAGMENT_TAG)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
 
@@ -267,8 +292,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isComplete()) {
-                            Log.d("Sign", "Complete");
-                            progressBar.cancel();
+                            onCompleteSign();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -391,6 +415,77 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     @Override
     public void onProcessIncomplete() {
         onBackPressed();
+    }
+
+    private void onCompleteSign() {
+
+        Log.d("Sign", "Complete");
+        checkView.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
+        checkView.check();
+        new CountDownTimer(1000, 2000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d("TICK", String.valueOf(millisUntilFinished));
+            }
+
+            @Override
+            public void onFinish() {
+                final FirebaseUser fUser = auth.getCurrentUser();
+                assert fUser != null;
+                DatabaseReference reference = FirebaseDatabase.getInstance()
+                        .getReference("Users").child(fUser.getUid());
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        progressBar.cancel();
+                        int colorFrom = getResources().getColor(R.color.white);
+                        int colorTo = getResources().getColor(R.color.blue_dark);
+                        Fragment fragment = getFragment(SIGN_FRAGMENT_TAG);
+                        background.setVisibility(View.VISIBLE);
+                        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                        colorAnimation.setDuration(1000);
+                        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                background.setBackgroundColor((int) animation.getAnimatedValue());
+                            }
+                        });
+                        colorAnimation.start();
+                        FadingTextView view = new FadingTextView(SignActivity.this);
+                        view.setTimeout(2000, TimeUnit.MILLISECONDS);
+                        view.setTextColor(getResources().getColor(R.color.white));
+                        view.setTextSize(30);
+                        Typeface font = ResourcesCompat.getFont(SignActivity.this, R.font.roboto_bold);
+                        view.setTypeface(font);
+
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                        );
+                        params.addRule(RelativeLayout.CENTER_VERTICAL);
+                        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                        view.setLayoutParams(params);
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .detach(fragment)
+                                .commit();
+                        UserData data = dataSnapshot.getValue(UserData.class);
+                        if (data != null) {
+                            String[] array = {"HI", data.getUsername(), "Welcome back"};
+                            view.setTexts(array);
+                            container.addView(view);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        }.start();
     }
 }
 
