@@ -475,6 +475,19 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             String[] array = {"HI", data.getUsername(), "Welcome back"};
                             view.setTexts(array);
                             container.addView(view);
+
+                            new CountDownTimer(4000, 1000) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+
+                                }
+
+                                @Override
+                                public void onFinish() {
+                                    startActivity(new Intent(SignActivity.this, MainActivity.class)
+                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                                }
+                            }.start();
                         }
                     }
 

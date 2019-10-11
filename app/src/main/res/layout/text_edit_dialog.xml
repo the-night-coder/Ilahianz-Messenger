@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/material_dialog_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Enter your Name"
+        android:textColor="@color/blue_dark"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/edit_text"
+        style="@style/editTextStyle"
+        android:hint="@string/name_lower" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel_action"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:text="@string/cancel_upper"
+            android:textColor="@color/blue_dark" />
+
+        <Button
+            android:id="@+id/save_action"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:elevation="0dp"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:text="@string/save_upper"
+            android:textColor="@color/blue_dark" />
+
+    </LinearLayout>
+
+</LinearLayout>

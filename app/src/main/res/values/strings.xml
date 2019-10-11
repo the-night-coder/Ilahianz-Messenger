@@ -32,5 +32,36 @@
     <string name="id_no">ID No.</string>
     <string name="scan">Scan</string>
     <string name="verify_you">Verify you</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="chats">Chats</string>
+    <string name="search">Search</string>
+    <string name="account">Account</string>
+    <string name="help">Help</string>
+    <string name="notifications">Notifications</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile">Profile</string>
+    <string name="photo">PHOTO</string>
+    <string name="profile_quotes">A profile helps better identification</string>
+    <string name="name">NAME</string>
+    <string name="night_coder">Night Coder</string>
+    <string name="birthday_upper">BIRTHDAY</string>
+    <string name="gender_upper">GENDER</string>
+    <string name="city_city">CITY</string>
+    <string name="district_upper">DISTRICT</string>
+    <string name="department_upper">DEPARTMENT</string>
+    <string name="category_upper">CATEGORY</string>
+    <string name="id_number">ID NUMBER</string>
+    <string name="contact_info">Contact Info</string>
+    <string name="email_upper">EMAIL</string>
+    <string name="phone_upper">PHONE</string>
+    <string name="academic_year_upper">ACADEMIC YEAR</string>
+    <string name="name_lower">Name</string>
+    <string name="save_upper">SAVE</string>
+    <string name="cancel_upper">Cancel</string>
 
 </resources>

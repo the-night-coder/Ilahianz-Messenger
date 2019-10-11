@@ -4,4 +4,7 @@
     <dimen name="register_btn_size_w">300dp</dimen>
     <dimen name="register_btn_size_h">40dp</dimen>
     <dimen name="left_image_margin_top_register">25dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 </resources>

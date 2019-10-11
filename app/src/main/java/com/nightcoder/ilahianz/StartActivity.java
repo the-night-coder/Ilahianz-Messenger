@@ -7,11 +7,14 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.nightcoder.ilahianz.Supports.Graphics;
 
 public class StartActivity extends AppCompatActivity {
 
     Handler handler = new Handler();
+    FirebaseUser firebaseUser;
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -25,10 +28,17 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         ImageView imageView = findViewById(R.id.imageView);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        Graphics.setGifImage(this, R.raw.icon_fffff, imageView);
+        if (firebaseUser != null) {
+            startActivity(new Intent(StartActivity.this, MainActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+            finish();
+        } else {
 
-        handler.postDelayed(runnable, 13000);
+            Graphics.setGifImage(this, R.raw.icon_fffff, imageView);
+            handler.postDelayed(runnable, 13000);
+        }
 
     }
 }
