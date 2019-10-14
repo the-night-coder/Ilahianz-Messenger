@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".AccountActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:theme="@style/MainActivityStyle" />

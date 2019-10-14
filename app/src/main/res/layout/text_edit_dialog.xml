@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_margin="7dp"
     android:background="@drawable/material_dialog_background"
     android:orientation="vertical">
 
@@ -19,13 +21,16 @@
 
     <EditText
         android:id="@+id/edit_text"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:inputType="textPersonName"
         style="@style/editTextStyle"
         android:hint="@string/name_lower" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:gravity="end"
         android:orientation="horizontal">
 

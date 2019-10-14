@@ -1,329 +1,339 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ChatUI.Fragments.AccountFragments.PersonalInfoFragment">
 
-    <LinearLayout
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/white_circle_fill"
+        android:elevation="5dp"
+        android:padding="5dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/profile_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/blue_outline"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="@string/profile"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/roboto_light"
-                android:text="@string/profile_quotes" />
-
-            <RelativeLayout
-                android:id="@+id/edit_profile_image"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground">
+                android:layout_margin="10dp"
+                android:background="@drawable/blue_outline"
+                android:orientation="vertical">
 
                 <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/photo" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp"
-                    android:src="@mipmap/ppro" />
-            </RelativeLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-            <LinearLayout
-                android:id="@+id/edit_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/profile"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/name" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="@string/profile_quotes" />
 
-                <TextView
-                    android:id="@+id/name"
-                    style="@style/profileContentTextStyle"
-                    android:text="@string/night_coder" />
+                <RelativeLayout
+                    android:id="@+id/edit_profile_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/photo" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_person" />
+                </RelativeLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+                <LinearLayout
+                    android:id="@+id/edit_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/name" />
+
+                    <TextView
+                        android:id="@+id/name"
+                        style="@style/profileContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+
+                <!---->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/birthday_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_birthday"
+                        style="@style/profileNoEditableContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+
+                <!---->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/gender_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_gender"
+                        style="@style/profileNoEditableContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+
+                <!---->
+                <LinearLayout
+                    android:id="@+id/edit_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/city_city" />
+
+                    <TextView
+                        android:id="@+id/profile_city"
+                        style="@style/profileContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+
+                <!---->
+                <LinearLayout
+                    android:id="@+id/edit_district"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/district_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_district"
+                        style="@style/profileContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+
+                <!---->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/department_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_department"
+                        style="@style/profileNoEditableContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+
+                <!---->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/category_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_category"
+                        style="@style/profileNoEditableContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+                <LinearLayout
+                    android:id="@+id/academic_year"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/academic_year_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_academic_year"
+                        style="@style/profileNoEditableContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/id_number" />
+
+                    <TextView
+                        android:id="@+id/profile_id"
+                        style="@style/profileNoEditableContentTextStyle" />
+                </LinearLayout>
+                <!---->
             </LinearLayout>
 
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-
-            <!---->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
+                android:layout_margin="10dp"
+                android:background="@drawable/blue_outline"
+                android:orientation="vertical">
 
                 <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/birthday_upper" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/contact_info"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+                <!---->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
 
-                <TextView
-                    style="@style/profileNoEditableContentTextStyle"
-                    android:text="June 16, 1998"
-                    tools:ignore="HardcodedText" />
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/email_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_email"
+                        style="@style/profileNoEditableContentTextStyle" />
+                </LinearLayout>
+
+                <View style="@style/profileBottomLineStyle" />
+                <!---->
+
+                <LinearLayout
+                    android:id="@+id/edit_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:foreground="?android:selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        style="@style/profileTitleTextStyle"
+                        android:text="@string/phone_upper" />
+
+                    <TextView
+                        android:id="@+id/profile_phone"
+                        style="@style/profileContentTextStyle" />
+                </LinearLayout>
             </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-
-            <!---->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/gender_upper" />
-
-                <TextView
-                    style="@style/profileNoEditableContentTextStyle"
-                    android:text="@string/male" />
-            </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-
-            <!---->
-            <LinearLayout
-                android:id="@+id/edit_city"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/city_city" />
-
-                <TextView
-                    style="@style/profileContentTextStyle"
-                    android:text="Kothamangalam"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-
-            <!---->
-            <LinearLayout
-                android:id="@+id/edit_district"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/district_upper" />
-
-                <TextView
-                    style="@style/profileContentTextStyle"
-                    android:text="Ernakulam"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-
-            <!---->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/department_upper" />
-
-                <TextView
-                    style="@style/profileNoEditableContentTextStyle"
-                    android:text="BCA"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-
-            <!---->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/category_upper" />
-
-                <TextView
-                    style="@style/profileNoEditableContentTextStyle"
-                    android:text="Student"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-            <LinearLayout
-                android:id="@+id/academic_year"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/academic_year_upper" />
-
-                <TextView
-                    style="@style/profileNoEditableContentTextStyle"
-                    android:text="2017 - 20"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/id_number" />
-
-                <TextView
-                    style="@style/profileNoEditableContentTextStyle"
-                    android:text="46564132"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-            <!---->
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/blue_outline"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="@string/contact_info"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-            <!---->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/email_upper" />
-
-                <TextView
-                    style="@style/profileNoEditableContentTextStyle"
-                    android:text="Ksreekanthkr@gmail.com"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-
-            <View style="@style/profileBottomLineStyle" />
-            <!---->
-
-            <LinearLayout
-                android:id="@+id/edit_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:foreground="?android:selectableItemBackground"
-                android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    style="@style/profileTitleTextStyle"
-                    android:text="@string/phone_upper" />
-
-                <TextView
-                    style="@style/profileContentTextStyle"
-                    android:text="8156906701"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

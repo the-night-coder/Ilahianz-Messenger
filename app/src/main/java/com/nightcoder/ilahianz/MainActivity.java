@@ -1,24 +1,22 @@
 package com.nightcoder.ilahianz;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
-
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.nightcoder.ilahianz.ChatUI.BlankFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.HelpFragment;
@@ -27,17 +25,16 @@ import com.nightcoder.ilahianz.ChatUI.Fragments.SearchFragment;
 import static com.nightcoder.ilahianz.Literals.StringConstants.ACCOUNT_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.CHAT_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.HELP_FRAGMENT_TAG;
-import static com.nightcoder.ilahianz.Literals.StringConstants.LOADING_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.SEARCH_FRAGMENT_TAG;
-import static com.nightcoder.ilahianz.Literals.StringConstants.SIGN_FRAGMENT_TAG;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentCallbackListener {
 
     private BottomNavigationView navigationView;
     private Context mContext;
     private TextView heading;
     private AppBarLayout appBarLayout;
     private String currentFragment;
+    private FragmentCallbackListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
         currentFragment = CHAT_FRAGMENT_TAG;
+        listener = this;
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
@@ -109,7 +107,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        MainActivity.this.moveTaskToBack(true);
+        if (!currentFragment.equals(CHAT_FRAGMENT_TAG)) {
+            changeFragment(new ChatFragment(), CHAT_FRAGMENT_TAG);
+        } else {
+            MainActivity.this.moveTaskToBack(true);
+        }
     }
 
     private void hideAppBarAnimation() {
@@ -130,10 +132,22 @@ public class MainActivity extends AppCompatActivity {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
             currentFragment = tag;
+            listener.onFragmentChanged();
         }
     }
 
     private Fragment getFragment(String tag) {
         return getSupportFragmentManager().findFragmentByTag(tag);
     }
+
+    @Override
+    public void onFragmentChanged() {
+        if (CHAT_FRAGMENT_TAG.equals(currentFragment)) {
+            navigationView.setSelectedItemId(R.id.nav_chats);
+        }
+    }
+}
+
+interface FragmentCallbackListener {
+    void onFragmentChanged();
 }

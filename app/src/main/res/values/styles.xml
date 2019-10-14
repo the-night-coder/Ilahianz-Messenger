@@ -1,18 +1,15 @@
 <resources>
-
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/blue_dark</item>
     </style>
 
     <style name="MainActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blue_dark</item>
         <item name="colorPrimaryDark">@color/white</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/blue_dark</item>
     </style>
 
     <style name="signIn_theme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -30,7 +27,7 @@
     <style name="profileContentTextStyle" parent="Widget.AppCompat.TextView">
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -42,7 +39,7 @@
     <style name="profileNoEditableContentTextStyle" parent="Widget.AppCompat.TextView">
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_width">wrap_content</item>
@@ -55,6 +52,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">16dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/deep_blue</item>
     </style>
 
     <style name="profileBottomLineStyle">
@@ -69,9 +68,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:paddingStart">20dp</item>
         <item name="android:layout_marginStart">20dp</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
-        <item name="android:padding">5dp</item>
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">@drawable/dialog_edit_text_background</item>
     </style>
 </resources>
