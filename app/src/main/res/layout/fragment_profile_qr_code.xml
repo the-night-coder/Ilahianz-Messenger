@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ImageButton
+        android:id="@+id/close_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16sp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_close_black_24dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:src="@mipmap/ppro" />
+
+    <ImageView
+        android:id="@+id/qr_code"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/qr_code_bg"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/qr_code_background"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/scan_button"
+        android:layout_below="@id/qr_code"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/dialog_edit_text_background"
+            android:fontFamily="@font/roboto_black"
+            android:paddingStart="16sp"
+            android:paddingTop="5dp"
+            android:paddingEnd="16sp"
+            android:paddingBottom="5dp"
+            android:text="Username"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/scan_button"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16sp"
+        android:background="@drawable/dialog_edit_text_background"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="5dp">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/qr_code_action" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/scan_qr_code"
+            android:textSize="17sp" />
+    </LinearLayout>
+</RelativeLayout>
