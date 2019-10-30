@@ -18,6 +18,8 @@ import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
 import com.tomer.fadingtextview.FadingTextView;
 
+import java.util.concurrent.TimeUnit;
+
 public class LoadingFragment extends Fragment implements LogInCompleteCallback {
 
     private Context mContext;
@@ -39,7 +41,7 @@ public class LoadingFragment extends Fragment implements LogInCompleteCallback {
                 "We just passing your information to our Witch!",
                 "She will carry your information in our cloud"};
         textView.setTexts(array);
-        textView.setTimeout(1500, FadingTextView.MILLISECONDS);
+        textView.setTimeout(1500, TimeUnit.MILLISECONDS);
         Graphics.setGifImage(mContext, R.raw.giphy, imageView);
 
         return view;
@@ -57,7 +59,7 @@ public class LoadingFragment extends Fragment implements LogInCompleteCallback {
                 "We are sorry for the interruption",
                 "Try again later"};
         textView.setTexts(array);
-        textView.setTimeout(2000, FadingTextView.MILLISECONDS);
+        textView.setTimeout(2000, TimeUnit.MILLISECONDS);
         new CountDownTimer(6000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {

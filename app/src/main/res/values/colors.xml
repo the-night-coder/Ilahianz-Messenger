@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
     <color name="colorAccent">#D81B60</color>
     <color name="black">#000000</color>
     <color name="white">#fff</color>
@@ -11,7 +11,7 @@
     <color name="dd_green">#00875F</color>
     <color name="login_btn_color">#149F5B</color>
     <color name="register_btn_color">#1A73E9</color>
-    <color name="view_color">#CCCCCC</color>
+    <color name="view_color">#45CCCCCC</color>
     <color name="hint_color">#CECECE</color>
     <color name="blue_dark">#1A73E9</color>
     <color name="transparent_blue">#271A73E9</color>
@@ -20,4 +20,5 @@
     <color name="background_verify_fr">#677082</color>
     <color name="blue_transparent">#401A73E9</color>
     <color name="deep_blue">#00558B</color>
+    <color name="green_transparent">#331EEB1E</color>
 </resources>

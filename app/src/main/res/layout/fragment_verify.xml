@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,6 +16,7 @@
         android:layout_gravity="center_horizontal" />
 
     <Button
+        android:layout_below="@id/gif"
         android:id="@+id/btn_verify"
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -30,6 +31,7 @@
         tools:ignore="HardcodedText" />
 
     <RelativeLayout
+        android:layout_below="@id/btn_verify"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -39,12 +41,12 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
-            android:padding="10dp"
             android:layout_centerVertical="true"
-            android:visibility="gone"
-            app:checkView_strokeColor="@color/blue_dark"
             android:background="@drawable/white_circle_fill"
             android:elevation="5dp"
+            android:padding="10dp"
+            android:visibility="gone"
+            app:checkView_strokeColor="@color/blue_dark"
             app:checkView_strokeWidth="5dp" />
 
         <Button
@@ -77,4 +79,13 @@
             app:timeout="2000" />
     </RelativeLayout>
 
-</LinearLayout>
+    <TextView
+        android:layout_alignParentBottom="true"
+        android:textAlignment="center"
+        android:fontFamily="@font/roboto_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#4AFFFFFF"
+        android:layout_marginBottom="5dp"
+        android:text="@string/ilahianz_by_nightcoders"/>
+</RelativeLayout>

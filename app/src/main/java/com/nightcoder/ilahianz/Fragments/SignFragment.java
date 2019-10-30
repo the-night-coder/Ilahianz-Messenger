@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.SignInFragmentListener;
 import com.nightcoder.ilahianz.R;
@@ -40,6 +41,7 @@ public class SignFragment extends Fragment {
         password = view.findViewById(R.id.text_password);
         signin = view.findViewById(R.id.login_btn);
         create = view.findViewById(R.id.register_btn);
+        TextView forgoPassword = view.findViewById(R.id.forgot_password);
         //
         ImageView right = view.findViewById(R.id.right_drawable);
         ImageView left = view.findViewById(R.id.left_drawable);
@@ -55,6 +57,13 @@ public class SignFragment extends Fragment {
         left.setLayoutParams(new LinearLayout.LayoutParams((dimen[0] / 2), (dimen[0] / 2)));
 //
         logIn();
+
+        forgoPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.OnForgotPasswordClicked();
+            }
+        });
         return view;
     }
 
@@ -71,7 +80,7 @@ public class SignFragment extends Fragment {
             public void onClick(View v) {
                 String text_email = email.getText().toString();
                 String text_password = password.getText().toString();
-                if (!(text_email.isEmpty() && text_password.isEmpty()))
+                if (!(text_email.isEmpty()) && !(text_password.isEmpty()) && text_password.length() > 6)
                     listener.OnSignInButtonClicked(text_email, text_password);
             }
         });

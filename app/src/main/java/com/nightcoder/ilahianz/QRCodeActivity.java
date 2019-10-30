@@ -1,13 +1,16 @@
 package com.nightcoder.ilahianz;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-import com.nightcoder.ilahianz.Listeners.QRCodeListener;
+
+import java.util.Collections;
+import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -21,6 +24,8 @@ public class QRCodeActivity extends AppCompatActivity implements ZXingScannerVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         view = new ZXingScannerView(this);
+        List<BarcodeFormat> formats = Collections.singletonList(BarcodeFormat.QR_CODE);
+        view.setFormats(formats);
         setContentView(view);
 
     }

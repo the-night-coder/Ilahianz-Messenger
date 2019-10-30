@@ -23,7 +23,7 @@ public class UserData {
     private String phonePrivacy;
     private String emailPrivacy;
     private String profilePrivacy;
-    private String phoneNumber;
+    private String phone;
     private String birthdayPrivacy;
     private String latitude;
     private String longitude;
@@ -32,6 +32,8 @@ public class UserData {
     private String district;
     private String bio;
     private String department;
+    private String idNumber;
+    private String bloodDonate;
 
     public UserData() {
     }
@@ -43,12 +45,13 @@ public class UserData {
                     String description, String lastSeenPrivacy,
                     String locationPrivacy, String phonePrivacy,
                     String emailPrivacy, String profilePrivacy,
-                    String phoneNumber, String birthdayPrivacy,
+                    String phone, String birthdayPrivacy,
                     String latitude, String longitude,
                     String thumbnailURL, String city,
                     String district, String bio,
-                    String department) {
+                    String department, String idNumber, String bloodDonate) {
         this.username = username;
+        this.bloodDonate = bloodDonate;
         this.id = id;
         this.imageURL = imageURL;
         this.className = className;
@@ -68,7 +71,7 @@ public class UserData {
         this.phonePrivacy = phonePrivacy;
         this.emailPrivacy = emailPrivacy;
         this.profilePrivacy = profilePrivacy;
-        this.phoneNumber = phoneNumber;
+        this.phone = phone;
         this.birthdayPrivacy = birthdayPrivacy;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -77,6 +80,31 @@ public class UserData {
         this.district = district;
         this.bio = bio;
         this.department = department;
+        this.idNumber = idNumber;
+    }
+
+    public String getBloodDonate() {
+        return bloodDonate;
+    }
+
+    public void setBloodDonate(String bloodDonate) {
+        this.bloodDonate = bloodDonate;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getIdNumber() {
+        return idNumber;
+    }
+
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
     }
 
     public String getUsername() {
@@ -240,11 +268,11 @@ public class UserData {
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
+        return phone;
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.phone = phoneNumber;
     }
 
     public String getBirthdayPrivacy() {

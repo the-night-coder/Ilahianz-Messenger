@@ -24,35 +24,46 @@
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
+                android:background="@color/white"
+                android:gravity="center"
                 app:layout_collapseMode="pin" />
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
                 android:orientation="vertical">
 
+                <ImageButton
+                    android:id="@+id/close_btn"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/ic_close_black_24dp"
+                    android:layout_width="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="ContentDescription" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_image"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
                     android:src="@drawable/ic_person" />
 
                 <TextView
+                    android:id="@+id/profile_name"
                     android:layout_width="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/profile_image"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/roboto_bold"
                     android:text="Night Coder"
-                    android:textColor="#06065C"
+                    android:textColor="@color/black"
                     android:textSize="18sp"
                     tools:ignore="HardcodedText" />
-            </LinearLayout>
+            </RelativeLayout>
 
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -62,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:elevation="5dp"
+            app:tabIndicatorFullWidth="false"
             android:textAlignment="center"
             app:layout_collapseMode="pin"
             app:tabGravity="center"

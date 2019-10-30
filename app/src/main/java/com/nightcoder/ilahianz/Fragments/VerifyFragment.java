@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -38,7 +39,7 @@ public class VerifyFragment extends Fragment implements VFragmentListener {
     private CheckView checkView;
     private ImageView imageView;
     private FadingTextView fadingTextView;
-    private LinearLayout container;
+    private RelativeLayout container;
 
     public VerifyFragment(Context context) {
         this.mContext = context;
@@ -56,7 +57,7 @@ public class VerifyFragment extends Fragment implements VFragmentListener {
         fadingTextView = view.findViewById(R.id.verified_text);
         this.container = view.findViewById(R.id.container);
         int[] dimen = Graphics.getResolution(mContext);
-        imageView.setLayoutParams(new LinearLayout.LayoutParams((dimen[WIDTH_INDEX]), (dimen[WIDTH_INDEX])));
+        imageView.setLayoutParams(new RelativeLayout.LayoutParams((dimen[WIDTH_INDEX]), (dimen[WIDTH_INDEX])));
 
         Graphics.setGifImage(mContext, R.raw.qr_code, imageView);
 
@@ -109,7 +110,7 @@ public class VerifyFragment extends Fragment implements VFragmentListener {
                     colorAnimation.start();
                     checkView.setVisibility(View.VISIBLE);
                     checkView.check();
-                    String[] array = {"You are a Teacher", "Verified"};
+                    String[] array = {"You are not a Student", "Verified"};
                     fadingTextView.setTexts(array);
                     fadingTextView.setTextColor(getResources().getColor(R.color.dd_green));
                     fadingTextView.setTimeout(2000, FadingTextView.MILLISECONDS);

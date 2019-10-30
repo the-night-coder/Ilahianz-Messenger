@@ -1,482 +1,415 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/sky_blue"
     tools:context=".Fragments.RegisterFragment">
 
-    <LinearLayout
-        android:id="@+id/banner"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/sky_blue"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/left_drawable"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/banner_text_1" />
-
-        <ImageView
-            android:id="@+id/right_drawable"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="@dimen/left_image_margin_top_register"
-            android:src="@drawable/banner_image_1" />
-    </LinearLayout>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/banner"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="0dp"
-        android:elevation="5dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="15dp">
-
-        <RelativeLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/sky_blue">
 
-            <View
-                android:layout_width="50dp"
-                android:layout_height="5dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/handle_bg" />
-        </RelativeLayout>
-
-
-        <ScrollView
-            android:id="@+id/form_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="20dp">
-                <!---->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/first_name"
-                    android:textColor="@color/blue_dark" />
+                app:contentScrim="@color/sky_blue"
+                app:layout_scrollFlags="exitUntilCollapsed|scroll">
 
-                <EditText
-                    android:id="@+id/first_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/first_name"
-                    android:inputType="textPersonName"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-
-                <!---->
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/last_name"
-                    android:textColor="@color/blue_dark" />
-
-                <EditText
-                    android:id="@+id/last_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/last_name"
-                    android:inputType="textPersonName"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-                <!--            -->
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/gender"
-                    android:textColor="@color/blue_dark" />
-
-                <RadioGroup
-                    android:id="@+id/radio_gender"
+                <LinearLayout
+                    android:id="@+id/banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:background="@color/sky_blue"
+                    android:orientation="horizontal">
 
-                    <RadioButton
-                        android:id="@+id/male"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="@string/male" />
+                    <ImageView
+                        android:id="@+id/left_drawable"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:src="@drawable/banner_text_1"
+                        tools:ignore="ContentDescription" />
 
-                    <RadioButton
-                        android:id="@+id/female"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="@string/female" />
+                    <ImageView
+                        android:id="@+id/right_drawable"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="@dimen/left_image_margin_top_register"
+                        android:src="@drawable/banner_image_1"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-                    <RadioButton
-                        android:id="@+id/other"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="@string/other" />
-                </RadioGroup>
-                <!---->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/date_of_birth"
-                    android:textColor="@color/blue_dark" />
+        <RelativeLayout
+            android:id="@+id/form_container"
+            android:layout_width="match_parent"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:layout_marginTop="?actionBarSize"
+            android:background="@drawable/bottom_flat_fill_white"
+            android:visibility="visible"
+            android:layout_height="match_parent">
+            <View
+                android:layout_width="40dp"
+                android:layout_height="6dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/handle_bg" />
 
-                <EditText
-                    android:id="@+id/birthday"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:drawableEnd="@drawable/ic_lock_black_24dp"
-                    android:drawablePadding="10dp"
-                    android:editable="false"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/birthday"
-                    android:inputType="none"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-                <!---->
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/city"
-                    android:textColor="@color/blue_dark" />
-
-                <EditText
-                    android:id="@+id/city"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/city"
-                    android:inputType="textPersonName"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-                <!--            -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/phone_optional"
-                    android:textColor="@color/blue_dark" />
-
-                <EditText
-                    android:id="@+id/phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/phone_number"
-                    android:inputType="phone"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/email"
-                    android:textColor="@color/blue_dark" />
-
-                <EditText
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/email"
-                    android:inputType="textEmailAddress"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-                <!--            -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/password"
-                    android:textColor="@color/blue_dark" />
-
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/confirm_password"
-                    android:textColor="@color/blue_dark" />
-
-                <EditText
-                    android:id="@+id/confirm_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/confirm"
-                    android:inputType="textPassword"
-                    android:padding="5dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@color/view_color" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginBottom="5dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/who_you_are"
-                    android:textColor="@color/blue_dark" />
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/form_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/rectangle_outline"
-                    android:orientation="vertical">
+                    android:background="@android:color/transparent"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp"
+                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+                    <!---->
+
+
+                    <TextView
+                        android:layout_marginStart="18dp"
+                        android:layout_marginTop="16dp"
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/first_name"/>
+
+                    <EditText
+                        android:id="@+id/first_name"
+                        android:hint="@string/first_name"
+                        android:inputType="textPersonName"
+                        style="@style/registerEditTextStyle"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+
+                    <!---->
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/last_name" />
+
+                    <EditText
+                        android:id="@+id/last_name"
+                        style="@style/registerEditTextStyle"
+                        android:hint="@string/last_name"
+                        android:inputType="textPersonName"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+                    <!--            -->
+
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/gender"
+                        android:textColor="@color/blue_dark" />
 
                     <RadioGroup
-                        android:id="@+id/radio_category"
+                        android:id="@+id/radio_gender"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
                         android:orientation="horizontal"
                         android:padding="5dp">
 
                         <RadioButton
-                            android:id="@+id/radio_student"
+                            android:id="@+id/male"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/student" />
+                            android:text="@string/male" />
 
                         <RadioButton
-                            android:id="@+id/radio_teacher"
+                            android:id="@+id/female"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/teacher" />
+                            android:text="@string/female" />
 
                         <RadioButton
-                            android:id="@+id/radio_staff"
+                            android:id="@+id/other"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="@string/other_staff" />
+                            android:text="@string/other" />
                     </RadioGroup>
+                    <!---->
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/date_of_birth"
+                        android:textColor="@color/blue_dark" />
+
+                    <EditText
+                        android:id="@+id/birthday"
+                        style="@style/registerEditTextStyle"
+                        android:drawableEnd="@drawable/ic_lock_black_24dp"
+                        android:drawablePadding="10dp"
+                        android:editable="false"
+                        android:hint="@string/birthday"
+                        android:inputType="none" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+                    <!---->
+
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/city"
+                        android:textColor="@color/blue_dark" />
+
+                    <EditText
+                        android:id="@+id/city"
+                        style="@style/registerEditTextStyle"
+                        android:hint="@string/city"
+                        android:inputType="textPersonName" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+                    <!--            -->
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/phone_optional"
+                        android:textColor="@color/blue_dark" />
+
+                    <EditText
+                        android:id="@+id/phone"
+                        android:layout_width="match_parent"
+                        style="@style/registerEditTextStyle"
+                        android:hint="@string/phone_number"
+                        android:inputType="phone" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/email"
+                        android:textColor="@color/blue_dark" />
+
+                    <EditText
+                        android:id="@+id/email"
+                        style="@style/registerEditTextStyle"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+                    <!--            -->
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/password"
+                        android:textColor="@color/blue_dark" />
+
+                    <EditText
+                        android:id="@+id/password"
+                        style="@style/registerEditTextStyle"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/confirm_password"
+                        android:textColor="@color/blue_dark" />
+
+                    <EditText
+                        android:id="@+id/confirm_password"
+                        style="@style/registerEditTextStyle"
+                        android:hint="@string/confirm"
+                        android:inputType="textPassword"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@color/view_color" />
+
+                    <TextView
+                        style="@style/editTextTitleTextStyle"
+                        android:text="@string/who_you_are"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/blue_dark" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@drawable/rectangle_outline"
                         android:orientation="vertical">
 
-                        <EditText
-                            android:id="@+id/department"
+                        <RadioGroup
+                            android:id="@+id/radio_category"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="@font/roboto_regular"
-                            android:hint="@string/department"
-                            android:inputType="text"
-                            android:padding="5dp" />
+                            android:orientation="horizontal"
+                            android:padding="5dp">
 
-                        <View
-                            android:id="@+id/view_department"
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:background="@color/view_color" />
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <LinearLayout
-                                android:id="@+id/id_container"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:layout_toStartOf="@+id/scan_button"
-                                android:orientation="vertical">
-
-                                <EditText
-                                    android:id="@+id/id"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="50dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:background="@android:color/transparent"
-                                    android:editable="false"
-                                    android:fontFamily="@font/roboto_regular"
-                                    android:hint="@string/id_no"
-                                    android:inputType="text"
-                                    android:padding="5dp" />
-
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="0.5dp"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:background="@color/view_color" />
-                            </LinearLayout>
-
-                            <Button
-                                android:id="@+id/scan_button"
+                            <RadioButton
+                                android:id="@+id/radio_student"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_margin="10dp"
-                                android:background="@drawable/material_rect_outline_green"
-                                android:fontFamily="@font/roboto_bold"
-                                android:padding="3dp"
-                                android:text="@string/scan"
-                                android:textAllCaps="false"
-                                android:textColor="@color/dd_green" />
-                        </RelativeLayout>
-                    </LinearLayout>
-                </LinearLayout>
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="@string/student" />
 
-                <Button
-                    android:id="@+id/btn_register"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginBottom="40dp"
-                    android:background="@color/register_btn_color"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="@string/create_account"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-        </ScrollView>
-    </androidx.cardview.widget.CardView>
+                            <RadioButton
+                                android:id="@+id/radio_teacher"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="@string/staff" />
+
+                        </RadioGroup>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="vertical">
+
+                            <EditText
+                                android:id="@+id/department"
+                                style="@style/registerEditTextStyle"
+                                android:editable="false"
+                                android:hint="@string/department"
+                                android:inputType="none" />
+
+                            <View
+                                android:id="@+id/view_department"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:background="@color/view_color" />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <LinearLayout
+                                    android:id="@+id/id_container"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_toStartOf="@+id/scan_button"
+                                    android:orientation="vertical">
+
+                                    <EditText
+                                        android:id="@+id/id"
+                                        style="@style/registerEditTextStyle"
+                                        android:editable="false"
+                                        android:hint="@string/id_no"
+                                        android:inputType="none" />
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="10dp"
+                                        android:layout_marginEnd="10dp"
+                                        android:background="@color/view_color" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="10dp"
+                                        android:layout_marginTop="5dp"
+                                        android:textSize="13sp"
+                                        android:textColor="@color/dd_green"
+                                        android:fontFamily="@font/roboto_medium"
+                                        android:text="@string/scan_id_card_request" />
+                                </LinearLayout>
+
+                                <Button
+                                    android:id="@+id/scan_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_margin="10dp"
+                                    android:background="@android:color/transparent"
+                                    android:fontFamily="@font/roboto_bold"
+                                    android:padding="3dp"
+                                    android:text="@string/scan"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/dd_green" />
+                            </RelativeLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btn_register"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/register_btn_color"
+                        android:fontFamily="@font/roboto_bold"
+                        android:textSize="13sp"
+                        android:text="@string/create_account"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </RelativeLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </RelativeLayout>

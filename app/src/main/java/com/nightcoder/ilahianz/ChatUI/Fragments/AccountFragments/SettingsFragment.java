@@ -1,19 +1,23 @@
 package com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import com.nightcoder.ilahianz.R;
 
 
 public class SettingsFragment extends Fragment {
+
+    public SettingsFragment(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    private Context mContext;
 
 
     @Override

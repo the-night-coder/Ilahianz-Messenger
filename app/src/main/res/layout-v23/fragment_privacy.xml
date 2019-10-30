@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatUI.Fragments.AccountFragments.PrivacyFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/profile_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/privacy_outline"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/privacy"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/roboto_light"
+                android:text="@string/privacy_quotes" />
+            <!---->
+            <LinearLayout
+                android:id="@+id/privacy_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+
+                <RelativeLayout
+                    android:id="@+id/edit_profile_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    tools:ignore="UselessParent">
+
+                    <TextView
+                        android:id="@+id/profile_title"
+                        style="@style/privacyTitleTextStyle"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/profile_photo" />
+
+                    <TextView
+                        android:id="@+id/profile"
+                        style="@style/privacyContentTextStyle"
+                        android:layout_below="@+id/profile_title"
+                        android:layout_marginTop="16dp"
+                        android:layout_toStartOf="@+id/profile_photo"
+                        android:drawableEnd="@drawable/ic_lock_green_24dp" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_photo"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_person" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View style="@style/profileBottomLineStyle" />
+            <!---->
+            <!---->
+            <LinearLayout
+                android:id="@+id/privacy_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    style="@style/privacyTitleTextStyle"
+                    android:text="@string/phone_number_upper" />
+
+                <TextView
+                    android:id="@+id/phone"
+                    style="@style/privacyContentTextStyle"
+                    android:drawableEnd="@drawable/ic_lock_open_blue_24dp" />
+            </LinearLayout>
+
+            <View style="@style/profileBottomLineStyle" />
+            <!---->
+            <!---->
+            <LinearLayout
+                android:id="@+id/privacy_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    style="@style/privacyTitleTextStyle"
+                    android:text="@string/email_upper" />
+
+                <TextView
+                    android:id="@+id/email"
+                    style="@style/privacyContentTextStyle" />
+            </LinearLayout>
+
+            <View style="@style/profileBottomLineStyle" />
+            <!---->
+            <!---->
+            <LinearLayout
+                android:id="@+id/privacy_birthday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    style="@style/privacyTitleTextStyle"
+                    android:text="@string/birthday_upper" />
+
+                <TextView
+                    android:id="@+id/birthday"
+                    style="@style/privacyContentTextStyle" />
+            </LinearLayout>
+
+            <View style="@style/profileBottomLineStyle" />
+            <!---->
+            <!---->
+            <LinearLayout
+                android:id="@+id/privacy_last_seen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    style="@style/privacyTitleTextStyle"
+                    android:text="@string/last_seen_upper" />
+
+                <TextView
+                    android:id="@+id/last_seen"
+                    style="@style/privacyContentTextStyle" />
+            </LinearLayout>
+
+            <View style="@style/profileBottomLineStyle" />
+            <!---->
+            <!---->
+            <LinearLayout
+                android:id="@+id/privacy_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    style="@style/privacyTitleTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location_upper" />
+
+                <TextView
+                    android:id="@+id/location"
+                    style="@style/privacyContentTextStyle" />
+            </LinearLayout>
+            <!---->
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

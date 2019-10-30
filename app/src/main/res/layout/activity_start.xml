@@ -7,14 +7,27 @@
     android:background="#F2F6FA"
     tools:context=".StartActivity">
 
+    <Button
+        android:id="@+id/skip_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:text="@string/skip"
+        android:textColor="@color/blue_dark" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_launcher"
+        android:transitionName="imageTransition"
         android:layout_centerVertical="true" />
 
     <com.tomer.fadingtextview.FadingTextView
+        android:id="@+id/fad_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageView"

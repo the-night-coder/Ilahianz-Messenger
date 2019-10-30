@@ -3,6 +3,7 @@ package com.nightcoder.ilahianz.Literals;
 public final class StringConstants {
 
     public static final String SIGN_FRAGMENT_TAG = "SIGN_FRAGMENT_TAG";
+    public static final String FORGOT_PASS_FRAGMENT_TAG = "FORGOT_FRAGMENT_TAG";
     public static final String ACCOUNT_FRAGMENT_TAG = "ACCOUNT_FRAGMENT_TAG";
     public static final String CHAT_FRAGMENT_TAG = "CHAT_FRAGMENT_TAG";
     public static final String HELP_FRAGMENT_TAG = "HELP_FRAGMENT_TAG";
@@ -12,6 +13,8 @@ public final class StringConstants {
     public static final String VERIFY_FRAGMENT_TAG = "VERIFY_FRAGMENT_TAG";
     public static final String QR_CODE_FRAGMENT_TAG = "QR_CODE_FRAGMENT_TAG";
     public static final String QR_CODE_RESULT_KEY = "QR_CODE_RESULT";
+    public static final String PROFILE_QR_CODE_FRAGMENT_KEY = "PROFILE_QR_CODE_FRAGMENT";
+    public static final String PROFILE_QR_CODE_SCAN_FRAGMENT_KEY = "PROFILE_QR_CODE_SCAN_FRAGMENT";
 
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PH_NUMBER = "phone";
@@ -43,8 +46,12 @@ public final class StringConstants {
     public static final String KEY_THUMBNAIL = "thumbnailURL";
     public static final String KEY_SEARCH = "search";
     public static final String KEY_IMAGE_URL = "imageURL";
+    public static final String KEY_BLOOD_DONATE = "bloodDonate";
 
+    public static final String USER_INFO_SP = "USER_INFO";
     public static final String DEFAULT = "default";
+    public static final String NOT_PROVIDED = "Not Provided";
+    public static final String STAFF = "Staff";
     public static final String ATTENDANCE_WEBSITE = "http://ilahiacollege.info/StudentPanel/studAttendance.aspx";
     public static final String ILAHIA_WEBSITE = "http://ilahiaartscollege.org/";
     //public static final LatLng ILAHIA_LOCATION = new LatLng(10.025716, 76.567840);

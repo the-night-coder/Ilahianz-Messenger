@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,11 +41,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nightcoder.ilahianz.Fragments.ForgotPasswordFragment;
 import com.nightcoder.ilahianz.Fragments.LoadingFragment;
+import com.nightcoder.ilahianz.Fragments.BarCodeFragment;
 import com.nightcoder.ilahianz.Fragments.RegisterFragment;
 import com.nightcoder.ilahianz.Fragments.SignFragment;
 import com.nightcoder.ilahianz.Fragments.VerifyFragment;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.LoadingFragmentListener;
+import com.nightcoder.ilahianz.Listeners.FragmentListeners.QRCoderFragmentCallback;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.SignInFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.VFragmentListener;
@@ -54,6 +59,7 @@ import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.Supports.Network;
 import com.tomer.fadingtextview.FadingTextView;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -61,11 +67,14 @@ import java.util.concurrent.TimeUnit;
 import cdflynn.android.library.checkview.CheckView;
 
 import static com.nightcoder.ilahianz.Literals.IntegerConstats.CAMERA_REQUEST;
+import static com.nightcoder.ilahianz.Literals.IntegerConstats.ID_CAMERA_REQUEST;
 import static com.nightcoder.ilahianz.Literals.IntegerConstats.REQUEST_QR_CODE_RESULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.DEFAULT;
+import static com.nightcoder.ilahianz.Literals.StringConstants.FORGOT_PASS_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ABOUT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIO;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTHDAY_PRIVACY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BLOOD_DONATE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DISTRICT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_EMAIL_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
@@ -77,15 +86,17 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LONGITUDE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_NICKNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PHONE_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PROFILE_PRIVACY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_STATUS;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_THUMBNAIL;
 import static com.nightcoder.ilahianz.Literals.StringConstants.LOADING_FRAGMENT_TAG;
+import static com.nightcoder.ilahianz.Literals.StringConstants.QR_CODE_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.QR_CODE_RESULT_KEY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.REG_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.SIGN_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.VERIFY_FRAGMENT_TAG;
 
 public class SignActivity extends AppCompatActivity implements SignInFragmentListener,
-        RegisterFragmentListener, VerifyFragmentListener, LoadingFragmentListener {
+        RegisterFragmentListener, VerifyFragmentListener, LoadingFragmentListener, QRCoderFragmentCallback {
 
     private QRCodeListener QRListener;
     private FirebaseAuth auth;
@@ -98,6 +109,8 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     private CheckView checkView;
     private RelativeLayout container;
     private LinearLayout background;
+    private Context mContext;
+    private RegisterFragment registerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,19 +123,17 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                 View.SYSTEM_UI_FLAG_LOW_PROFILE
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         container.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         auth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference();
         background = findViewById(R.id.background_sign);
         background.setVisibility(View.GONE);
         checkConnectionSync();
+        mContext = SignActivity.this;
         ////
     }
 
@@ -142,6 +153,19 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         openSignUp();
     }
 
+    @Override
+    public void OnForgotPasswordClicked() {
+        ForgotPasswordFragment fragment = new ForgotPasswordFragment(this);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.frame, fragment, FORGOT_PASS_FRAGMENT_TAG)
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                .addToBackStack(SIGN_FRAGMENT_TAG)
+                .attach(fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
+
     private void openSignUp() {
         openRegisterFragment();
     }
@@ -152,7 +176,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     }
 
     private void openRegisterFragment() {
-        RegisterFragment registerFragment = new RegisterFragment(this);
+        registerFragment = new RegisterFragment(this);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.frame, registerFragment, REG_FRAGMENT_TAG)
@@ -169,13 +193,34 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         VerifyFragment verifyFragment = new VerifyFragment(this);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.frame, verifyFragment, VERIFY_FRAGMENT_TAG)
+                .add(R.id.frame, verifyFragment, VERIFY_FRAGMENT_TAG)
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .addToBackStack(REG_FRAGMENT_TAG)
-                .attach(verifyFragment)
+                .hide(registerFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
         vFragmentListener = verifyFragment;
+    }
+
+    @Override
+    public void OnIDScanRequest() {
+
+        //startActivity(new Intent(SignActivity.this, MLKitActivity.class));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, ID_CAMERA_REQUEST);
+        } else {
+            BarCodeFragment verifyFragment = new BarCodeFragment(this);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.frame, verifyFragment, QR_CODE_FRAGMENT_TAG)
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                    .addToBackStack(REG_FRAGMENT_TAG)
+                    .hide(registerFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
+        }
+
     }
 
     private void registerUser(final HashMap<String, Object> hashMap, String email, String password) {
@@ -189,8 +234,10 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             assert firebaseUser != null;
                             String UId = firebaseUser.getUid();
                             reference = FirebaseDatabase.getInstance().getReference("Users").child(UId);
+                            Calendar calendar = Calendar.getInstance();
                             hashMap.put(KEY_LAST_SEEN, "Everyone");
                             hashMap.put(KEY_ID, UId);
+                            hashMap.put(KEY_STATUS, "offline");
                             hashMap.put(KEY_LAST_SEEN_DATE, UId);
                             hashMap.put(KEY_PROFILE_PRIVACY, "Everyone");
                             hashMap.put(KEY_LOCATION_PRIVACY, "Everyone");
@@ -204,6 +251,26 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             hashMap.put(KEY_LONGITUDE, "Not Provided");
                             hashMap.put(KEY_THUMBNAIL, DEFAULT);
                             hashMap.put(KEY_NICKNAME, "Not Provided");
+                            hashMap.put(KEY_BLOOD_DONATE, "false");
+
+                            //debug
+                           Log.d(KEY_LAST_SEEN, "Everyone");
+                           Log.d(KEY_ID, UId);
+                           Log.d(KEY_LAST_SEEN_DATE, UId);
+                           Log.d(KEY_PROFILE_PRIVACY, "Everyone");
+                           Log.d(KEY_LOCATION_PRIVACY, "Everyone");
+                           Log.d(KEY_EMAIL_PRIVACY, "Everyone");
+                           Log.d(KEY_PHONE_PRIVACY, "Everyone");
+                           Log.d(KEY_BIRTHDAY_PRIVACY, "Everyone");
+                           Log.d(KEY_DISTRICT, "Not Provided");
+                           Log.d(KEY_BIO, "Not Provided");
+                           Log.d(KEY_ABOUT, "Hey Ilahianz");
+                           Log.d(KEY_LATITUDE, "Not Provided");
+                           Log.d(KEY_LONGITUDE, "Not Provided");
+                           Log.d(KEY_THUMBNAIL, DEFAULT);
+                           Log.d(KEY_NICKNAME, "Not Provided");
+                           Log.d(KEY_BLOOD_DONATE, "false");
+                            //
                             Log.d("LOGIN", "Complete");
                             callback.onRegistered();
                             reference.setValue(hashMap)
@@ -272,12 +339,32 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         if (requestCode == CAMERA_REQUEST) {
             for (int result : grantResults) {
                 if (result == PackageManager.PERMISSION_GRANTED) {
                     {
-                        startActivityForResult(new Intent(SignActivity.this, QRCodeActivity.class), REQUEST_QR_CODE_RESULT);
+                        startActivityForResult(new Intent(SignActivity.this, QRCodeActivity.class),
+                                REQUEST_QR_CODE_RESULT);
+                    }
+                }
+            }
+
+        }
+        if (requestCode == ID_CAMERA_REQUEST) {
+            for (int result : grantResults) {
+                if (result == PackageManager.PERMISSION_GRANTED) {
+                    {
+                        BarCodeFragment verifyFragment = new BarCodeFragment(this);
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.frame, verifyFragment, QR_CODE_FRAGMENT_TAG)
+                                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                                .addToBackStack(REG_FRAGMENT_TAG)
+                                .attach(verifyFragment)
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                                .commit();
                     }
                 }
             }
@@ -291,8 +378,10 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isComplete()) {
+                        if (task.isSuccessful()) {
                             onCompleteSign();
+                        }else{
+                            Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -304,7 +393,6 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     }
 
     private void checkConnectionSync() {
-        // aListener = (ActivityListener) SignActivity.this;
         new Thread() {
             @Override
             public void run() {
@@ -355,6 +443,10 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         } else if ((getFragment(REG_FRAGMENT_TAG) != null && getFragment(REG_FRAGMENT_TAG).isVisible())) {
             super.onBackPressed();
         } else if ((getFragment(VERIFY_FRAGMENT_TAG) != null && getFragment(VERIFY_FRAGMENT_TAG).isVisible())) {
+            super.onBackPressed();
+        } else if ((getFragment(FORGOT_PASS_FRAGMENT_TAG) != null && getFragment(FORGOT_PASS_FRAGMENT_TAG).isVisible())) {
+            super.onBackPressed();
+        } else if ((getFragment(QR_CODE_FRAGMENT_TAG) != null && getFragment(QR_CODE_FRAGMENT_TAG).isVisible())) {
             super.onBackPressed();
         } else {
             SignActivity.this.moveTaskToBack(true);
@@ -418,12 +510,11 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     }
 
     private void onCompleteSign() {
-
         Log.d("Sign", "Complete");
         checkView.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
         checkView.check();
-        new CountDownTimer(1000, 2000) {
+        new CountDownTimer(1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.d("TICK", String.valueOf(millisUntilFinished));
@@ -499,6 +590,13 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
 
             }
         }.start();
+    }
+
+    @Override
+    public void onScanComplete(String id) {
+        Log.d("RESULT_OK", id);
+        onBackPressed();
+        QRListener.OnIDQRCodeResultOK(id);
     }
 }
 

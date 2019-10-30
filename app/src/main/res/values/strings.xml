@@ -63,5 +63,34 @@
     <string name="name_lower">Name</string>
     <string name="save_upper">SAVE</string>
     <string name="cancel_upper">Cancel</string>
+    <string name="privacy">Privacy</string>
+    <string name="privacy_quotes">Who can see your personal information</string>
+    <string name="profile_privacy">Profile Privacy</string>
+    <string name="last_seen">Last Seen</string>
+    <string name="location">Location</string>
+    <string name="profile_photo">PROFILE PHOTO</string>
+    <string name="phone_number_upper">PHONE NUMBER</string>
+    <string name="last_seen_upper">LAST SEEN</string>
+    <string name="location_upper">LOCATION</string>
+    <string name="everyone">Everyone</string>
+    <string name="teachers_only">Teachers Only</string>
+    <string name="nobody">Nobody</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="connection_instruction">"You\'re offline check your connection !"
+        "\nmake sure your internet connection is turn ON"</string>
+    <string name="ok">OK</string>
+    <string name="enter_email_address">Enter Email address</string>
+    <string name="sent_verification_to_email">Sent Verification to email</string>
+    <string name="email_verification_quoets">You will get a verification mail to your email address.  check your email</string>
+    <string name="scan_id_card_request">Scan your id card Barcode</string>
+    <string name="staff">Staff</string>
+    <string name="choose">Choose</string>
+    <string name="cancel">Cancel</string>
+    <string name="departments">Departments</string>
+    <string name="skip">Skip</string>
+    <string name="ilahianz_by_nightcoders">Ilahianz By NightCoders</string>
+    <string name="search_an_ilahian">Search an Ilahian</string>
+    <string name="ilahianz">Ilahianz</string>
+    <string name="scan_qr_code">Scan QR Code</string>
 
 </resources>

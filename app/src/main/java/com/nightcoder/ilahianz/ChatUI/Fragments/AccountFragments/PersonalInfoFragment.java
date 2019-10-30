@@ -3,6 +3,7 @@ package com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,12 +18,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCanceledListener;
@@ -31,22 +29,29 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Network;
+import com.nightcoder.ilahianz.Supports.ViewSupports;
 
 import java.util.Calendar;
 import java.util.Locale;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_DAY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_MONTH;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CATEGORY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CITY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DEPARTMENT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DISTRICT;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_EMAIL;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_GENDER;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID_NUMBER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PH_NUMBER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
+import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
 
 
 public class PersonalInfoFragment extends Fragment {
@@ -56,14 +61,12 @@ public class PersonalInfoFragment extends Fragment {
     }
 
     private Context mContext;
-    private Dialog dialog;
     private TextView name, birthday, gender, city,
             district, department, category,
             academicYear, idNumber, email,
             phone;
-    private ProgressBar progressBar;
-    private NestedScrollView profileContainer;
     private View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -74,8 +77,6 @@ public class PersonalInfoFragment extends Fragment {
         LinearLayout editDistrict = view.findViewById(R.id.edit_district);
         LinearLayout editPhone = view.findViewById(R.id.edit_phone);
 
-        progressBar = view.findViewById(R.id.progress_circular);
-        profileContainer = view.findViewById(R.id.profile_container);
         idNumber = view.findViewById(R.id.profile_id);
         birthday = view.findViewById(R.id.profile_birthday);
         city = view.findViewById(R.id.profile_city);
@@ -93,13 +94,12 @@ public class PersonalInfoFragment extends Fragment {
         editName.setOnClickListener(editListener);
         editPhone.setOnClickListener(editListener);
         init();
-        loadUserData();
+
         return view;
     }
 
     private void init() {
-        profileContainer.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
+        setUserData();
     }
 
     private View.OnClickListener editListener = new View.OnClickListener() {
@@ -127,8 +127,7 @@ public class PersonalInfoFragment extends Fragment {
     };
 
     private void openEditDialog(String headingText, String hintText, String contentText, int inputType, final String key) {
-        dialog = new Dialog(mContext);
-        dialog.setContentView(R.layout.text_edit_dialog);
+        final Dialog dialog = ViewSupports.materialDialog(mContext, R.layout.text_edit_dialog);
         final EditText text = dialog.findViewById(R.id.edit_text);
         Button cancel = dialog.findViewById(R.id.cancel_action);
         Button save = dialog.findViewById(R.id.save_action);
@@ -171,50 +170,37 @@ public class PersonalInfoFragment extends Fragment {
         }
     };
 
-    private void loadUserData() {
-        progressBar.setVisibility(View.VISIBLE);
-        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert fUser != null;
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(fUser.getUid());
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                UserData data = dataSnapshot.getValue(UserData.class);
-                assert data != null;
-                setUserData(data);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void setUserData(@NonNull UserData data) {
-
+    private void setUserData() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, Integer.parseInt(data.getBirthMonth()));
+        calendar.set(Calendar.MONTH, Integer.parseInt(getUserInfo(KEY_BIRTH_MONTH)));
         String date = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) +
-                " " + data.getBirthday() + ", " + data.getBirthYear();
+                " " + getUserInfo(KEY_BIRTH_DAY) + ", " + getUserInfo(KEY_BIRTH_YEAR);
 
-        name.setText(data.getUsername());
+        name.setText(getUserInfo(KEY_USERNAME));
         birthday.setText(date);
-        gender.setText(data.getGender());
-        email.setText(data.getEmail());
-        phone.setText(data.getPhoneNumber());
-        department.setText(data.getDepartment());
-        city.setText(data.getCity());
-        district.setText(data.getDistrict());
-        category.setText(data.getCategory());
-        idNumber.setText(data.getId());
-        progressBar.setVisibility(View.GONE);
-        profileContainer.setVisibility(View.VISIBLE);
+        gender.setText(getUserInfo(KEY_GENDER));
+        email.setText(getUserInfo(KEY_EMAIL));
+        phone.setText(getUserInfo(KEY_PH_NUMBER));
+        department.setText(getUserInfo(KEY_DEPARTMENT));
+        city.setText(getUserInfo(KEY_CITY));
+        district.setText(getUserInfo(KEY_DISTRICT));
+        category.setText(getUserInfo(KEY_CATEGORY));
+        idNumber.setText(getUserInfo(KEY_ID_NUMBER));
     }
 
-    private void setEdits(String key, String data) {
+    private void setUserInfo(String key, String value) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(USER_INFO_SP, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    private String getUserInfo(String key) {
+        SharedPreferences preferences = mContext.getSharedPreferences(USER_INFO_SP, MODE_PRIVATE);
+        return preferences.getString(key, "none");
+    }
+
+    private void setEdits(final String key, final String data) {
         if (Network.Connected(mContext)) {
             FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
             assert fUser != null;
@@ -229,6 +215,8 @@ public class PersonalInfoFragment extends Fragment {
                     sbView.setBackgroundColor(getResources().getColor(R.color.dd_green));
                     sbView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                     snackbar.show();
+                    setUserInfo(key, data);
+                    init();
                 }
             }).addOnCanceledListener(new OnCanceledListener() {
                 @Override
