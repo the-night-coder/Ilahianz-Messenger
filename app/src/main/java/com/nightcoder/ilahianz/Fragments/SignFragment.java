@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nightcoder.ilahianz.Listeners.FragmentListeners.SignInFragmentListener;
+import com.nightcoder.ilahianz.Listeners.SignActivityListeners.SignInFragmentListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
 

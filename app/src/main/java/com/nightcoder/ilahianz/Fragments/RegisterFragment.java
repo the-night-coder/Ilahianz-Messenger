@@ -6,9 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,7 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
-import com.nightcoder.ilahianz.Listeners.FragmentListeners.RegisterFragmentListener;
+import com.nightcoder.ilahianz.Listeners.SignActivityListeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.Listeners.QRCodeListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
@@ -45,6 +43,8 @@ import java.util.Locale;
 
 import static android.provider.Telephony.Carriers.PASSWORD;
 import static com.nightcoder.ilahianz.Literals.StringConstants.DEFAULT;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ACADEMIC_YEAR_FROM;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ACADEMIC_YEAR_TO;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_DAY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_MONTH;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
@@ -79,9 +79,12 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
     private boolean verified = true;
     private ArrayList<String> arrayList;
     private ArrayAdapter<String> adapter;
-    private String categoryText = "Student";
+    private String categoryText;
     private ViewGroup mViewGroup;
     private RelativeLayout formContainer;
+    private LinearLayout academicYearContainer;
+    private EditText academicYearFrom, academicYearTo;
+    private RadioGroup category;
 
 
     public RegisterFragment(Context context) {
@@ -114,6 +117,14 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         teacher.setOnClickListener(clickListener);
         department.setOnClickListener(clickListener);
 
+        category.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radio_student) {
+                    ViewSupports.visibilitySlideAnimation(Gravity.TOP, 500, academicYearContainer, category, View.VISIBLE);
+                }
+            }
+        });
         return view;
     }
 
@@ -125,12 +136,14 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
                     openDepartmentDialog();
                     break;
                 case R.id.radio_teacher:
+                    ViewSupports.visibilitySlideAnimation(Gravity.TOP, 500, academicYearContainer, category, View.GONE);
                     openCategory();
                     break;
                 case R.id.radio_student: {
                     registerButton.setText(getResources().getString(R.string.create_account));
                     verified = true;
                     categoryText = "Student";
+                    ViewSupports.visibilitySlideAnimation(Gravity.TOP, 500, academicYearContainer, category, View.VISIBLE);
                 }
                 break;
                 case R.id.scan_button:
@@ -159,10 +172,14 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         password = view.findViewById(R.id.password);
         cPassword = view.findViewById(R.id.confirm_password);
         cityName = view.findViewById(R.id.city);
+        academicYearContainer = view.findViewById(R.id.academic_year_container);
+        academicYearFrom = view.findViewById(R.id.date_from);
+        academicYearTo = view.findViewById(R.id.date_to);
         email = view.findViewById(R.id.email);
         phone = view.findViewById(R.id.phone);
         student = view.findViewById(R.id.radio_student);
         teacher = view.findViewById(R.id.radio_teacher);
+        category = view.findViewById(R.id.radio_category);
         registerButton = view.findViewById(R.id.btn_register);
         scrollView = view.findViewById(R.id.form_scroll);
         gender = view.findViewById(R.id.radio_gender);
@@ -296,6 +313,14 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         } else if (!pass.equals(cPass)) {
             Toast.makeText(mContext, "Password not match", Toast.LENGTH_SHORT).show();
             cPassword.setError("Not match");
+        } else if (categoryText == null) {
+            Toast.makeText(mContext, "Provide your category", Toast.LENGTH_SHORT).show();
+        } else if ((categoryText.equals("Student")) && (academicYearFrom.getText().toString().length() != 4)) {
+            Toast.makeText(mContext, "Provide Academic Year", Toast.LENGTH_SHORT).show();
+            academicYearFrom.setError("Required");
+        } else if ((categoryText.equals("Student")) && academicYearTo.getText().toString().length() != 4) {
+            Toast.makeText(mContext, "Provide Academic Year", Toast.LENGTH_SHORT).show();
+            academicYearTo.setError("Required");
         } else if (department.getText().toString().isEmpty()) {
             Toast.makeText(mContext, "Provide your department", Toast.LENGTH_SHORT).show();
             department.setError("Required!");
@@ -318,9 +343,10 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
             hashMap.put(KEY_BIRTH_DAY, String.valueOf(birthDay));
             hashMap.put(KEY_BIRTH_YEAR, String.valueOf(birthYear));
             hashMap.put(KEY_BIRTH_MONTH, String.valueOf(birthMonth));
-            hashMap.put(PASSWORD, password.getText().toString());
-            hashMap.put(KEY_PH_NUMBER, phone.getText().toString().isEmpty() ?
-                    NOT_PROVIDED : phone.getText().toString());
+            hashMap.put(KEY_ACADEMIC_YEAR_FROM, categoryText.equals("Student") ? academicYearFrom.getText().toString() : "null");
+            hashMap.put(KEY_ACADEMIC_YEAR_TO, categoryText.equals("Student") ? academicYearTo.getText().toString() : "null");
+            hashMap.put(KEY_PH_NUMBER, phone.getText().toString().isEmpty() ? NOT_PROVIDED : phone.getText().toString());
+
             if (Network.Connected(mContext)) {
                 listener.OnRegisterButtonClicked(hashMap,
                         email.getText().toString(), password.getText().toString());

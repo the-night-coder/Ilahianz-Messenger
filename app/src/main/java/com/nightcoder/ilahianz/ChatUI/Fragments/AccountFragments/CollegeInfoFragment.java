@@ -1,10 +1,8 @@
 package com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,13 +16,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -37,8 +31,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.nightcoder.ilahianz.BloodDonationActivity;
 import com.nightcoder.ilahianz.R;
+import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.nightcoder.ilahianz.Supports.Network;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 
@@ -46,80 +40,51 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIO;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ACADEMIC_YEAR_FROM;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ACADEMIC_YEAR_TO;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_DAY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_MONTH;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CATEGORY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CITY;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DEPARTMENT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DISTRICT;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_EMAIL;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_GENDER;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_NICKNAME;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID_NUMBER;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PH_NUMBER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
 
 
-public class PersonalInfoFragment extends Fragment {
+public class CollegeInfoFragment extends Fragment {
 
-    public PersonalInfoFragment(Context mContext) {
+    public CollegeInfoFragment(Context mContext) {
         this.mContext = mContext;
     }
 
     private Context mContext;
-    private TextView name, birthday, gender, city,
-            district, nickname, bio;
+    private TextView department, category,
+            academicYear, idNumber, email,
+            phone;
     private View view;
-    private CheckBox checkBox;
-    private LinearLayout bloodDetails;
-    private RelativeLayout bloodParent;
-    private Button participateButton;
-    private LinearLayout bloodDonationParent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_personal_info, container, false);
-        LinearLayout editName = view.findViewById(R.id.edit_name);
-        LinearLayout editCity = view.findViewById(R.id.edit_city);
-        LinearLayout editDistrict = view.findViewById(R.id.edit_district);
-        LinearLayout editNickname = view.findViewById(R.id.edit_nickname);
-        LinearLayout editBio = view.findViewById(R.id.edit_bio);
+        view = inflater.inflate(R.layout.fragment_college_info, container, false);
+        LinearLayout editPhone = view.findViewById(R.id.edit_phone);
 
-        birthday = view.findViewById(R.id.profile_birthday);
-        city = view.findViewById(R.id.profile_city);
-        nickname = view.findViewById(R.id.profile_nickname);
-        district = view.findViewById(R.id.profile_district);
-        bio = view.findViewById(R.id.profile_bio);
-        gender = view.findViewById(R.id.profile_gender);
-        checkBox = view.findViewById(R.id.check_instruction);
-        bloodParent = view.findViewById(R.id.view_container_blood);
-        bloodDonationParent = view.findViewById(R.id.blood_donation_parent);
-        name = view.findViewById(R.id.name);
-        participateButton = view.findViewById(R.id.btn_participate);
-        bloodDetails = view.findViewById(R.id.blood_details_container);
+        idNumber = view.findViewById(R.id.profile_id);
+        department = view.findViewById(R.id.profile_department);
+        email = view.findViewById(R.id.profile_email);
+        phone = view.findViewById(R.id.profile_phone);
+        academicYear = view.findViewById(R.id.profile_academic_year);
+        category = view.findViewById(R.id.profile_category);
 
-        bloodDetails.setVisibility(View.GONE);
-        editCity.setOnClickListener(editListener);
-        editDistrict.setOnClickListener(editListener);
-        editName.setOnClickListener(editListener);
-        editBio.setOnClickListener(editListener);
-        editNickname.setOnClickListener(editListener);
-        participateButton.setOnClickListener(editListener);
+        editPhone.setOnClickListener(editListener);
         init();
-
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonView.getId() == R.id.check_instruction) {
-                    if (isChecked) {
-                        participateButton.setText("Participate");
-                    } else {
-                        participateButton.setText("Cancel");
-                    }
-                }
-            }
-        });
 
         return view;
     }
@@ -129,51 +94,16 @@ public class PersonalInfoFragment extends Fragment {
     }
 
     private View.OnClickListener editListener = new View.OnClickListener() {
-        @SuppressLint("SetTextI18n")
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.edit_city:
-                    openEditDialog("Enter City Name", "City", city.getText().toString(),
-                            InputType.TYPE_TEXT_VARIATION_PERSON_NAME, KEY_CITY);
-                    break;
-                case R.id.edit_district:
-                    openEditDialog("Enter District", "District", district.getText().toString(),
-                            InputType.TYPE_TEXT_VARIATION_PERSON_NAME, KEY_DISTRICT);
-                    break;
-                case R.id.edit_name:
-                    openEditDialog("Enter your Name", "Name", name.getText().toString(),
-                            InputType.TYPE_TEXT_VARIATION_PERSON_NAME, KEY_USERNAME);
-                    break;
-                case R.id.edit_bio:
-                    openEditDialog("Enter Bio", "Bio",
-                            bio.getText().toString(), InputType.TYPE_TEXT_FLAG_MULTI_LINE, KEY_BIO);
-                    break;
-                case R.id.edit_nickname:
-                    openEditDialog("Enter Nickname", "Nickname",
-                            nickname.getText().toString(), InputType.TYPE_TEXT_VARIATION_PERSON_NAME, KEY_NICKNAME);
-                    break;
-                case R.id.btn_participate:
-                    bloodDonationForm();
+                case R.id.edit_phone:
+                    openEditDialog("Enter Phone Number", "Phone Number",
+                            phone.getText().toString(), InputType.TYPE_CLASS_PHONE, KEY_PH_NUMBER);
                     break;
             }
         }
     };
-
-    @SuppressLint("SetTextI18n")
-    private void bloodDonationForm() {
-        if (participateButton.getText().toString().equals("Participate") && !checkBox.isChecked()) {
-            ViewSupports.visibilitySlideAnimation(Gravity.TOP, 500, bloodDetails, bloodParent, View.VISIBLE);
-            participateButton.setText("Cancel");
-        } else if (participateButton.getText().toString().equals("Cancel") && !checkBox.isChecked()) {
-            ViewSupports.visibilitySlideAnimation(Gravity.TOP, 500, bloodDetails, bloodParent, View.GONE);
-            participateButton.setText("Participate");
-        } else if (!checkBox.isChecked()) {
-            Toast.makeText(mContext, "Agree Instructions", Toast.LENGTH_SHORT).show();
-        } else {
-            mContext.startActivity(new Intent(mContext, BloodDonationActivity.class));
-        }
-    }
 
     private void openEditDialog(String headingText, String hintText, String contentText, int inputType, final String key) {
         final Dialog dialog = ViewSupports.materialDialog(mContext, R.layout.text_edit_dialog);
@@ -220,18 +150,13 @@ public class PersonalInfoFragment extends Fragment {
     };
 
     private void setUserData() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, Integer.parseInt(getUserInfo(KEY_BIRTH_MONTH)));
-        String date = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US) +
-                " " + getUserInfo(KEY_BIRTH_DAY) + ", " + getUserInfo(KEY_BIRTH_YEAR);
-
-        name.setText(getUserInfo(KEY_USERNAME));
-        birthday.setText(date);
-        gender.setText(getUserInfo(KEY_GENDER));
-        nickname.setText(getUserInfo(KEY_NICKNAME));
-        city.setText(getUserInfo(KEY_CITY));
-        district.setText(getUserInfo(KEY_DISTRICT));
-        bio.setText(getUserInfo(KEY_BIO));
+        email.setText(getUserInfo(KEY_EMAIL));
+        phone.setText(getUserInfo(KEY_PH_NUMBER));
+        department.setText(getUserInfo(KEY_DEPARTMENT));
+        category.setText(getUserInfo(KEY_CATEGORY));
+        idNumber.setText(getUserInfo(KEY_ID_NUMBER));
+        academicYear.setText(String.format("%s to %s", MemorySupports.getUserInfo(mContext, KEY_ACADEMIC_YEAR_FROM),
+                MemorySupports.getUserInfo(mContext, KEY_ACADEMIC_YEAR_TO)));
     }
 
     private void setUserInfo(String key, String value) {

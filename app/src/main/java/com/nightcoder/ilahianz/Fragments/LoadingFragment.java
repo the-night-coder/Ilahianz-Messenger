@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.nightcoder.ilahianz.Listeners.FragmentListeners.LoadingFragmentListener;
-import com.nightcoder.ilahianz.Listeners.LogInCompleteCallback;
+import com.nightcoder.ilahianz.Listeners.SignActivityListeners.LoadingFragmentListener;
+import com.nightcoder.ilahianz.Listeners.SignActivityListeners.LogInCompleteCallback;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
 import com.tomer.fadingtextview.FadingTextView;

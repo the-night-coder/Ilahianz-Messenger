@@ -14,8 +14,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.zxing.BarcodeFormat;
-import com.nightcoder.ilahianz.Fragments.ProfileQRCodeFragment;
-import com.nightcoder.ilahianz.Fragments.ScanProfileFragment;
+import com.nightcoder.ilahianz.ProfileActivityFragments.ProfileQRCodeFragment;
+import com.nightcoder.ilahianz.ProfileActivityFragments.ScanProfileFragment;
 import com.nightcoder.ilahianz.Listeners.ProfileQRCodeScanCallback;
 import com.nightcoder.ilahianz.Listeners.ProfileScanButtonCallback;
 

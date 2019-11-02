@@ -1,4 +1,4 @@
-package com.nightcoder.ilahianz.ChatUI.Fragments;
+package com.nightcoder.ilahianz.MainActivityFragments;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.nightcoder.ilahianz.ChatUI.Fragments;
+package com.nightcoder.ilahianz.MainActivityFragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

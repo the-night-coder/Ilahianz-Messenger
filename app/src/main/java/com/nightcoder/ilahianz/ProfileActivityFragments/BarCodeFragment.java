@@ -1,4 +1,4 @@
-package com.nightcoder.ilahianz.Fragments;
+package com.nightcoder.ilahianz.ProfileActivityFragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

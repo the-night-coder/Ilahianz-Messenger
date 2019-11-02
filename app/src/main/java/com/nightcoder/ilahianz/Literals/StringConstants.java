@@ -33,7 +33,7 @@ public final class StringConstants {
     public static final String KEY_ID = "id";
     public static final String KEY_LONGITUDE = "longitude";
     public static final String KEY_LATITUDE = "latitude";
-    public static final String KEY_LAST_SEEN = "lastSeenPrivacy";
+    public static final String KEY_LAST_SEEN_PRIVACY = "lastSeenPrivacy";
     public static final String KEY_PROFILE_PRIVACY = "profilePrivacy";
     public static final String KEY_LOCATION_PRIVACY = "locationPrivacy";
     public static final String KEY_EMAIL_PRIVACY = "emailPrivacy";
@@ -47,10 +47,21 @@ public final class StringConstants {
     public static final String KEY_SEARCH = "search";
     public static final String KEY_IMAGE_URL = "imageURL";
     public static final String KEY_BLOOD_DONATE = "bloodDonate";
+    public static final String KEY_ACADEMIC_YEAR_FROM = "academicYearFrom";
+    public static final String KEY_ACADEMIC_YEAR_TO = "academicYearTo";
+    public static final String KEY_JOIN_DATE = "joinDate";
 
     public static final String USER_INFO_SP = "USER_INFO";
     public static final String DEFAULT = "default";
     public static final String NOT_PROVIDED = "Not Provided";
+    public static final String EVERYONE = "Everyone";
+    public static final String BLOOD_DONATE = "bloodDonate";
+    public static final String KEY_AGE = "age";
+    public static final String KEY_BLOOD_TYPE = "bloodType";
+    public static final String ONLINE = "Online";
+    public static final String OFFLINE = "Offline";
+    public static final String NOBODY = "Nobody";
+    public static final String TEACHERS_ONLY = "Teachers Only";
     public static final String STAFF = "Staff";
     public static final String ATTENDANCE_WEBSITE = "http://ilahiacollege.info/StudentPanel/studAttendance.aspx";
     public static final String ILAHIA_WEBSITE = "http://ilahiaartscollege.org/";

@@ -35,7 +35,7 @@ import com.nightcoder.ilahianz.Supports.ViewSupports;
 import static android.content.Context.MODE_PRIVATE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTHDAY_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_EMAIL_PRIVACY;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LAST_SEEN;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LAST_SEEN_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LOCATION_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PHONE_PRIVACY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PROFILE_PRIVACY;
@@ -97,7 +97,7 @@ public class PrivacyFragment extends Fragment {
                     openEditDialog("Birthday", KEY_BIRTHDAY_PRIVACY);
                     break;
                 case R.id.privacy_last_seen:
-                    openEditDialog("Last Seen", KEY_LAST_SEEN);
+                    openEditDialog("Last Seen", KEY_LAST_SEEN_PRIVACY);
                     break;
                 case R.id.privacy_location:
                     openEditDialog("Location", KEY_LOCATION_PRIVACY);
@@ -174,8 +174,8 @@ public class PrivacyFragment extends Fragment {
                 }
                 break;
             }
-            case KEY_LAST_SEEN: {
-                switch (getUserInfo(KEY_LAST_SEEN)) {
+            case KEY_LAST_SEEN_PRIVACY: {
+                switch (getUserInfo(KEY_LAST_SEEN_PRIVACY)) {
                     case "Everyone":
                         rg.check(R.id.radio_everyone);
                     case "Nobody":
@@ -232,7 +232,7 @@ public class PrivacyFragment extends Fragment {
         email.setText(getUserInfo(KEY_EMAIL_PRIVACY));
         photo.setText(getUserInfo(KEY_PROFILE_PRIVACY));
         birthday.setText(getUserInfo(KEY_BIRTHDAY_PRIVACY));
-        lastSeen.setText(getUserInfo(KEY_LAST_SEEN));
+        lastSeen.setText(getUserInfo(KEY_LAST_SEEN_PRIVACY));
         location.setText(getUserInfo(KEY_LOCATION_PRIVACY));
 
         switch (getUserInfo(KEY_BIRTHDAY_PRIVACY)) {
@@ -268,7 +268,7 @@ public class PrivacyFragment extends Fragment {
                 phone.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_person_black_24dp, 0);
                 break;
         }
-        switch (getUserInfo(KEY_LAST_SEEN)) {
+        switch (getUserInfo(KEY_LAST_SEEN_PRIVACY)) {
             case "Everyone":
                 lastSeen.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_lock_open_blue_24dp, 0);
                 break;

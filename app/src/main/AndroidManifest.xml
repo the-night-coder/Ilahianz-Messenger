@@ -26,7 +26,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ScanProfileActivity"></activity>
+        <activity
+            android:name=".BloodDonationActivity"
+            android:theme="@style/BloodDonationStyle" />
+        <activity android:name=".ScanProfileActivity" />
         <activity
             android:name=".ProfileActivity"
             android:theme="@style/ProfileActivityStyle" />

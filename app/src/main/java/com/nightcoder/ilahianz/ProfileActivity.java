@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
+import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.CollegeInfoFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.PersonalInfoFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.PrivacyFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.SettingsFragment;
@@ -80,6 +81,7 @@ public class ProfileActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         viewPagerAdapter.addFragment(new PersonalInfoFragment(mContext), "Personal Info");
+        viewPagerAdapter.addFragment(new CollegeInfoFragment(mContext), "Academic Info");
         viewPagerAdapter.addFragment(new PrivacyFragment(mContext), "Privacy");
         viewPagerAdapter.addFragment(new SettingsFragment(mContext), "Settings");
 

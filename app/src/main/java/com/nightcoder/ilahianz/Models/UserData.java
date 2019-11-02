@@ -34,6 +34,9 @@ public class UserData {
     private String department;
     private String idNumber;
     private String bloodDonate;
+    private String academicYearFrom;
+    private String academicYearTo;
+    private String joinDate;
 
     public UserData() {
     }
@@ -49,13 +52,18 @@ public class UserData {
                     String latitude, String longitude,
                     String thumbnailURL, String city,
                     String district, String bio,
-                    String department, String idNumber, String bloodDonate) {
+                    String department, String idNumber,
+                    String bloodDonate, String academicYearFrom,
+                    String academicYearTo, String joinDate) {
         this.username = username;
         this.bloodDonate = bloodDonate;
+        this.academicYearFrom = academicYearFrom;
+        this.academicYearTo = academicYearTo;
         this.id = id;
         this.imageURL = imageURL;
         this.className = className;
         this.gender = gender;
+        this.joinDate = joinDate;
         this.nickname = nickname;
         this.category = category;
         this.search = search;
@@ -81,6 +89,30 @@ public class UserData {
         this.bio = bio;
         this.department = department;
         this.idNumber = idNumber;
+    }
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public String getAcademicYearFrom() {
+        return academicYearFrom;
+    }
+
+    public void setAcademicYearFrom(String academicYearFrom) {
+        this.academicYearFrom = academicYearFrom;
+    }
+
+    public String getAcademicYearTo() {
+        return academicYearTo;
+    }
+
+    public void setAcademicYearTo(String academicYearTo) {
+        this.academicYearTo = academicYearTo;
     }
 
     public String getBloodDonate() {

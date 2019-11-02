@@ -53,6 +53,19 @@ public class ViewSupports {
         return dialog;
     }
 
+    public static Dialog materialDialog(Context context, int gravity, int id) {
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(id);
+        Window window = dialog.getWindow();
+        assert window != null;
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        window.setGravity(gravity);
+        window.setWindowAnimations(R.style.DialogAnimation);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        return dialog;
+    }
+
     public static synchronized void visibilityFadeAnimation(long duration, int target, ViewGroup parent, int visibility){
         Transition transition = new Fade();
         transition.setDuration(duration);
