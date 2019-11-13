@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="20dp"
+    android:background="@drawable/material_loading_dialog_bg"
+    android:elevation="5dp"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/DialogHeadingStyle"
+        android:text="@string/caution"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_regular"
+        android:padding="10dp"
+        android:text="@string/developer_caution"
+        android:textSize="17sp" />
+
+    <Button
+        android:id="@+id/btn_close"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/participate_button_bg"
+        android:text="@string/close"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+</LinearLayout>

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:layout_margin="7dp"
-    android:background="@drawable/material_dialog_background"
+    android:background="@drawable/material_loading_dialog_bg"
     android:orientation="vertical">
 
     <TextView
@@ -21,38 +21,41 @@
 
     <EditText
         android:id="@+id/edit_text"
+        style="@style/editTextStyle"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:inputType="textPersonName"
-        style="@style/editTextStyle"
-        android:hint="@string/name_lower" />
+        android:fontFamily="@font/roboto_regular"
+        android:hint="@string/name_lower"
+        android:inputType="textPersonName" />
 
-    <LinearLayout
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/view_color" />
+
+    <Button
+        android:id="@+id/save_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="end"
-        android:orientation="horizontal">
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/save"
+        android:textAllCaps="false"
+        android:textColor="@color/dd_green" />
 
-        <Button
-            android:id="@+id/cancel_action"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:text="@string/cancel_upper"
-            android:textColor="@color/blue_dark" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/view_color" />
 
-        <Button
-            android:id="@+id/save_action"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:elevation="0dp"
-            android:layout_margin="10dp"
-            android:background="@android:color/transparent"
-            android:text="@string/save_upper"
-            android:textColor="@color/blue_dark" />
-
-    </LinearLayout>
-
+    <Button
+        android:id="@+id/cancel_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/cancel_upper"
+        android:textAllCaps="false"
+        android:textColor="@color/blue_dark" />
 </LinearLayout>

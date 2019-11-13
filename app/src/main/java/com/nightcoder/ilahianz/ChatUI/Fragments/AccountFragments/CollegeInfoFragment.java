@@ -1,5 +1,6 @@
 package com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,37 +24,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.nightcoder.ilahianz.Listeners.ProfileActivity.EditInfoListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
-import com.nightcoder.ilahianz.Supports.Network;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
-
-import java.util.Calendar;
-import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ACADEMIC_YEAR_FROM;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ACADEMIC_YEAR_TO;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_DAY;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_MONTH;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CATEGORY;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CITY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DEPARTMENT;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_DISTRICT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_EMAIL;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_GENDER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID_NUMBER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PH_NUMBER;
-import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
 
 
@@ -68,6 +51,7 @@ public class CollegeInfoFragment extends Fragment {
             academicYear, idNumber, email,
             phone;
     private View view;
+    private EditInfoListener listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,12 +60,6 @@ public class CollegeInfoFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_college_info, container, false);
         LinearLayout editPhone = view.findViewById(R.id.edit_phone);
 
-        idNumber = view.findViewById(R.id.profile_id);
-        department = view.findViewById(R.id.profile_department);
-        email = view.findViewById(R.id.profile_email);
-        phone = view.findViewById(R.id.profile_phone);
-        academicYear = view.findViewById(R.id.profile_academic_year);
-        category = view.findViewById(R.id.profile_category);
 
         editPhone.setOnClickListener(editListener);
         init();
@@ -90,17 +68,21 @@ public class CollegeInfoFragment extends Fragment {
     }
 
     private void init() {
+        idNumber = view.findViewById(R.id.profile_id);
+        department = view.findViewById(R.id.profile_department);
+        email = view.findViewById(R.id.profile_email);
+        phone = view.findViewById(R.id.profile_phone);
+        academicYear = view.findViewById(R.id.profile_academic_year);
+        category = view.findViewById(R.id.profile_category);
         setUserData();
     }
 
     private View.OnClickListener editListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.edit_phone:
-                    openEditDialog("Enter Phone Number", "Phone Number",
-                            phone.getText().toString(), InputType.TYPE_CLASS_PHONE, KEY_PH_NUMBER);
-                    break;
+            if (v.getId() == R.id.edit_phone) {
+                openEditDialog("Enter Phone Number", "Phone Number",
+                        phone.getText().toString(), InputType.TYPE_CLASS_PHONE, KEY_PH_NUMBER);
             }
         }
     };
@@ -159,53 +141,20 @@ public class CollegeInfoFragment extends Fragment {
                 MemorySupports.getUserInfo(mContext, KEY_ACADEMIC_YEAR_TO)));
     }
 
-    private void setUserInfo(String key, String value) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(USER_INFO_SP, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(key, value);
-        editor.apply();
-    }
-
     private String getUserInfo(String key) {
         SharedPreferences preferences = mContext.getSharedPreferences(USER_INFO_SP, MODE_PRIVATE);
         return preferences.getString(key, "none");
     }
 
-    private void setEdits(final String key, final String data) {
-        if (Network.Connected(mContext)) {
-            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-            assert fUser != null;
-            DatabaseReference reference = FirebaseDatabase.getInstance()
-                    .getReference("Users").child(fUser.getUid()).child(key);
-            reference.setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Snackbar snackbar = Snackbar.make(view, "Changes applied",
-                            Snackbar.LENGTH_SHORT).setAction("Action", null);
-                    View sbView = snackbar.getView();
-                    sbView.setBackgroundColor(getResources().getColor(R.color.dd_green));
-                    sbView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                    snackbar.show();
-                    setUserInfo(key, data);
-                    init();
-                }
-            }).addOnCanceledListener(new OnCanceledListener() {
-                @Override
-                public void onCanceled() {
-                    Snackbar snackbar = Snackbar.make(view, "Changes can't applied",
-                            Snackbar.LENGTH_SHORT).setAction("Action", null);
-                    View sbView = snackbar.getView();
-                    sbView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                    snackbar.show();
-                }
-            });
-        } else {
-            Snackbar snackbar = Snackbar.make(view, "Connection required",
-                    Snackbar.LENGTH_SHORT).setAction("Action", null);
-            View sbView = snackbar.getView();
-            sbView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            snackbar.show();
-        }
+    private void setEdits(String key, String data) {
+        listener.setEdits(key, data);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Activity activity = (Activity) context;
+        listener = (EditInfoListener) activity;
     }
 
     private void showKeyboard() {

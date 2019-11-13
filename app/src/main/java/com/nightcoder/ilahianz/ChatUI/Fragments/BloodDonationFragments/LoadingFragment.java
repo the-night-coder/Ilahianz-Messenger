@@ -1,33 +1,69 @@
 package com.nightcoder.ilahianz.ChatUI.Fragments.BloodDonationFragments;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.nightcoder.ilahianz.Listeners.BloodDonation.LoadingFragmentCallbacks;
+import com.nightcoder.ilahianz.Listeners.BloodDonation.BloodDonationActivityCallbacks;
 import com.nightcoder.ilahianz.R;
+import com.nightcoder.ilahianz.Supports.ViewSupports;
 
-public class LoadingFragment extends Fragment implements LoadingFragmentCallbacks {
+import cdflynn.android.library.checkview.CheckView;
+
+public class LoadingFragment extends Fragment {
+
+    private BloodDonationActivityCallbacks callbacks;
+    private RelativeLayout layoutContainer;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.loading_blood_donation_progress, container, false);
+        CheckView checkView = root.findViewById(R.id.check_view);
+        checkView.setVisibility(View.GONE);
+        layoutContainer = root.findViewById(R.id.container);
+        ViewSupports.visibilityFadeAnimation(600, checkView, (ViewGroup) root, View.VISIBLE);
+        checkView.check();
+        int colorFrom = getResources().getColor(R.color.blood_donation_form_bg);
+        int colorTo = getResources().getColor(R.color.white);
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(1500);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                layoutContainer.setBackgroundColor((int) animation.getAnimatedValue());
+            }
+        });
+        colorAnimation.start();
+        new CountDownTimer(2000, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                callbacks.onProcessLoadingComplete();
+            }
+        }.start();
         return root;
     }
 
     @Override
-    public void onProcessFailed() {
-
-    }
-
-    @Override
-    public void onProcessSuccess() {
-
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Activity activity = (Activity) context;
+        callbacks = (BloodDonationActivityCallbacks) activity;
     }
 }

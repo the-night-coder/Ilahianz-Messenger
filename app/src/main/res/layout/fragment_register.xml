@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/sky_blue"
     tools:context=".Fragments.RegisterFragment">
 
@@ -51,17 +51,18 @@
         <RelativeLayout
             android:id="@+id/form_container"
             android:layout_width="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:layout_height="match_parent"
             android:layout_marginTop="?actionBarSize"
             android:background="@drawable/bottom_flat_fill_white"
             android:visibility="visible"
-            android:layout_height="match_parent">
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
             <View
                 android:layout_width="40dp"
                 android:layout_height="6dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/handle_bg" />
 
             <androidx.core.widget.NestedScrollView
@@ -81,16 +82,16 @@
 
 
                     <TextView
+                        style="@style/editTextTitleTextStyle"
                         android:layout_marginStart="18dp"
                         android:layout_marginTop="16dp"
-                        style="@style/editTextTitleTextStyle"
-                        android:text="@string/first_name"/>
+                        android:text="@string/first_name" />
 
                     <EditText
                         android:id="@+id/first_name"
+                        style="@style/registerEditTextStyle"
                         android:hint="@string/first_name"
-                        android:inputType="textPersonName"
-                        style="@style/registerEditTextStyle"/>
+                        android:inputType="textPersonName" />
 
                     <View
                         android:layout_width="match_parent"
@@ -109,7 +110,7 @@
                         android:id="@+id/last_name"
                         style="@style/registerEditTextStyle"
                         android:hint="@string/last_name"
-                        android:inputType="textPersonName"/>
+                        android:inputType="textPersonName" />
 
                     <View
                         android:layout_width="match_parent"
@@ -208,8 +209,8 @@
 
                     <EditText
                         android:id="@+id/phone"
-                        android:layout_width="match_parent"
                         style="@style/registerEditTextStyle"
+                        android:layout_width="match_parent"
                         android:hint="@string/phone_number"
                         android:inputType="phone" />
 
@@ -249,7 +250,7 @@
                         android:id="@+id/password"
                         style="@style/registerEditTextStyle"
                         android:hint="@string/password"
-                        android:inputType="textPassword"/>
+                        android:inputType="textPassword" />
 
                     <View
                         android:layout_width="match_parent"
@@ -268,7 +269,7 @@
                         android:id="@+id/confirm_password"
                         style="@style/registerEditTextStyle"
                         android:hint="@string/confirm"
-                        android:inputType="textPassword"/>
+                        android:inputType="textPassword" />
 
                     <View
                         android:layout_width="match_parent"
@@ -280,8 +281,8 @@
 
                     <TextView
                         style="@style/editTextTitleTextStyle"
-                        android:text="@string/who_you_are"
                         android:layout_marginBottom="5dp"
+                        android:text="@string/who_you_are"
                         android:textColor="@color/blue_dark" />
 
                     <LinearLayout
@@ -372,6 +373,7 @@
                                         android:textAlignment="center" />
                                 </RelativeLayout>
                             </LinearLayout>
+
                             <EditText
                                 android:id="@+id/department"
                                 style="@style/registerEditTextStyle"
@@ -418,10 +420,10 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="10dp"
                                         android:layout_marginTop="5dp"
-                                        android:textSize="13sp"
+                                        android:fontFamily="@font/roboto_regular"
+                                        android:text="@string/scan_id_card_request"
                                         android:textColor="@color/dd_green"
-                                        android:fontFamily="@font/roboto_medium"
-                                        android:text="@string/scan_id_card_request" />
+                                        android:textSize="13sp" />
                                 </LinearLayout>
 
                                 <Button
@@ -440,18 +442,21 @@
                         </LinearLayout>
                     </LinearLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/view_color" />
+
                     <Button
                         android:id="@+id/btn_register"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="16dp"
-                        android:background="@color/register_btn_color"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
                         android:fontFamily="@font/roboto_bold"
-                        android:textSize="13sp"
                         android:text="@string/create_account"
-                        android:textColor="@color/white" />
+                        android:textAllCaps="false"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="13sp" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
         </RelativeLayout>

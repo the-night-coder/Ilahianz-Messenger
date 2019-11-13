@@ -90,6 +90,7 @@ public class SignFragment extends Fragment {
                 listener.OnRegisterButtonClicked();
             }
         });
+        password.setText("");
 
     }
 }

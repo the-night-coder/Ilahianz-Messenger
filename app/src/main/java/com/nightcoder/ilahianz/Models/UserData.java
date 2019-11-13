@@ -37,6 +37,7 @@ public class UserData {
     private String academicYearFrom;
     private String academicYearTo;
     private String joinDate;
+    private String bloodType;
 
     public UserData() {
     }
@@ -54,8 +55,9 @@ public class UserData {
                     String district, String bio,
                     String department, String idNumber,
                     String bloodDonate, String academicYearFrom,
-                    String academicYearTo, String joinDate) {
+                    String academicYearTo, String joinDate, String bloodType) {
         this.username = username;
+        this.bloodType = bloodType;
         this.bloodDonate = bloodDonate;
         this.academicYearFrom = academicYearFrom;
         this.academicYearTo = academicYearTo;
@@ -89,6 +91,14 @@ public class UserData {
         this.bio = bio;
         this.department = department;
         this.idNumber = idNumber;
+    }
+
+    public String getBloodType() {
+        return bloodType;
+    }
+
+    public void setBloodType(String bloodType) {
+        this.bloodType = bloodType;
     }
 
     public String getJoinDate() {

@@ -33,6 +33,7 @@ import com.nightcoder.ilahianz.Supports.ViewSupports;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import static com.nightcoder.ilahianz.Literals.StringConstants.BLOOD_DONATE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_AGE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BLOOD_TYPE;
@@ -93,7 +94,6 @@ public class BloodDonationForm extends Fragment {
             if (group.getId() == R.id.blood_groups) {
                 RadioButton rb = root.findViewById(checkedId);
                 bloodTypeText = rb.getText().toString();
-                bloodTypeSelected = false;
                 if (bloodAntibodyText != null)
                     setBloodType(String.format("%s%s", bloodTypeText, bloodAntibodyText));
             } else if (group.getId() == R.id.blood_group_anti_body) {
@@ -128,6 +128,7 @@ public class BloodDonationForm extends Fragment {
             hashMap.put(KEY_AGE, age.getText().toString());
             hashMap.put(KEY_BLOOD_TYPE, bloodGroup.getText().toString());
             hashMap.put(KEY_GENDER, MemorySupports.getUserInfo(mContext, KEY_GENDER));
+            MemorySupports.setUserInfo(mContext, KEY_BLOOD_TYPE, bloodGroup.getText().toString());
 
             final Dialog dialog = ViewSupports.materialDialog(mContext, Gravity.CENTER, R.layout.blood_donation_confirm_dialog);
 

@@ -2,6 +2,7 @@ package com.nightcoder.ilahianz;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
-import com.nightcoder.ilahianz.MainActivityFragments.HelpFragment;
+import com.nightcoder.ilahianz.MainActivityFragments.NoticeFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.SearchFragment;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 
@@ -38,6 +39,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.SEARCH_FRAGMENT_T
 
 public class MainActivity extends AppCompatActivity implements FragmentCallbackListener {
 
+    protected MyApp myApp;
     private BottomNavigationView navigationView;
     private Context mContext;
     private TextView heading;
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         init();
-
+        myApp = (MyApp) this.getApplicationContext();
         navigationView.setOnNavigationItemSelectedListener(navListener);
         profileImage.setOnClickListener(clickListener);
         Fragment fragment = new ChatFragment();
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         listener = this;
     }
 
-    private void init(){
+    private void init() {
         navigationView = findViewById(R.id.bottom_nav);
         mContext = MainActivity.this;
         heading = findViewById(R.id.heading);
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.profile_photo:
                     startActivity(new Intent(mContext, ProfileActivity.class));
                     break;
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
                     hideAppBarAnimation();
                     break;
                 case R.id.nav_favorite:
-                    changeFragment(new HelpFragment(), HELP_FRAGMENT_TAG);
+                    changeFragment(new NoticeFragment(), HELP_FRAGMENT_TAG);
                     heading.setText(R.string.notifications);
                     openAppBarAnimation();
                     break;
@@ -164,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
     }
 
 
-
     @Override
     public void onFragmentChanged() {
         if (CHAT_FRAGMENT_TAG.equals(currentFragment)) {
@@ -173,10 +174,30 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
     }
 
     @Override
+    protected void onResume() {
+        myApp.setCurrentActivity(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        clearReference();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onPause() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.US);
         Log.d("Time", simpleDateFormat.format(new Date()));
+        clearReference();
         super.onPause();
+    }
+
+    private void clearReference() {
+        Activity activity = myApp.getCurrentActivity();
+        if (this.equals(activity)) {
+            myApp.setCurrentActivity(this);
+        }
     }
 }
 

@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
+import com.nightcoder.ilahianz.Supports.ViewSupports;
 
 import java.util.Objects;
 
@@ -98,7 +99,9 @@ public class ForgotPasswordFragment extends Fragment {
                     }.start();
                 } else {
                     dialog.cancel();
-                    Toast.makeText(mContext, "Something went to wrong", Toast.LENGTH_SHORT).show();
+                    if (task.getException() != null)
+                        ViewSupports.materialErrorDialog(mContext,
+                                task.getException().getMessage(), "Mail sent Error");
                 }
             }
         });

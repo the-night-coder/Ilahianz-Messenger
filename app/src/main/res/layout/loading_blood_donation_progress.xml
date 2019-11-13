@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:id="@+id/container"
+    android:background="@color/blood_donation_form_bg">
 
     <cdflynn.android.library.checkview.CheckView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:id="@+id/check_view"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_centerInParent="true"
         android:background="@drawable/white_circle_fill"
-        android:elevation="5dp" />
-
+        android:elevation="5dp"
+        android:padding="5dp"
+        app:checkView_strokeColor="@color/blue_dark"
+        app:checkView_strokeWidth="4dp" />
 
 </RelativeLayout>

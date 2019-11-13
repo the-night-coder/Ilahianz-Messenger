@@ -1,5 +1,6 @@
 package com.nightcoder.ilahianz;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,15 +17,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.CollegeInfoFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.PersonalInfoFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.PrivacyFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.SettingsFragment;
+import com.nightcoder.ilahianz.Listeners.ProfileActivity.EditInfoListener;
+import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.nightcoder.ilahianz.Supports.Network;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 
@@ -37,14 +48,15 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_IMAGE_URL;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements EditInfoListener {
 
     private Context mContext;
-    private CollapsingToolbarLayout appBarLayout;
     private CircleImageView profileImage;
     private TextView name;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    protected MyApp myApp;
+    private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +66,12 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tab_account);
         viewPager = findViewById(R.id.view_pager);
         tabLayout.setupWithViewPager(viewPager);
-        appBarLayout = findViewById(R.id.collaps);
         profileImage = findViewById(R.id.profile_image);
         ImageButton closeBtn = findViewById(R.id.close_btn);
         name = findViewById(R.id.profile_name);
         viewPager.setVisibility(View.GONE);
+        myApp = (MyApp) this.getApplicationContext();
+
         new CountDownTimer(200, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -78,7 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
 
         viewPagerAdapter.addFragment(new PersonalInfoFragment(mContext), "Personal Info");
         viewPagerAdapter.addFragment(new CollegeInfoFragment(mContext), "Academic Info");
@@ -86,14 +99,6 @@ public class ProfileActivity extends AppCompatActivity {
         viewPagerAdapter.addFragment(new SettingsFragment(mContext), "Settings");
 
         viewPager.setAdapter(viewPagerAdapter);
-
-
-        tabLayout.setOnTabSelectedListener(tabSelectedListener);
-
-        if (!Network.Connected(mContext)) {
-            ViewSupports.showNoConnection(mContext);
-        }
-
         name.setText(getUserInfo(KEY_USERNAME));
 
         if (!getUserInfo(KEY_IMAGE_URL).equals(DEFAULT)) {
@@ -101,37 +106,58 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private TabLayout.OnTabSelectedListener tabSelectedListener
-            = new TabLayout.OnTabSelectedListener() {
-        @Override
-        public void onTabSelected(TabLayout.Tab tab) {
-            switch (tab.getPosition()) {
-                case 0:
-                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.blue_dark));
-                    break;
-                case 1:
-                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.dd_green));
-                    break;
-                case 2:
-                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorAccent));
-                    break;
-            }
-        }
-
-        @Override
-        public void onTabUnselected(TabLayout.Tab tab) {
-
-        }
-
-        @Override
-        public void onTabReselected(TabLayout.Tab tab) {
-
-        }
-    };
-
     private String getUserInfo(String key) {
         SharedPreferences preferences = mContext.getSharedPreferences(USER_INFO_SP, MODE_PRIVATE);
         return preferences.getString(key, "none");
+    }
+
+    @Override
+    public void setEdits(final String key, final String data) {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                if (Network.Connected(mContext)) {
+                    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    assert fUser != null;
+                    DatabaseReference reference = FirebaseDatabase.getInstance()
+                            .getReference("Users").child(fUser.getUid()).child(key);
+                    reference.setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ViewSupports.materialSnackBar(mContext, "Changes Applied !",
+                                                4000, R.drawable.ic_check_circle_black_24dp);
+                                        MemorySupports.setUserInfo(mContext, key, data);
+                                        //callback.callInitialize();
+                                    }
+                                });
+                            }
+
+                        }
+                    }).addOnCanceledListener(new OnCanceledListener() {
+                        @Override
+                        public void onCanceled() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ViewSupports.materialSnackBar(mContext, "Changes can't Applied !",
+                                            4000, R.drawable.ic_close_black_24dp);
+                                }
+                            });
+
+                        }
+                    });
+                } else {
+                    ViewSupports.materialSnackBar(mContext, "Connection required !",
+                            4000, R.drawable.ic_info_black_24dp);
+
+                }
+            }
+        }.run();
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -169,9 +195,38 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    private void clearReference() {
+        Activity activity = myApp.getCurrentActivity();
+        if (this.equals(activity)) {
+            myApp.setCurrentActivity(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        myApp.setCurrentActivity(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        clearReference();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        overridePendingTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        startActivity(getIntent());
+        overridePendingTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+    }
+
     @Override
     protected void onPause() {
         ViewSupports.visibilitySlideAnimation(Gravity.BOTTOM, 400, viewPager, (ViewGroup) viewPager.getRootView(), View.GONE);
+        clearReference();
         super.onPause();
 
     }

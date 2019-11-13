@@ -115,5 +115,20 @@
         "No one can directly contact the blood donor"\n
         "Donate Blood Donate Life"
     </string>
+    <string name="loading">Loading…</string>
+    <string name="leave_confirmation">Are you sure you want to leave ?</string>
+    <string name="leave">Leave</string>
+    <string name="log_out">Log Out</string>
+    <string name="developer_caution">Application need to re-load for initialize the contents \n
+        close and re-open the application\n Happy Chatting</string>
+    <string name="close">Close</string>
+    <string name="caution">Caution</string>
+    <string name="log_in_error">Log In Error</string>
+    <string name="try_again">Try Again</string>
+    <string name="save">Save</string>
+    <string name="type_message">Type Message...</string>
+    <string name="username">Username</string>
+    <string name="online">Online</string>
+    <string name="active">Active</string>
 
 </resources>

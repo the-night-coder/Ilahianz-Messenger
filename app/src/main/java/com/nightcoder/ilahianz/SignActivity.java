@@ -12,7 +12,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,23 +41,24 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.nightcoder.ilahianz.ProfileActivityFragments.BarCodeFragment;
 import com.nightcoder.ilahianz.Fragments.ForgotPasswordFragment;
 import com.nightcoder.ilahianz.Fragments.LoadingFragment;
 import com.nightcoder.ilahianz.Fragments.RegisterFragment;
 import com.nightcoder.ilahianz.Fragments.SignFragment;
 import com.nightcoder.ilahianz.Fragments.VerifyFragment;
-import com.nightcoder.ilahianz.Listeners.SignActivityListeners.LoadingFragmentListener;
 import com.nightcoder.ilahianz.Listeners.FragmentListeners.QRCoderFragmentCallback;
+import com.nightcoder.ilahianz.Listeners.FragmentListeners.VFragmentListener;
+import com.nightcoder.ilahianz.Listeners.QRCodeListener;
+import com.nightcoder.ilahianz.Listeners.SignActivityListeners.LoadingFragmentListener;
+import com.nightcoder.ilahianz.Listeners.SignActivityListeners.LogInCompleteCallback;
 import com.nightcoder.ilahianz.Listeners.SignActivityListeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.Listeners.SignActivityListeners.SignInFragmentListener;
-import com.nightcoder.ilahianz.Listeners.FragmentListeners.VFragmentListener;
 import com.nightcoder.ilahianz.Listeners.SignActivityListeners.VerifyFragmentListener;
-import com.nightcoder.ilahianz.Listeners.SignActivityListeners.LogInCompleteCallback;
-import com.nightcoder.ilahianz.Listeners.QRCodeListener;
 import com.nightcoder.ilahianz.Models.UserData;
+import com.nightcoder.ilahianz.ProfileActivityFragments.BarCodeFragment;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.nightcoder.ilahianz.Supports.Network;
+import com.nightcoder.ilahianz.Supports.ViewSupports;
 import com.tomer.fadingtextview.FadingTextView;
 
 import java.text.SimpleDateFormat;
@@ -74,6 +75,7 @@ import static com.nightcoder.ilahianz.Literals.IntegerConstats.ID_CAMERA_REQUEST
 import static com.nightcoder.ilahianz.Literals.IntegerConstats.REQUEST_QR_CODE_RESULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.DEFAULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.EVERYONE;
+import static com.nightcoder.ilahianz.Literals.StringConstants.FIRST_TIME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.FORGOT_PASS_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ABOUT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ACADEMIC_YEAR_FROM;
@@ -84,6 +86,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_DAY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_MONTH;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BIRTH_YEAR;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BLOOD_DONATE;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_BLOOD_TYPE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CATEGORY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CITY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CLASS_NAME;
@@ -115,6 +118,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.QR_CODE_FRAGMENT_
 import static com.nightcoder.ilahianz.Literals.StringConstants.QR_CODE_RESULT_KEY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.REG_FRAGMENT_TAG;
 import static com.nightcoder.ilahianz.Literals.StringConstants.SIGN_FRAGMENT_TAG;
+import static com.nightcoder.ilahianz.Literals.StringConstants.TRUE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.VERIFY_FRAGMENT_TAG;
 
 public class SignActivity extends AppCompatActivity implements SignInFragmentListener,
@@ -133,6 +137,9 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     private LinearLayout background;
     private Context mContext;
     private RegisterFragment registerFragment;
+    private Handler handler = new Handler();
+    private Handler handler2 = new Handler();
+    private DatabaseReference reference2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,6 +283,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             hashMap.put(KEY_THUMBNAIL, DEFAULT);
                             hashMap.put(KEY_NICKNAME, NOT_PROVIDED);
                             hashMap.put(KEY_BLOOD_DONATE, NOT_PROVIDED);
+                            hashMap.put(KEY_BLOOD_TYPE, NOT_PROVIDED);
                             simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.US);
                             hashMap.put(KEY_JOIN_DATE, simpleDateFormat.format(new Date()));
 
@@ -283,19 +291,19 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             Log.d(KEY_LAST_SEEN_PRIVACY, "Everyone");
                             Log.d(KEY_ID, uId);
                             Log.d(KEY_LAST_SEEN_DATE, uId);
-                           Log.d(KEY_PROFILE_PRIVACY, "Everyone");
-                           Log.d(KEY_LOCATION_PRIVACY, "Everyone");
-                           Log.d(KEY_EMAIL_PRIVACY, "Everyone");
-                           Log.d(KEY_PHONE_PRIVACY, "Everyone");
-                           Log.d(KEY_BIRTHDAY_PRIVACY, "Everyone");
-                           Log.d(KEY_DISTRICT, "Not Provided");
-                           Log.d(KEY_BIO, "Not Provided");
-                           Log.d(KEY_ABOUT, "Hey Ilahianz");
-                           Log.d(KEY_LATITUDE, "Not Provided");
-                           Log.d(KEY_LONGITUDE, "Not Provided");
-                           Log.d(KEY_THUMBNAIL, DEFAULT);
-                           Log.d(KEY_NICKNAME, "Not Provided");
-                           Log.d(KEY_BLOOD_DONATE, "false");
+                            Log.d(KEY_PROFILE_PRIVACY, "Everyone");
+                            Log.d(KEY_LOCATION_PRIVACY, "Everyone");
+                            Log.d(KEY_EMAIL_PRIVACY, "Everyone");
+                            Log.d(KEY_PHONE_PRIVACY, "Everyone");
+                            Log.d(KEY_BIRTHDAY_PRIVACY, "Everyone");
+                            Log.d(KEY_DISTRICT, "Not Provided");
+                            Log.d(KEY_BIO, "Not Provided");
+                            Log.d(KEY_ABOUT, "Hey Ilahianz");
+                            Log.d(KEY_LATITUDE, "Not Provided");
+                            Log.d(KEY_LONGITUDE, "Not Provided");
+                            Log.d(KEY_THUMBNAIL, DEFAULT);
+                            Log.d(KEY_NICKNAME, "Not Provided");
+                            Log.d(KEY_BLOOD_DONATE, "false");
                             //
                             Log.d("LOGIN", "Complete");
                             callback.onRegistered();
@@ -306,6 +314,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                                             if (task.isComplete()) {
                                                 Log.d("LOGIN PUSH", "Complete");
                                                 callback.logInComplete();
+                                                FirebaseAuth.getInstance().signOut();
                                             }
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
@@ -406,16 +415,14 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             onCompleteSign();
-                        }else{
-                            Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (task.getException() != null)
+                                ViewSupports.materialErrorDialog(mContext,
+                                        task.getException().getMessage(), "Log In Error");
+                            progressBar.cancel();
                         }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressBar.cancel();
-            }
-        });
+                });
     }
 
     private void checkConnectionSync() {
@@ -475,8 +482,8 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         } else if ((getFragment(QR_CODE_FRAGMENT_TAG) != null && getFragment(QR_CODE_FRAGMENT_TAG).isVisible())) {
             super.onBackPressed();
         } else {
-            SignActivity.this.moveTaskToBack(true);
             threadAlive = false;
+            SignActivity.this.moveTaskToBack(true);
         }
     }
 
@@ -540,83 +547,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         checkView.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
         checkView.check();
-        new CountDownTimer(1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                Log.d("TICK", String.valueOf(millisUntilFinished));
-            }
-
-            @Override
-            public void onFinish() {
-                final FirebaseUser fUser = auth.getCurrentUser();
-                assert fUser != null;
-                DatabaseReference reference = FirebaseDatabase.getInstance()
-                        .getReference("Users").child(fUser.getUid());
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        progressBar.cancel();
-                        int colorFrom = getResources().getColor(R.color.white);
-                        int colorTo = getResources().getColor(R.color.blue_dark);
-                        Fragment fragment = getFragment(SIGN_FRAGMENT_TAG);
-                        background.setVisibility(View.VISIBLE);
-                        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-                        colorAnimation.setDuration(1000);
-                        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
-                                background.setBackgroundColor((int) animation.getAnimatedValue());
-                            }
-                        });
-                        colorAnimation.start();
-                        FadingTextView view = new FadingTextView(SignActivity.this);
-                        view.setTimeout(2000, TimeUnit.MILLISECONDS);
-                        view.setTextColor(getResources().getColor(R.color.white));
-                        view.setTextSize(30);
-                        Typeface font = ResourcesCompat.getFont(SignActivity.this, R.font.roboto_bold);
-                        view.setTypeface(font);
-
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                        );
-                        params.addRule(RelativeLayout.CENTER_VERTICAL);
-                        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                        view.setLayoutParams(params);
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        fragmentManager.beginTransaction()
-                                .detach(fragment)
-                                .commit();
-                        UserData data = dataSnapshot.getValue(UserData.class);
-                        if (data != null) {
-                            setUserInfo(data);
-                            String[] array = {"HI", data.getUsername(), "Welcome back"};
-                            view.setTexts(array);
-                            container.addView(view);
-
-                            new CountDownTimer(4000, 1000) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-
-                                }
-
-                                @Override
-                                public void onFinish() {
-                                    startActivity(new Intent(SignActivity.this, MainActivity.class)
-                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-                                }
-                            }.start();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-        }.start();
+        handler2.postDelayed(readThread, 1000);
     }
 
     @Override
@@ -624,6 +555,88 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         Log.d("RESULT_OK", id);
         onBackPressed();
         QRListener.OnIDQRCodeResultOK(id);
+    }
+
+    private Runnable readThread = new Runnable() {
+        @Override
+        public void run() {
+            final FirebaseUser fUser = auth.getCurrentUser();
+            assert fUser != null;
+            reference2 = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(fUser.getUid());
+            reference2.addValueEventListener(valueEventListener);
+        }
+    };
+
+    private ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            progressBar.cancel();
+            Log.d("ON_DATA_CHANGE", "hdjf");
+            int colorFrom = getResources().getColor(R.color.white);
+            int colorTo = getResources().getColor(R.color.blue_dark);
+            Fragment fragment = getFragment(SIGN_FRAGMENT_TAG);
+            background.setVisibility(View.VISIBLE);
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(1000);
+            colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    background.setBackgroundColor((int) animation.getAnimatedValue());
+                }
+            });
+            colorAnimation.start();
+            FadingTextView view = new FadingTextView(SignActivity.this);
+            view.setTimeout(1500, TimeUnit.MILLISECONDS);
+            view.setTextColor(getResources().getColor(R.color.white));
+            view.setTextSize(30);
+            Typeface font = ResourcesCompat.getFont(SignActivity.this, R.font.roboto_bold);
+            view.setTypeface(font);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            params.addRule(RelativeLayout.CENTER_VERTICAL);
+            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            view.setLayoutParams(params);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .detach(fragment)
+                    .commit();
+            UserData data = dataSnapshot.getValue(UserData.class);
+            if (data != null) {
+                setUserInfo(data);
+                String[] array = {"HI", data.getUsername()};
+                view.setTexts(array);
+                container.addView(view);
+                handler.postDelayed(intent, 3000);
+
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
+    private Runnable intent = new Runnable() {
+        @Override
+        public void run() {
+            startActivity(new Intent(SignActivity.this, MainActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            | Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_NO_HISTORY));
+            MemorySupports.setUserInfo(mContext, FIRST_TIME, TRUE);
+            finish();
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        reference2.removeEventListener(valueEventListener);
+        super.onDestroy();
     }
 
     private void setUserInfo(UserData data) {
@@ -658,6 +671,13 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
         MemorySupports.setUserInfo(mContext, KEY_JOIN_DATE, data.getJoinDate());
         MemorySupports.setUserInfo(mContext, KEY_ACADEMIC_YEAR_FROM, data.getAcademicYearFrom());
         MemorySupports.setUserInfo(mContext, KEY_ACADEMIC_YEAR_TO, data.getAcademicYearTo());
+        MemorySupports.setUserInfo(mContext, KEY_BLOOD_TYPE, data.getBloodType());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SignActivity.this.moveTaskToBack(true);
     }
 }
 

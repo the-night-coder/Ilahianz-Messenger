@@ -50,19 +50,35 @@ public final class StringConstants {
     public static final String KEY_ACADEMIC_YEAR_FROM = "academicYearFrom";
     public static final String KEY_ACADEMIC_YEAR_TO = "academicYearTo";
     public static final String KEY_JOIN_DATE = "joinDate";
+    public static final String KEY_BLOOD_TYPE = "bloodType";
 
     public static final String USER_INFO_SP = "USER_INFO";
     public static final String DEFAULT = "default";
+    // chat Activity Constants
+    public static final String RECEIVER = "receiver";
+    public static final String SENDER = "sender";
+    public static final String IS_SEEN = "isSeen";
+    public static final String IS_DELIVERED = "isDelivered";
+    public static final String MESSAGE = "message";
+    public static final String TIMESTAMP = "timestamp";
+    public static final String REFERENCE = "reference";
+    //
+    public static final String USER_ADD_CHANGED = "userAddChange";
+    public static final String USER_UPDATE_CHANGE = "userUpdateChange";
     public static final String NOT_PROVIDED = "Not Provided";
     public static final String EVERYONE = "Everyone";
     public static final String BLOOD_DONATE = "bloodDonate";
     public static final String KEY_AGE = "age";
-    public static final String KEY_BLOOD_TYPE = "bloodType";
     public static final String ONLINE = "Online";
     public static final String OFFLINE = "Offline";
+    public static final String FIRST_TIME = "firstTime";
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
     public static final String NOBODY = "Nobody";
     public static final String TEACHERS_ONLY = "Teachers Only";
     public static final String STAFF = "Staff";
+    public static final String KEY_CHAT_LISTS = "chatLists";
+    public static final String KEY_CHATS = "chats";
     public static final String ATTENDANCE_WEBSITE = "http://ilahiacollege.info/StudentPanel/studAttendance.aspx";
     public static final String ILAHIA_WEBSITE = "http://ilahiaartscollege.org/";
     //public static final LatLng ILAHIA_LOCATION = new LatLng(10.025716, 76.567840);
