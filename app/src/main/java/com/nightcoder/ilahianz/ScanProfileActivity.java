@@ -19,7 +19,7 @@ import com.nightcoder.ilahianz.ProfileActivityFragments.ScanProfileFragment;
 import com.nightcoder.ilahianz.Listeners.ProfileQRCodeScanCallback;
 import com.nightcoder.ilahianz.Listeners.ProfileScanButtonCallback;
 
-import static com.nightcoder.ilahianz.Literals.IntegerConstats.CAMERA_REQUEST;
+import static com.nightcoder.ilahianz.Literals.IntegerConstants.CAMERA_REQUEST;
 import static com.nightcoder.ilahianz.Literals.StringConstants.PROFILE_QR_CODE_FRAGMENT_KEY;
 import static com.nightcoder.ilahianz.Literals.StringConstants.PROFILE_QR_CODE_SCAN_FRAGMENT_KEY;
 

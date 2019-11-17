@@ -27,7 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MessagingActivity" />
+        <activity android:name=".MessagingActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".BloodDonationActivity"
             android:theme="@style/BloodDonationStyle" />

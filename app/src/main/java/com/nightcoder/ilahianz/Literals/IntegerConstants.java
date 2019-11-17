@@ -1,6 +1,6 @@
 package com.nightcoder.ilahianz.Literals;
 
-public final class IntegerConstats {
+public final class IntegerConstants {
 
     public static final int REQUEST_QR_CODE_RESULT = 112;
     public static final int IMAGE_REQUEST = 357;

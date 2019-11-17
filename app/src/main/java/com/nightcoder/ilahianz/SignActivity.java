@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,9 +69,9 @@ import java.util.concurrent.TimeUnit;
 
 import cdflynn.android.library.checkview.CheckView;
 
-import static com.nightcoder.ilahianz.Literals.IntegerConstats.CAMERA_REQUEST;
-import static com.nightcoder.ilahianz.Literals.IntegerConstats.ID_CAMERA_REQUEST;
-import static com.nightcoder.ilahianz.Literals.IntegerConstats.REQUEST_QR_CODE_RESULT;
+import static com.nightcoder.ilahianz.Literals.IntegerConstants.CAMERA_REQUEST;
+import static com.nightcoder.ilahianz.Literals.IntegerConstants.ID_CAMERA_REQUEST;
+import static com.nightcoder.ilahianz.Literals.IntegerConstants.REQUEST_QR_CODE_RESULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.DEFAULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.EVERYONE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.FIRST_TIME;

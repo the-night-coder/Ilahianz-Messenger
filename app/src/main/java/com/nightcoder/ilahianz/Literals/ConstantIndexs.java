@@ -2,14 +2,6 @@ package com.nightcoder.ilahianz.Literals;
 
 public class ConstantIndexs {
 
-    //database cursor index (Chats database)
-    public static final int ID_INDEX = 0;
-    public static final int UID_INDEX = 1;
-    public static final int SENDER_ID_INDEX = 2;
-    public static final int RECEIVER_ID_INDEX = 3;
-    public static final int TIMESTAMP_INDEX = 4;
-    public static final int MESSAGE_INDEX = 5;
-    //
 
     public static final int INDEX_USERNAME = 2;
     public static final int INDEX_PH_NUMBER = 3;

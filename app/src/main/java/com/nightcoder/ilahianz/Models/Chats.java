@@ -1,31 +1,48 @@
 package com.nightcoder.ilahianz.Models;
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
-@IgnoreExtraProperties
-public class ChatModel {
+public class Chats {
 
     private String sender;
     private String receiver;
     private String message;
     private boolean isSeen;
     private boolean isDelivered;
+    private boolean isSent;
     private String timestamp;
     private String reference;
+    private String link;
 
-    public ChatModel(String sender, String receiver, String message,
-                     boolean isSeen, boolean isDelivered,
-                     String timestamp, String reference) {
+    public Chats() {
+    }
+
+    public Chats(String sender, String receiver, String message,
+                 String timestamp, String reference, String link,
+                 boolean isSeen, boolean isDelivered, boolean isSent) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
         this.isSeen = isSeen;
+        this.link = link;
+        this.isSent = isSent;
         this.isDelivered = isDelivered;
         this.timestamp = timestamp;
         this.reference = reference;
     }
 
-    public ChatModel() {
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public boolean isSent() {
+        return isSent;
+    }
+
+    public void setSent(boolean sent) {
+        isSent = sent;
     }
 
     public String getSender() {
@@ -52,20 +69,20 @@ public class ChatModel {
         this.message = message;
     }
 
-    public boolean isSeen() {
+    public boolean getIsSeen() {
         return isSeen;
     }
 
-    public void setSeen(boolean seen) {
-        isSeen = seen;
+    public void setIsSeen(boolean isSeen) {
+        this.isSeen = isSeen;
     }
 
-    public boolean isDelivered() {
+    public boolean getIsDelivered() {
         return isDelivered;
     }
 
-    public void setDelivered(boolean delivered) {
-        isDelivered = delivered;
+    public void setIsDelivered(boolean isDelivered) {
+        this.isDelivered = isDelivered;
     }
 
     public String getTimestamp() {

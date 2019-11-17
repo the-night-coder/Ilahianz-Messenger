@@ -26,7 +26,7 @@ import com.tomer.fadingtextview.FadingTextView;
 
 import cdflynn.android.library.checkview.CheckView;
 
-import static com.nightcoder.ilahianz.Literals.IntegerConstats.WIDTH_INDEX;
+import static com.nightcoder.ilahianz.Literals.IntegerConstants.WIDTH_INDEX;
 
 
 @SuppressWarnings("ALL")

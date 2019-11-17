@@ -62,6 +62,8 @@ public final class StringConstants {
     public static final String MESSAGE = "message";
     public static final String TIMESTAMP = "timestamp";
     public static final String REFERENCE = "reference";
+    public static final String IS_SENT = "isSent";
+    public static final String LINK = "link";
     //
     public static final String USER_ADD_CHANGED = "userAddChange";
     public static final String USER_UPDATE_CHANGE = "userUpdateChange";

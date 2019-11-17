@@ -132,22 +132,12 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
                                         ViewSupports.materialSnackBar(mContext, "Changes Applied !",
                                                 4000, R.drawable.ic_check_circle_black_24dp);
                                         MemorySupports.setUserInfo(mContext, key, data);
-                                        //callback.callInitialize();
                                     }
                                 });
+                            } else {
+                                ViewSupports.materialSnackBar(mContext, "Changes can't Applied !",
+                                        4000, R.drawable.ic_close_black_24dp);
                             }
-
-                        }
-                    }).addOnCanceledListener(new OnCanceledListener() {
-                        @Override
-                        public void onCanceled() {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ViewSupports.materialSnackBar(mContext, "Changes can't Applied !",
-                                            4000, R.drawable.ic_close_black_24dp);
-                                }
-                            });
 
                         }
                     });

@@ -49,6 +49,15 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/message_container"
+        android:layout_below="@id/toolbar"
+        android:overScrollMode="always"
+        android:splitMotionEvents="true" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -56,6 +65,7 @@
         android:background="@color/view_color" />
 
     <RelativeLayout
+        android:id="@+id/message_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
@@ -74,12 +84,15 @@
                 android:id="@+id/message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="10dp"
                 android:layout_toEndOf="@id/emoji_btn"
                 android:background="@drawable/message_box_background"
                 android:fontFamily="@font/roboto_regular"
                 android:hint="@string/type_message"
-                android:inputType="textLongMessage"
+                android:inputType="textMultiLine"
                 android:maxLines="10"
                 android:padding="15dp" />
 
@@ -90,7 +103,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/button_material_circle"
-                android:src="@drawable/ic_insert_emoticon_black_24dp" />
+                android:src="@drawable/ic_insert_emoticon_black_24dp"
+                android:tint="@color/black" />
         </RelativeLayout>
 
         <ImageButton
@@ -101,6 +115,7 @@
             android:layout_margin="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/button_material_circle"
-            android:src="@drawable/ic_arrow_upward_black_24dp" />
+            android:src="@drawable/ic_arrow_upward_black_24dp"
+            android:tint="@color/black" />
     </RelativeLayout>
 </RelativeLayout>

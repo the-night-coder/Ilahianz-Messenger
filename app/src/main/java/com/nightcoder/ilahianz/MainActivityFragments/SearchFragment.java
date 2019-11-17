@@ -23,9 +23,12 @@ import com.nightcoder.ilahianz.Adapters.UserAdapter;
 import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.ScanProfileActivity;
+import com.nightcoder.ilahianz.Supports.MemorySupports;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 
 public class SearchFragment extends Fragment {
     private Context mContext;
@@ -74,12 +77,13 @@ public class SearchFragment extends Fragment {
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mUsers.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             UserData userData = snapshot.getValue(UserData.class);
                             if (userData != null) {
-                                //if (!userData.getId().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
-                                mUsers.add(userData);
-                                //}
+                                if (!userData.getId().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
+                                    mUsers.add(userData);
+                                }
                             }
                         }
 
@@ -97,7 +101,7 @@ public class SearchFragment extends Fragment {
 
     }
 
-    private void setUserData(){
+    private void setUserData() {
 
     }
 }
