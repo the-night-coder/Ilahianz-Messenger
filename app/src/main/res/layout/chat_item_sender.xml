@@ -15,8 +15,7 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?android:selectableItemBackground"
-        android:gravity="end"
-        android:visibility="gone">
+        android:gravity="end">
 
         <LinearLayout
             android:layout_width="wrap_content"

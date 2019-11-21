@@ -186,7 +186,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         stateReference.addListenerForSingleValueEvent(stateChangeListener);
         chatDBHelper = new ChatDBHelper(MessagingActivity.this, userId);
         chatReference = FirebaseDatabase.getInstance().getReference(KEY_CHATS);
-        updateChats();
+        updateChats(true, false);
         Log.d(TAG, "UPDATING INIT");
         chatReference = FirebaseDatabase.getInstance()
                 .getReference(KEY_CHATS);
@@ -202,7 +202,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         message.put(REFERENCE, key);
         chatDBHelper.insertData(myId, userId, time.format(new Date()), key, link,
                 false, false, false, String.valueOf(this.message.getText()));
-        updateChats();
+        updateChats(false, true);
         reference.child(key).setValue(message).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -210,7 +210,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                     SQLiteDatabase db = chatDBHelper.getInstance();
                     db.execSQL("UPDATE " + userId + " SET isSent=1 WHERE reference=" + "'" + key + "'");
                     Log.d(TAG, "MESSAGE SENT");
-                    updateChats();
+                    updateChats(false, false);
                     Log.d(TAG, "UPDATING SEND_MESSAGE");
                     mp = MediaPlayer.create(MessagingActivity.this, R.raw.tik);
                     mp.start();
@@ -254,9 +254,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                                                 chat.getReference(), chat.getLink(), true, true,
                                                 true, chat.getMessage());
                                         Log.d(TAG, "Inserted");
-                                        mp = MediaPlayer.create(MessagingActivity.this, R.raw.ping);
-                                        mp.start();
-                                        updateChats();
+                                        updateChats(false, true);
                                     }
                                 });
 
@@ -265,7 +263,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                                     SQLiteDatabase db = chatDBHelper.getInstance();
                                     db.execSQL("UPDATE " + userId + " SET isDelivered=1 WHERE reference="
                                             + "'" + chat.getReference() + "'");
-                                    updateChats();
+                                    updateChats(false, false);
                                 }
                                 if (chat.getIsSeen()) {
                                     DatabaseReference reference = FirebaseDatabase.getInstance()
@@ -277,7 +275,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                                                 SQLiteDatabase db = chatDBHelper.getInstance();
                                                 db.execSQL("UPDATE " + userId + " SET isSeen=1 WHERE reference=" +
                                                         "'" + chat.getReference() + "'");
-                                                updateChats();
+                                                updateChats(false, false);
                                             }
                                         }
                                     });
@@ -295,7 +293,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         }
     };
 
-    private void updateChats() {
+    private void updateChats(boolean animationEnable, boolean lastAnimation) {
         try {
             Log.d(TAG, "UPDATING CHATS");
             Cursor cursor = chatDBHelper.getData();
@@ -315,7 +313,8 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                 mChats.add(chats);
             }
 
-            MessageAdapter messageAdapter = new MessageAdapter(MessagingActivity.this, mChats);
+            MessageAdapter messageAdapter = new MessageAdapter(MessagingActivity.this,
+                    mChats, animationEnable, lastAnimation);
             recyclerView.setAdapter(messageAdapter);
         } catch (SQLiteException e) {
             Log.d(TAG, "NO TABLE FOUND " + userId);
@@ -349,7 +348,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                 SQLiteDatabase db = chatDBHelper.getInstance();
                 db.execSQL("DELETE FROM " + userId);
                 chatReference.setValue(null);
-                updateChats();
+                updateChats(false, false);
                 break;
             case R.id.menu_info:
                 break;

@@ -8,12 +8,9 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nightcoder.ilahianz.Models.Chats;
@@ -32,11 +29,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private static final int CHAT_TYPE_RIGHT = 1;
     private Context mContext;
     private List<Chats> mChats;
+    private boolean flag;
+    private boolean lastAnimation;
 
-    public MessageAdapter(Context mContext, List<Chats> mChats) {
+    public MessageAdapter(Context mContext, List<Chats> mChats, boolean animation, boolean lastAnimatin) {
         this.mContext = mContext;
         this.mChats = mChats;
         this.fUser = MemorySupports.getUserInfo(mContext, KEY_ID);
+        flag = animation;
+        this.lastAnimation = lastAnimatin;
     }
 
     private String fUser;
@@ -77,12 +78,22 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.status.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_check_black_24dp));
         }
 
-        if (chat.getSender().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
-            holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.sender_item_animation));
-        } else {
-            holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.receiver_item_animation));
+        if (flag) {
+            if (chat.getSender().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
+                holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.sender_item_animation));
+            } else {
+                holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.receiver_item_animation));
+            }
         }
-
+        if (lastAnimation) {
+            if (getItemCount() == position + 1) {
+                if (chat.getSender().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
+                    holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.sender_item_animation));
+                } else {
+                    holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.receiver_item_animation));
+                }
+            }
+        }
     }
 
     @Override

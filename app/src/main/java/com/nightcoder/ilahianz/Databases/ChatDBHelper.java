@@ -40,6 +40,8 @@ public class ChatDBHelper extends SQLiteOpenHelper {
     public static final int IS_SENT_INDEX = 7;
     public static final int MESSAGE_INDEX = 8;
 
+
+
     public ChatDBHelper(@Nullable Context context, String tableName) {
         super(context, DATABASE_NAME, null, 1);
         this.TABLE_NAME = tableName;
