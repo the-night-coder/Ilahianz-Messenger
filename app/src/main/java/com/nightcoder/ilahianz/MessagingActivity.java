@@ -1,21 +1,22 @@
 package com.nightcoder.ilahianz;
 
 import android.app.Activity;
-import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +34,8 @@ import com.nightcoder.ilahianz.Databases.ChatDBHelper;
 import com.nightcoder.ilahianz.Listeners.DatabaseListener.DataChangeCallbacks;
 import com.nightcoder.ilahianz.Models.Chats;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
+import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiPopup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import static com.nightcoder.ilahianz.Literals.StringConstants.FALSE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.IS_DELIVERED;
 import static com.nightcoder.ilahianz.Literals.StringConstants.IS_SEEN;
 import static com.nightcoder.ilahianz.Literals.StringConstants.IS_SENT;
@@ -58,40 +59,38 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.TIMESTAMP;
 
 public class MessagingActivity extends AppCompatActivity implements DataChangeCallbacks {
 
+    private static final String USER_ID_BUFFER = "USER_BUFFER";
     private String userId;
     protected MyApp myApp;
     private String myId;
     private DatabaseReference chatReference, stateReference;
-    private List<Chats> mChats;
-    private MessageAdapter messageAdapter;
     private RecyclerView recyclerView;
     private TextView status;
     protected ChatDBHelper chatDBHelper;
-    private ImageButton sentButton;
-    private EditText message;
-    private Handler handler = new Handler();
+    private ImageButton sentButton, emojiButton;
+    private EmojiEditText message;
+    private MediaPlayer mp;
+    private final String TAG = "MESSAGE_ACTIVITY";
+    protected Context mContext;
+
+    public static String MESSAGE_LINK = "null";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging);
-        myApp = new MyApp();
-        myId = MemorySupports.getUserInfo(this, KEY_ID);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-        linearLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        handler.post(readMessage);
+        RelativeLayout rootView = findViewById(R.id.root_view);
+        initViews();
         init();
 
+        final EmojiPopup emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(message);
 
         sentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!message.getText().toString().trim().isEmpty()) {
+                if (!String.valueOf(message.getText()).trim().isEmpty()) {
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put(SENDER, myId);
                     hashMap.put(RECEIVER, userId);
@@ -100,9 +99,22 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                     hashMap.put(IS_DELIVERED, false);
                     hashMap.put(IS_SENT, false);
                     hashMap.put(LINK, "null");
-                    hashMap.put(MESSAGE, message.getText().toString().trim());
-                    sendMessage(hashMap, "null");
-                    message.setText("");
+                    hashMap.put(MESSAGE, String.valueOf(message.getText()).trim());
+                    sendMessage(hashMap, MESSAGE_LINK);
+                }
+                message.setText("");
+            }
+        });
+
+        emojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (emojiPopup.isShowing()) {
+                    emojiPopup.toggle();
+                    emojiButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_insert_emoticon_black_24dp));
+                } else {
+                    emojiPopup.toggle();
+                    emojiButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_black_24dp));
                 }
             }
         });
@@ -111,27 +123,74 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
     @Override
     protected void onResume() {
         super.onResume();
-        myApp.setCurrentActivity(this);
-        myApp.setOnline();
-        myId = MemorySupports.getUserInfo(this, KEY_ID);
+        Log.d(TAG, "RESUMED");
+        init();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "RESTARTED");
+        init();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "PAUSED");
         myApp.setOffline();
         clearReference();
+        chatReference.removeEventListener(checkMessage);
+        stateReference.removeEventListener(stateChangeListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        chatReference.removeEventListener(checkMessage);
+        stateReference.removeEventListener(stateChangeListener);
+        clearReference();
+        myApp.setOffline();
+        super.onDestroy();
+        Log.d(TAG, "DESTROYED");
+    }
+
+    private void initViews() {
+        message = findViewById(R.id.message);
+        sentButton = findViewById(R.id.btn_sent);
+        emojiButton = findViewById(R.id.emoji_btn);
+        status = findViewById(R.id.status);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     private void init() {
-        userId = getIntent().getStringExtra(KEY_ID);
-        message = findViewById(R.id.message);
-        sentButton = findViewById(R.id.btn_sent);
-        status = findViewById(R.id.status);
+        myApp = new MyApp();
+        mContext = MessagingActivity.this;
+        myApp.setCurrentActivity(this);
+        myId = MemorySupports.getUserInfo(this, KEY_ID);
+        myApp.setOnline();
+        try {
+            MemorySupports.setUserInfo(mContext, USER_ID_BUFFER, getIntent().getStringExtra(KEY_ID));
+            userId = MemorySupports.getUserInfo(mContext, USER_ID_BUFFER);
+        } catch (Exception e) {
+            Log.d(TAG, "No Extras");
+        }
+
+        myId = MemorySupports.getUserInfo(this, KEY_ID);
+        userId = MemorySupports.getUserInfo(mContext, USER_ID_BUFFER);
+
         stateReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child(KEY_STATUS);
         stateReference.addListenerForSingleValueEvent(stateChangeListener);
-        chatDBHelper = new ChatDBHelper(this, userId);
-        showChats();
+        chatDBHelper = new ChatDBHelper(MessagingActivity.this, userId);
+        chatReference = FirebaseDatabase.getInstance().getReference(KEY_CHATS);
+        updateChats();
+        Log.d(TAG, "UPDATING INIT");
+        chatReference = FirebaseDatabase.getInstance()
+                .getReference(KEY_CHATS);
+        chatReference.addValueEventListener(checkMessage);
     }
 
     private void sendMessage(final HashMap<String, Object> message, String link) {
@@ -142,40 +201,92 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         assert key != null;
         message.put(REFERENCE, key);
         chatDBHelper.insertData(myId, userId, time.format(new Date()), key, link,
-                false, false, false, this.message.getText().toString());
+                false, false, false, String.valueOf(this.message.getText()));
+        updateChats();
         reference.child(key).setValue(message).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     SQLiteDatabase db = chatDBHelper.getInstance();
-                    db.execSQL("UPDATE " + userId + " SET isSent='true' WHERE reference=" + "'" + key + "'");
+                    db.execSQL("UPDATE " + userId + " SET isSent=1 WHERE reference=" + "'" + key + "'");
+                    Log.d(TAG, "MESSAGE SENT");
+                    updateChats();
+                    Log.d(TAG, "UPDATING SEND_MESSAGE");
+                    mp = MediaPlayer.create(MessagingActivity.this, R.raw.tik);
+                    mp.start();
                 }
             }
         });
     }
 
-    private ValueEventListener chatListener = new ValueEventListener() {
+    private ValueEventListener checkMessage = new ValueEventListener() {
         @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                final Chats chat = snapshot.getValue(Chats.class);
-                assert chat != null;
-                if (chat.getReceiver().equals(userId) && chat.getSender().equals(myId) ||
-                        chat.getReceiver().equals(myId) && chat.getSender().equals(userId)) {
-                    if (chat.getReceiver().equals(myId) && !chat.getIsSeen()) {
-                        DatabaseReference reference = FirebaseDatabase.getInstance()
-                                .getReference(KEY_CHATS).child(chat.getReference()).child(IS_SEEN);
-                        reference.setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                chatDBHelper.insertData(chat.getSender(), chat.getReceiver(), chat.getTimestamp(),
-                                        chat.getReference(), chat.getLink(), chat.getIsDelivered(), chat.getIsSeen(),
-                                        true, chat.getMessage());
+        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+            new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        final Chats chat = snapshot.getValue(Chats.class);
+                        assert chat != null;
+                        if (chat.getReceiver().equals(userId) && chat.getSender().equals(myId) ||
+                                chat.getReceiver().equals(myId) && chat.getSender().equals(userId)) {
+
+                            if (chat.getReceiver().equals(myId) && !chat.getIsSeen() && chat.getSender().equals(userId)) {
+                                chat.setIsSeen(true);
+                                DatabaseReference reference = FirebaseDatabase.getInstance()
+                                        .getReference(KEY_CHATS).child(chat.getReference());
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put(REFERENCE, chat.getReference());
+                                hashMap.put(RECEIVER, chat.getReceiver());
+                                hashMap.put(SENDER, chat.getSender());
+                                hashMap.put(TIMESTAMP, chat.getTimestamp());
+                                hashMap.put(IS_DELIVERED, true);
+                                hashMap.put(IS_SENT, true);
+                                hashMap.put(IS_SEEN, true);
+                                hashMap.put(MESSAGE, chat.getMessage());
+                                hashMap.put(LINK, chat.getLink());
+                                reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        chat.setIsSeen(true);
+                                        chatDBHelper.insertData(chat.getSender(), chat.getReceiver(), chat.getTimestamp(),
+                                                chat.getReference(), chat.getLink(), true, true,
+                                                true, chat.getMessage());
+                                        Log.d(TAG, "Inserted");
+                                        mp = MediaPlayer.create(MessagingActivity.this, R.raw.ping);
+                                        mp.start();
+                                        updateChats();
+                                    }
+                                });
+
+                            } else if (chat.getReceiver().equals(userId)) {
+                                if (chat.getIsDelivered()) {
+                                    SQLiteDatabase db = chatDBHelper.getInstance();
+                                    db.execSQL("UPDATE " + userId + " SET isDelivered=1 WHERE reference="
+                                            + "'" + chat.getReference() + "'");
+                                    updateChats();
+                                }
+                                if (chat.getIsSeen()) {
+                                    DatabaseReference reference = FirebaseDatabase.getInstance()
+                                            .getReference(KEY_CHATS).child(chat.getReference());
+                                    reference.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                SQLiteDatabase db = chatDBHelper.getInstance();
+                                                db.execSQL("UPDATE " + userId + " SET isSeen=1 WHERE reference=" +
+                                                        "'" + chat.getReference() + "'");
+                                                updateChats();
+                                            }
+                                        }
+                                    });
+                                }
                             }
-                        });
+                        }
                     }
                 }
-            }
+            }.run();
         }
 
         @Override
@@ -184,37 +295,33 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         }
     };
 
-    private void showChats() {
-        Cursor cursor = chatDBHelper.getData();
-        mChats = new ArrayList<>();
-        mChats.clear();
-        while (cursor.moveToNext()) {
-            Chats chats = new Chats();
-            chats.setSender(cursor.getString(ChatDBHelper.SENDER_INDEX));
-            chats.setReceiver(cursor.getString(ChatDBHelper.RECEIVER_ID_INDEX));
-            chats.setReference(cursor.getString(ChatDBHelper.REFERENCE_INDEX));
-            chats.setIsDelivered(cursor.getInt(ChatDBHelper.IS_DELIVERED_INDEX) == 1);
-            chats.setIsSeen(cursor.getInt(ChatDBHelper.IS_SEEN_INDEX) == 1);
-            chats.setSent(cursor.getInt(ChatDBHelper.IS_SENT_INDEX) == 1);
-            chats.setLink(cursor.getString(ChatDBHelper.LINK_INDEX));
-            chats.setTimestamp(cursor.getString(ChatDBHelper.TIMESTAMP_INDEX));
-            chats.setMessage(cursor.getString(ChatDBHelper.MESSAGE_INDEX));
+    private void updateChats() {
+        try {
+            Log.d(TAG, "UPDATING CHATS");
+            Cursor cursor = chatDBHelper.getData();
+            List<Chats> mChats = new ArrayList<>();
+            mChats.clear();
+            while (cursor.moveToNext()) {
+                Chats chats = new Chats();
+                chats.setSender(cursor.getString(ChatDBHelper.SENDER_INDEX));
+                chats.setReceiver(cursor.getString(ChatDBHelper.RECEIVER_ID_INDEX));
+                chats.setReference(cursor.getString(ChatDBHelper.REFERENCE_INDEX));
+                chats.setIsDelivered(cursor.getInt(ChatDBHelper.IS_DELIVERED_INDEX) == 1);
+                chats.setIsSeen(cursor.getInt(ChatDBHelper.IS_SEEN_INDEX) == 1);
+                chats.setSent(cursor.getInt(ChatDBHelper.IS_SENT_INDEX) == 1);
+                chats.setLink(cursor.getString(ChatDBHelper.LINK_INDEX));
+                chats.setTimestamp(cursor.getString(ChatDBHelper.TIMESTAMP_INDEX));
+                chats.setMessage(cursor.getString(ChatDBHelper.MESSAGE_INDEX));
+                mChats.add(chats);
+            }
 
-            mChats.add(chats);
+            MessageAdapter messageAdapter = new MessageAdapter(MessagingActivity.this, mChats);
+            recyclerView.setAdapter(messageAdapter);
+        } catch (SQLiteException e) {
+            Log.d(TAG, "NO TABLE FOUND " + userId);
         }
 
-        messageAdapter = new MessageAdapter(MessagingActivity.this, mChats);
-        recyclerView.setAdapter(messageAdapter);
     }
-
-    Runnable readMessage = new Runnable() {
-        @Override
-        public void run() {
-            chatReference = FirebaseDatabase.getInstance().getReference(KEY_CHATS);
-            chatReference.addValueEventListener(chatListener);
-        }
-    };
-
 
     private ValueEventListener stateChangeListener = new ValueEventListener() {
         @Override
@@ -230,14 +337,6 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
     };
 
     @Override
-    protected void onDestroy() {
-        chatReference.removeEventListener(chatListener);
-        stateReference.removeEventListener(stateChangeListener);
-        clearReference();
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.message_menu, menu);
         return true;
@@ -245,8 +344,17 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_clear_chat:
+                SQLiteDatabase db = chatDBHelper.getInstance();
+                db.execSQL("DELETE FROM " + userId);
+                chatReference.setValue(null);
+                updateChats();
+                break;
+            case R.id.menu_info:
+                break;
+        }
         return super.onOptionsItemSelected(item);
-
     }
 
     private void clearReference() {
@@ -256,10 +364,44 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         }
     }
 
+    private void preventDuplicate() {
+        try {
+            Log.d(TAG, "UPDATING CHATS");
+            Cursor cursor = chatDBHelper.getData();
+            String ref1, ref2 = null;
+            int index1, index2 = 0;
+            while (cursor.moveToNext()) {
+
+            }
+        } catch (SQLiteException e) {
+            Log.d(TAG, "NO TABLE FOUND " + userId);
+        }
+
+    }
+
     @Override
     public void onDataChange() {
-        showChats();
     }
+
+//    private void setNotification(String title, String content) {
+//        Intent intent = new Intent(mContext, MessagingActivity.class);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(mContext,
+//                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        NotificationCompat.Builder b = new NotificationCompat.Builder(mContext);
+//        b.setAutoCancel(true)
+//                .setDefaults(Notification.DEFAULT_ALL)
+//                .setWhen(System.currentTimeMillis())
+//                .setSmallIcon(R.mipmap.ic_launcher)
+//                .setTicker("Notification")
+//                .setContentTitle(title)
+//                .setContentText(content)
+//                .setDefaults(Notification.DEFAULT_LIGHTS)
+//                .setContentIntent(pendingIntent)
+//                .setContentInfo("Info");
+//        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+//        assert notificationManager != null;
+//        notificationManager.notify(1, b.build());
+//    }
 }
 
 

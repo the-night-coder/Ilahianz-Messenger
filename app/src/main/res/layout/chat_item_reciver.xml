@@ -4,43 +4,48 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:selectableItemBackground"
-    android:gravity="end"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/container"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:visibility="gone"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="1dp"
-        android:background="@drawable/chat_item_sender"
-        android:foreground="?android:selectableItemBackground"
-        android:orientation="vertical">
+        android:foreground="?android:selectableItemBackground">
 
-        <TextView
-            android:id="@+id/message"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="8dp"
-            android:paddingStart="16dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="5dp"
-            android:text="cvcbsajfbsdkfdjbvbzsZJVChzXVznXVVcZX hsvfchvakVFCcvvb"
-            android:textColor="@color/black"
-            tools:ignore="HardcodedText" />
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/chat_item_receiver"
+            android:orientation="vertical">
 
+            <com.vanniktech.emoji.EmojiTextView
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:fontFamily="@font/roboto_regular"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="5dp"
+                android:text="cvcbsajfbsdkfdjbvbzsZJVChzXVznXVVcZX hsvfchvakVFCcvvb"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
         android:layout_marginBottom="3dp"
         android:gravity="center"
         android:orientation="horizontal">
@@ -52,6 +57,7 @@
             android:fontFamily="@font/roboto_regular"
             android:text="10:10 AM"
             android:textSize="10sp"
+            android:visibility="gone"
             tools:ignore="HardcodedText,SmallSp" />
 
         <ImageView
@@ -59,7 +65,8 @@
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="10dp"
-            android:src="@drawable/ic_schedule_black_24dp" />
+            android:src="@drawable/ic_schedule_black_24dp"
+            android:visibility="gone" />
     </LinearLayout>
 
 
@@ -67,7 +74,8 @@
         android:id="@+id/date_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
+        android:layout_gravity="start"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="20dp"
         android:visibility="gone">
 

@@ -628,13 +628,13 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             | Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_NO_HISTORY));
             MemorySupports.setUserInfo(mContext, FIRST_TIME, TRUE);
+            reference2.removeEventListener(valueEventListener);
             finish();
         }
     };
 
     @Override
     protected void onDestroy() {
-        reference2.removeEventListener(valueEventListener);
         super.onDestroy();
     }
 

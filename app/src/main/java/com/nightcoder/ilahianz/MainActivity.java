@@ -26,6 +26,8 @@ import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.NoticeFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.SearchFragment;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
+import com.vanniktech.emoji.EmojiManager;
+import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
         currentFragment = CHAT_FRAGMENT_TAG;
+        EmojiManager.destroy();
+        EmojiManager.install(new GoogleEmojiProvider());
         listener = this;
     }
 

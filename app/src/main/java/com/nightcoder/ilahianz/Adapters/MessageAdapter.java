@@ -5,18 +5,22 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nightcoder.ilahianz.Models.Chats;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
+import com.vanniktech.emoji.EmojiTextView;
 
 import java.util.List;
 
@@ -65,8 +69,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }
         });
 
-        if (!chat.isSent()) {
+        if (chat.getIsSeen()) {
             holder.status.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_check_circle_blue_24dp));
+        } else if (chat.getIsDelivered()) {
+            holder.status.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_check_circle_black_24dp));
+        } else if (chat.isSent()) {
+            holder.status.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_check_black_24dp));
+        }
+
+        if (chat.getSender().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
+            holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.sender_item_animation));
+        } else {
+            holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.receiver_item_animation));
         }
 
     }
@@ -79,12 +93,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public int getItemViewType(int position) {
         if (mChats.get(position).getReceiver().equals(fUser))
-            return CHAT_TYPE_RIGHT;
-        else return CHAT_TYPE_LEFT;
+            return CHAT_TYPE_LEFT;
+        else return CHAT_TYPE_RIGHT;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView message, time, date;
+        TextView time, date;
+        EmojiTextView message;
         ImageView status;
         LinearLayout container;
         LinearLayout dateContainer;

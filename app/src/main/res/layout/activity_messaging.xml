@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -54,9 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/message_container"
-        android:layout_below="@id/toolbar"
-        android:overScrollMode="always"
-        android:splitMotionEvents="true" />
+        android:layout_below="@id/toolbar" />
 
     <View
         android:layout_width="match_parent"
@@ -80,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/btn_sent">
 
-            <EditText
+            <com.vanniktech.emoji.EmojiEditText
                 android:id="@+id/message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,7 +114,7 @@
             android:layout_margin="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/button_material_circle"
-            android:src="@drawable/ic_arrow_upward_black_24dp"
+            android:src="@drawable/ic_send_black_24dp"
             android:tint="@color/black" />
     </RelativeLayout>
 </RelativeLayout>
