@@ -1,5 +1,7 @@
 package com.nightcoder.ilahianz;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -106,6 +108,14 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
             }
         });
 
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emojiPopup.dismiss();
+                emojiButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_insert_emoticon_black_24dp));
+            }
+        });
+
         emojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +193,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         userId = MemorySupports.getUserInfo(mContext, USER_ID_BUFFER);
 
         stateReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child(KEY_STATUS);
-        stateReference.addListenerForSingleValueEvent(stateChangeListener);
+        stateReference.addValueEventListener(stateChangeListener);
         chatDBHelper = new ChatDBHelper(MessagingActivity.this, userId);
         chatReference = FirebaseDatabase.getInstance().getReference(KEY_CHATS);
         updateChats(true, false);
@@ -326,6 +336,17 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             String state = dataSnapshot.getValue(String.class);
+            int colorFrom = getResources().getColor(R.color.white);
+            int colorTo = getResources().getColor(R.color.blue_dark);
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(500);
+            colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    status.setTextColor((int) animation.getAnimatedValue());
+                }
+            });
+            colorAnimation.start();
             status.setText(state);
         }
 
@@ -361,21 +382,6 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         if (this.equals(activity)) {
             myApp.setCurrentActivity(this);
         }
-    }
-
-    private void preventDuplicate() {
-        try {
-            Log.d(TAG, "UPDATING CHATS");
-            Cursor cursor = chatDBHelper.getData();
-            String ref1, ref2 = null;
-            int index1, index2 = 0;
-            while (cursor.moveToNext()) {
-
-            }
-        } catch (SQLiteException e) {
-            Log.d(TAG, "NO TABLE FOUND " + userId);
-        }
-
     }
 
     @Override

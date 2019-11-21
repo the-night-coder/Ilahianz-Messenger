@@ -79,6 +79,7 @@
             android:textAlignment="center"
             app:layout_collapseMode="pin"
             app:tabGravity="center"
+            android:foregroundGravity="center"
             app:tabIndicator="@drawable/tab_shape_indicator"
             app:tabIndicatorAnimationDuration="500"
             app:tabIndicatorColor="@color/blue_dark"

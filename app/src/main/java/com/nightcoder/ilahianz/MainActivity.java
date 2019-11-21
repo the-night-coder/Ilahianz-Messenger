@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         heading = findViewById(R.id.heading);
         appBarLayout = findViewById(R.id.appbar);
         profileImage = findViewById(R.id.profile_photo);
-
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {

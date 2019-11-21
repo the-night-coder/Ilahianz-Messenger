@@ -19,6 +19,7 @@ import com.tomer.fadingtextview.FadingTextView;
 public class StartActivity extends AppCompatActivity {
 
     private ImageView imageView;
+    private Button skip;
     Handler handler = new Handler();
     FirebaseUser firebaseUser;
     Runnable runnable = new Runnable() {
@@ -44,6 +45,7 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         imageView = findViewById(R.id.imageView);
+        skip = findViewById(R.id.skip_action);
         FadingTextView fadingTextView = findViewById(R.id.fad_text);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -52,8 +54,15 @@ public class StartActivity extends AppCompatActivity {
             fadingTextView.setTexts(array);
             handler.postDelayed(intentMainActivity, 1000);
         } else {
+            skip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handler.removeCallbacks(runnable);
+                    handler.post(runnable);
+                }
+            });
             Graphics.setGifImage(this, R.raw.logo_gif, imageView);
-            handler.postDelayed(runnable, 1000);
+            handler.postDelayed(runnable, 12000);
         }
 
     }

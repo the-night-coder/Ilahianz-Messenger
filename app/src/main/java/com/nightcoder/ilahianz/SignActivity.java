@@ -232,8 +232,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
 
     @Override
     public void OnIDScanRequest() {
-
-        //startActivity(new Intent(SignActivity.this, MLKitActivity.class));
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, ID_CAMERA_REQUEST);
@@ -676,7 +675,6 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
     @Override
     protected void onPause() {
         super.onPause();
-        SignActivity.this.moveTaskToBack(true);
     }
 }
 
