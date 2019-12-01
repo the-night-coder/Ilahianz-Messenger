@@ -9,6 +9,7 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+
     <style name="BloodDonationStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blood_donation_form_bg</item>

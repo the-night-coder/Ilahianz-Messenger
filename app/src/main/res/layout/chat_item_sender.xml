@@ -40,7 +40,7 @@
                 android:paddingBottom="6dp"
                 android:text="cvcbsajfbsdkfdjbvbzsZJVChzXVznXVVcZ"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 tools:ignore="HardcodedText" />
 
         </LinearLayout>

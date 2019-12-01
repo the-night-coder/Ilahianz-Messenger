@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -61,7 +62,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.TIMESTAMP;
 
 public class MessagingActivity extends AppCompatActivity implements DataChangeCallbacks {
 
-    private static final String USER_ID_BUFFER = "USER_BUFFER";
+    public static final String USER_ID_BUFFER = "USER_BUFFER";
     private String userId;
     protected MyApp myApp;
     private String myId;
@@ -74,7 +75,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
     private MediaPlayer mp;
     private final String TAG = "MESSAGE_ACTIVITY";
     protected Context mContext;
-
+    private RelativeLayout toolbarContainer;
     public static String MESSAGE_LINK = "null";
 
     @Override
@@ -128,6 +129,13 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                 }
             }
         });
+
+        toolbarContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, UserProfileActivity.class).putExtra(KEY_ID, userId));
+            }
+        });
     }
 
     @Override
@@ -170,6 +178,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         emojiButton = findViewById(R.id.emoji_btn);
         status = findViewById(R.id.status);
         recyclerView = findViewById(R.id.recycler_view);
+        toolbarContainer = findViewById(R.id.toolbar_container);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);

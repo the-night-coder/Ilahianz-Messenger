@@ -41,6 +41,7 @@
         tools:ignore="HardcodedText" />
 
     <View
+        android:id="@+id/status"
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:layout_alignParentEnd="true"
