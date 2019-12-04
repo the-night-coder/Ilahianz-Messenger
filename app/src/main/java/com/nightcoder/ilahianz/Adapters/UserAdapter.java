@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,6 +17,8 @@ import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.R;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 
@@ -46,6 +49,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 mContext.startActivity(new Intent(mContext, MessagingActivity.class).putExtra(KEY_ID, UID));
             }
         });
+        holder.container.setVisibility(View.VISIBLE);
+        holder.profileImage.setVisibility(View.VISIBLE);
+        holder.username.setVisibility(View.VISIBLE);
+        holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+        holder.username.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+        holder.profileImage.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
     }
 
     @Override
@@ -56,11 +65,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView username;
         RelativeLayout container;
+        CircleImageView profileImage;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.username);
             container = itemView.findViewById(R.id.container);
+            profileImage = itemView.findViewById(R.id.profile_image);
+            container.setVisibility(View.GONE);
+            profileImage.setVisibility(View.GONE);
+            username.setVisibility(View.GONE);
         }
     }
 }

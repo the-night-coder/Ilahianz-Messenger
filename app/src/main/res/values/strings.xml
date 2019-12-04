@@ -135,5 +135,6 @@
     <string name="report">Report</string>
     <string name="block">Block</string>
     <string name="bca">Bachelor of Computer Applications (BCA)</string>
+    <string name="basic_info">Basic Info</string>
 
 </resources>

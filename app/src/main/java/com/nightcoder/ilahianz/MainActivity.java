@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
                     .replace(R.id.frame, fragment, tag)
                     .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .remove(getFragment(currentFragment))
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit();
             currentFragment = tag;
             listener.onFragmentChanged();

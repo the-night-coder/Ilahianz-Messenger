@@ -23,4 +23,5 @@
     <color name="green_transparent">#331EEB1E</color>
     <color name="blood_donation_form_bg">#FFE3A8</color>
     <color name="button_bg_color">#192196F3</color>
+    <color name="transparent_black">#A1000000</color>
 </resources>
