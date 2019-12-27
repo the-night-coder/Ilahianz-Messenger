@@ -2,7 +2,6 @@ package com.nightcoder.ilahianz;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
@@ -56,4 +55,5 @@ public class MyApp extends Application {
         reference.updateChildren(hashMap);
         Log.d("STATUS", "OFFLINE");
     }
+
 }

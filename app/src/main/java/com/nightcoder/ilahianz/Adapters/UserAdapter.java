@@ -12,8 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nightcoder.ilahianz.Databases.Model.UserModel;
 import com.nightcoder.ilahianz.MessagingActivity;
-import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.R;
 
 import java.util.List;
@@ -25,9 +25,9 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<UserData> mUsers;
+    private List<UserModel> mUsers;
 
-    public UserAdapter(Context mContext, List<UserData> users) {
+    public UserAdapter(Context mContext, List<UserModel> users) {
         this.mContext = mContext;
         this.mUsers = users;
     }
@@ -40,7 +40,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserAdapter.ViewHolder holder, int position) {
-        UserData userData = mUsers.get(position);
+        UserModel userData = mUsers.get(position);
         holder.username.setText(userData.getUsername());
         final String UID = userData.getId();
         holder.container.setOnClickListener(new View.OnClickListener() {

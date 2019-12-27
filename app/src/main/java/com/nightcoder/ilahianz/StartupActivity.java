@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -92,13 +93,17 @@ public class StartupActivity extends AppCompatActivity {
             currentPage = i;
             if (i == 0) {
                 next_btn.setText("Next");
-                back_btn.setVisibility(View.INVISIBLE);
+                back_btn.setVisibility(View.GONE);
+                back_btn.setAnimation(AnimationUtils.loadAnimation(StartupActivity.this, R.anim.fade_out));
             } else if (i == dots.length - 1) {
                 next_btn.setText("Finish");
                 back_btn.setVisibility(View.VISIBLE);
             } else {
                 next_btn.setText("Next");
-                back_btn.setVisibility(View.VISIBLE);
+                if (back_btn.getVisibility() == View.GONE) {
+                    back_btn.setVisibility(View.VISIBLE);
+                    back_btn.setAnimation(AnimationUtils.loadAnimation(StartupActivity.this, R.anim.fade_in));
+                }
             }
         }
 

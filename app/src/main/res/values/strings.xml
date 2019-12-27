@@ -126,7 +126,7 @@
     <string name="log_in_error">Log In Error</string>
     <string name="try_again">Try Again</string>
     <string name="save">Save</string>
-    <string name="type_message">Type Message...</string>
+    <string name="type_message">Type Message…</string>
     <string name="username">Username</string>
     <string name="online">Online</string>
     <string name="active">Active</string>
@@ -136,5 +136,16 @@
     <string name="block">Block</string>
     <string name="bca">Bachelor of Computer Applications (BCA)</string>
     <string name="basic_info">Basic Info</string>
+    <string name="blood_donation_console">Blood Donation Console</string>
+    <string name="blood_donation_banner_quotes">
+        "With Ilahianz, You can donate your blood."
+        "Open the blood donation console and join Ilahianz blood donation group"
+        " or visit console for blood requests :)"
+    </string>
+    <string name="ideas_quotes">
+        "Share your Ideas, Thoughts, Suggestions with Ilahianz."
+        "Also you can Support others Ideas and help to become their Dreams True."
+        " or Suggest new Things for their ideas ;)"
+    </string>
 
 </resources>

@@ -1,7 +1,6 @@
 package com.nightcoder.ilahianz.Adapters;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nightcoder.ilahianz.Models.Chats;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
-import com.nightcoder.ilahianz.Supports.ViewSupports;
 import com.vanniktech.emoji.EmojiTextView;
 
 import java.util.List;
@@ -32,12 +30,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private boolean flag;
     private boolean lastAnimation;
 
-    public MessageAdapter(Context mContext, List<Chats> mChats, boolean animation, boolean lastAnimatin) {
+    public MessageAdapter(Context mContext, List<Chats> mChats, boolean animation, boolean lastAnimation) {
         this.mContext = mContext;
         this.mChats = mChats;
         this.fUser = MemorySupports.getUserInfo(mContext, KEY_ID);
         flag = animation;
-        this.lastAnimation = lastAnimatin;
+        this.lastAnimation = lastAnimation;
     }
 
     private String fUser;
@@ -60,12 +58,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (holder.dateContainer.getVisibility() == View.VISIBLE)
-                    ViewSupports.visibilitySlideAnimation(Gravity.BOTTOM, 600, holder.dateContainer,
-                            holder.container, View.GONE);
-                else
-                    ViewSupports.visibilitySlideAnimation(Gravity.BOTTOM, 600, holder.dateContainer,
-                            holder.container, View.VISIBLE);
+                if (holder.dateContainer.getVisibility() == View.VISIBLE) {
+                    holder.dateContainer.setVisibility(View.GONE);
+                    holder.dateContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.snackbar_exit_animation));
+                } else {
+                    holder.dateContainer.setVisibility(View.VISIBLE);
+                    holder.dateContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.snackbar_enter_animation));
+                }
 
             }
         });
@@ -109,11 +108,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView time, date;
-        EmojiTextView message;
-        ImageView status;
-        LinearLayout container;
-        LinearLayout dateContainer;
+        private TextView time, date;
+        private EmojiTextView message;
+        private ImageView status;
+        private LinearLayout container;
+        private LinearLayout dateContainer;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);

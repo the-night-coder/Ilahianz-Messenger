@@ -27,8 +27,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ProfileImageViewActivity"
-            android:theme="@style/ProfileViewActivityStyle"/>
+        <activity android:name=".BloodConsoleActivity"></activity>
+        <activity
+            android:name=".ProfileImageViewActivity"
+            android:theme="@style/ProfileViewActivityStyle" />
         <activity
             android:name=".UserProfileActivity"
             android:theme="@style/UserProfileTheme" />

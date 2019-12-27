@@ -8,6 +8,7 @@ public final class StringConstants {
     public static final String CHAT_FRAGMENT_TAG = "CHAT_FRAGMENT_TAG";
     public static final String HELP_FRAGMENT_TAG = "HELP_FRAGMENT_TAG";
     public static final String SEARCH_FRAGMENT_TAG = "SEARCH_FRAGMENT_TAG";
+    public static final String SEARCH_USER_FRAGMENT_TAG = "SEARCH_USER_FRAGMENT_TAG";
     public static final String REG_FRAGMENT_TAG = "REG_FRAGMENT_TAG";
     public static final String LOADING_FRAGMENT_TAG = "LOADING_FRAGMENT_TAG";
     public static final String VERIFY_FRAGMENT_TAG = "VERIFY_FRAGMENT_TAG";

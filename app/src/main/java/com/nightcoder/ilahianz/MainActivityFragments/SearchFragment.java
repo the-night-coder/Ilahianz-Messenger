@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.Adapters.UserAdapter;
+import com.nightcoder.ilahianz.Databases.Model.UserModel;
+import com.nightcoder.ilahianz.Databases.UsersDBHelper;
 import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.ScanProfileActivity;
@@ -27,6 +30,7 @@ import com.nightcoder.ilahianz.Supports.MemorySupports;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 
@@ -37,9 +41,12 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<UserData> mUsers;
+    private UsersDBHelper usersDBHelper;
+    private ImageButton backBtn;
 
     public SearchFragment(Context mContext) {
         this.mContext = mContext;
+        usersDBHelper = new UsersDBHelper(mContext);
     }
 
     @Nullable
@@ -59,13 +66,21 @@ public class SearchFragment extends Fragment {
                 mContext.startActivity(new Intent(mContext, ScanProfileActivity.class));
             }
         });
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Objects.requireNonNull(getActivity()).onBackPressed();
+            }
+        });
         readUsers();
+        setUserData();
         return root;
     }
 
     private void init() {
         scanButton = root.findViewById(R.id.scan_button);
         recyclerView = root.findViewById(R.id.recycler_view);
+        backBtn = root.findViewById(R.id.back_btn);
     }
 
     private void readUsers() {
@@ -77,18 +92,14 @@ public class SearchFragment extends Fragment {
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mUsers.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             UserData userData = snapshot.getValue(UserData.class);
                             if (userData != null) {
                                 if (!userData.getId().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
-                                    mUsers.add(userData);
+                                    usersDBHelper.addUser(userData);
                                 }
                             }
                         }
-
-                        userAdapter = new UserAdapter(mContext, mUsers);
-                        recyclerView.setAdapter(userAdapter);
                     }
 
                     @Override
@@ -102,6 +113,12 @@ public class SearchFragment extends Fragment {
     }
 
     private void setUserData() {
+        ArrayList<UserModel> users;
+        users = usersDBHelper.getUsers();
+        if (users != null) {
+            userAdapter = new UserAdapter(mContext, users);
+            recyclerView.setAdapter(userAdapter);
+        }
 
     }
 }
