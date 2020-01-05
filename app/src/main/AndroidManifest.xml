@@ -27,7 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".BloodConsoleActivity"></activity>
+        <service android:name=".Services.BackService" android:enabled="true"/>
+        <activity android:name=".BloodConsoleActivity"/>
         <activity
             android:name=".ProfileImageViewActivity"
             android:theme="@style/ProfileViewActivityStyle" />

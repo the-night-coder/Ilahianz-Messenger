@@ -76,12 +76,16 @@
     <string name="teachers_only">Teachers Only</string>
     <string name="nobody">Nobody</string>
     <string name="no_internet_connection">No Internet Connection</string>
-    <string name="connection_instruction">"You\'re offline check your connection !"
-        "\nmake sure your internet connection is turn ON"</string>
+    <string name="connection_instruction">
+        "You\'re offline check your connection !"
+        "\nmake sure your internet connection is turn ON"
+    </string>
     <string name="ok">OK</string>
     <string name="enter_email_address">Enter Email address</string>
     <string name="sent_verification_to_email">Sent Verification to email</string>
-    <string name="email_verification_quoets">You will get a verification mail to your email address.  check your email</string>
+    <string name="email_verification_quoets">
+        "You will get a verification mail to your email address.  check your email"
+    </string>
     <string name="scan_id_card_request">Scan your id card Barcode</string>
     <string name="staff">Staff</string>
     <string name="choose">Choose</string>
@@ -119,7 +123,8 @@
     <string name="leave_confirmation">Are you sure you want to leave ?</string>
     <string name="leave">Leave</string>
     <string name="log_out">Log Out</string>
-    <string name="developer_caution">Application need to re-load for initialize the contents \n
+    <string name="developer_caution">
+        "Application need to re-load for initialize the contents \n"
         close and re-open the application\n Happy Chatting</string>
     <string name="close">Close</string>
     <string name="caution">Caution</string>
@@ -145,7 +150,15 @@
     <string name="ideas_quotes">
         "Share your Ideas, Thoughts, Suggestions with Ilahianz."
         "Also you can Support others Ideas and help to become their Dreams True."
-        " or Suggest new Things for their ideas ;)"
+        " or Suggest new Things for their ideas :)"
+    </string>
+    <string name="notice_quotes">
+        "Noticeboard is a surface intended for the posting of public Messages"
+        "Display notice giving information about something. Like exam notice, result notice, etc…"
+    </string>
+    <string name="feedback_quotes">
+        "Send feedback to the developer and also you can suggest new ideas for this platform"
+        "We make it possible soon. Thanks :)"
     </string>
 
 </resources>

@@ -26,6 +26,7 @@ import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.EventsFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.NoticeFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.SearchFragment;
+import com.nightcoder.ilahianz.Services.BackService;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
@@ -111,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         initInterface();
         init();
 
+        startService(new Intent(this, BackService.class));
+
     }
 
     private void init() {
@@ -120,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.frame, fragment, CHAT_FRAGMENT_TAG)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
         currentFragment = CHAT_FRAGMENT_TAG;
         EmojiManager.destroy();
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
     @Override
     public void onBackPressed() {
         if (!currentFragment.equals(CHAT_FRAGMENT_TAG)) {
-            if (getFragment(SEARCH_USER_FRAGMENT_TAG) == searchFragment) {
+            if (getFragment(SEARCH_USER_FRAGMENT_TAG) == searchFragment && searchFragment != null) {
                 Fragment fragment = getFragment(SEARCH_USER_FRAGMENT_TAG);
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction()
@@ -174,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
             MainActivity.this.moveTaskToBack(true);
         }
     }
-
 
     private void hideAppBarAnimation() {
         appBarLayout.setVisibility(View.GONE);
@@ -194,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         if (getFragment(tag) != getFragment(currentFragment)) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.frame, fragment, tag)
                     .remove(getFragment(currentFragment))
                     .commit();
@@ -218,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
     @Override
     protected void onResume() {
         myApp.setCurrentActivity(this);
+        myApp.setOnline();
         super.onResume();
     }
 
