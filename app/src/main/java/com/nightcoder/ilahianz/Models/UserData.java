@@ -12,7 +12,7 @@ public class UserData {
     private String category;
     private String search;
     private String status;
-    private String lastSeen;
+    private double lastSeen;
     private String email;
     private String birthday;
     private String birthYear;
@@ -44,7 +44,7 @@ public class UserData {
 
     public UserData(String username, String id, String imageURL, String className, String gender,
                     String nickname, String category, String search, String status,
-                    String lastSeen, String email, String birthday,
+                    double lastSeen, String email, String birthday,
                     String birthYear, String birthMonth,
                     String description, String lastSeenPrivacy,
                     String locationPrivacy, String phonePrivacy,
@@ -221,11 +221,11 @@ public class UserData {
         this.status = status;
     }
 
-    public String getLastSeen() {
+    public double getLastSeen() {
         return lastSeen;
     }
 
-    public void setLastSeen(String lastSeen) {
+    public void setLastSeen(double lastSeen) {
         this.lastSeen = lastSeen;
     }
 

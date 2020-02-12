@@ -38,7 +38,7 @@ public class MyApp extends Application {
     public void setOnline() {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(KEY_STATUS, "Active");
-        hashMap.put(KEY_LAST_SEEN_DATE, "Active");
+        hashMap.put(KEY_LAST_SEEN_DATE, ServerValue.TIMESTAMP);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(MemorySupports.getUserInfo(getCurrentActivity(), KEY_ID));
         reference.child("status").onDisconnect().setValue("Offline");

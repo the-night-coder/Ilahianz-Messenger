@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,7 +25,6 @@ import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.EventsFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.NoticeFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.SearchFragment;
-import com.nightcoder.ilahianz.Services.BackService;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
@@ -111,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         initViews();
         initInterface();
         init();
-
-        startService(new Intent(this, BackService.class));
 
     }
 

@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteException;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,12 +32,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.Adapters.MessageAdapter;
 import com.nightcoder.ilahianz.Databases.ChatDBHelper;
 import com.nightcoder.ilahianz.Listeners.DatabaseListener.DataChangeCallbacks;
 import com.nightcoder.ilahianz.Models.Chats;
-import com.nightcoder.ilahianz.Services.BackService;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
@@ -47,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.IS_DELIVERED;
 import static com.nightcoder.ilahianz.Literals.StringConstants.IS_SEEN;
@@ -199,9 +201,21 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                     Log.d(TAG, "UPDATING SEND_MESSAGE");
                     mp = MediaPlayer.create(MessagingActivity.this, R.raw.tik);
                     mp.start();
+                    createChatList(userId, myId, Objects.requireNonNull(message.get(MESSAGE)).toString());
                 }
             }
         });
+    }
+
+    private void createChatList(String uid, String id, String lMessage) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList").child(uid);
+        HashMap<String, Object> hashMap = new HashMap<>();
+
+        hashMap.put("time", ServerValue.TIMESTAMP);
+        hashMap.put("id", id);
+        hashMap.put("lastMessage", lMessage);
+
+        reference.child(id).setValue(hashMap);
     }
 
     private ValueEventListener checkMessage = new ValueEventListener() {
