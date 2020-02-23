@@ -39,6 +39,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.Fragments.ForgotPasswordFragment;
 import com.nightcoder.ilahianz.Fragments.LoadingFragment;
@@ -261,12 +262,10 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             assert firebaseUser != null;
                             String uId = firebaseUser.getUid();
                             reference = FirebaseDatabase.getInstance().getReference("Users").child(uId);
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.US);
-                            Log.d("Time", simpleDateFormat.format(new Date()));
                             hashMap.put(KEY_LAST_SEEN_PRIVACY, EVERYONE);
                             hashMap.put(KEY_ID, uId);
                             hashMap.put(KEY_STATUS, OFFLINE);
-                            hashMap.put(KEY_LAST_SEEN_DATE, simpleDateFormat.format(new Date()));
+                            hashMap.put(KEY_LAST_SEEN_DATE, ServerValue.TIMESTAMP);
                             hashMap.put(KEY_PROFILE_PRIVACY, EVERYONE);
                             hashMap.put(KEY_LOCATION_PRIVACY, EVERYONE);
                             hashMap.put(KEY_EMAIL_PRIVACY, EVERYONE);
@@ -282,7 +281,7 @@ public class SignActivity extends AppCompatActivity implements SignInFragmentLis
                             hashMap.put(KEY_NICKNAME, NOT_PROVIDED);
                             hashMap.put(KEY_BLOOD_DONATE, NOT_PROVIDED);
                             hashMap.put(KEY_BLOOD_TYPE, NOT_PROVIDED);
-                            simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.US);
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.US);
                             hashMap.put(KEY_JOIN_DATE, simpleDateFormat.format(new Date()));
 
                             //debug

@@ -29,8 +29,8 @@ import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
-import com.nightcoder.ilahianz.Listeners.SignActivityListeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.Listeners.QRCodeListener;
+import com.nightcoder.ilahianz.Listeners.SignActivityListeners.RegisterFragmentListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.Graphics;
 import com.nightcoder.ilahianz.Supports.Network;
@@ -228,7 +228,7 @@ public class RegisterFragment extends Fragment implements QRCodeListener {
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                if (categoryText.equals("Student")) {
+                if (categoryText != null && categoryText.equals("Student")) {
                     student.setChecked(true);
                     registerButton.setText(getResources().getString(R.string.create_account));
                 }

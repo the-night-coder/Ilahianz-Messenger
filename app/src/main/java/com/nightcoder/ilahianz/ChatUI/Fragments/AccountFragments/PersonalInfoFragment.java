@@ -30,18 +30,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nightcoder.ilahianz.BloodDonationActivity;
 import com.nightcoder.ilahianz.Listeners.ProfileActivity.EditInfoListener;
+import com.nightcoder.ilahianz.Listeners.ProfileActivity.EventChangeListener;
+import com.nightcoder.ilahianz.Listeners.ProfileActivity.PersonalInfoFragmentListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
-import com.nightcoder.ilahianz.Supports.Network;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 
 import java.util.Calendar;
@@ -66,7 +64,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.NOT_PROVIDED;
 import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
 
 
-public class PersonalInfoFragment extends Fragment {
+public class PersonalInfoFragment extends Fragment implements EventChangeListener {
 
     public PersonalInfoFragment(Context mContext) {
         this.mContext = mContext;
@@ -84,6 +82,7 @@ public class PersonalInfoFragment extends Fragment {
     private LinearLayout bloodDonateProfile;
     private TextView bloodGroup;
     private EditInfoListener callback;
+    private PersonalInfoFragmentListener profileEditListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,6 +108,7 @@ public class PersonalInfoFragment extends Fragment {
         editNickname.setOnClickListener(editListener);
         editProfileImage.setOnClickListener(editListener);
         participateButton.setOnClickListener(editListener);
+        editProfileImage.setOnClickListener(editListener);
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @SuppressLint("SetTextI18n")
@@ -175,6 +175,9 @@ public class PersonalInfoFragment extends Fragment {
                     } else {
                         bloodDonationForm();
                     }
+                    break;
+                case R.id.edit_profile_image:
+                    profileEditListener.onProfileEdit();
                     break;
             }
         }
@@ -337,5 +340,11 @@ public class PersonalInfoFragment extends Fragment {
         super.onAttach(context);
         Activity activity = (Activity) context;
         callback = (EditInfoListener) activity;
+        profileEditListener = (PersonalInfoFragmentListener) activity;
+    }
+
+    @Override
+    public void onDataChange() {
+        setUserData();
     }
 }

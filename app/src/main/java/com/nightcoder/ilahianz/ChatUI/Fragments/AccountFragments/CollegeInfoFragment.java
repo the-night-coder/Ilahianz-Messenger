@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.nightcoder.ilahianz.Listeners.ProfileActivity.EditInfoListener;
+import com.nightcoder.ilahianz.Listeners.ProfileActivity.EventChangeListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
@@ -40,7 +41,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_PH_NUMBER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
 
 
-public class CollegeInfoFragment extends Fragment {
+public class CollegeInfoFragment extends Fragment implements EventChangeListener {
 
     public CollegeInfoFragment(Context mContext) {
         this.mContext = mContext;
@@ -169,4 +170,8 @@ public class CollegeInfoFragment extends Fragment {
         inputMethod.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
+    @Override
+    public void onDataChange() {
+        setUserData();
+    }
 }

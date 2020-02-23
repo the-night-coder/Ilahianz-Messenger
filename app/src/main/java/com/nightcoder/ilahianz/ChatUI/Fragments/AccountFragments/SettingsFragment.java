@@ -12,12 +12,13 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.nightcoder.ilahianz.Listeners.ProfileActivity.EventChangeListener;
 import com.nightcoder.ilahianz.R;
 import com.nightcoder.ilahianz.SignActivity;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements EventChangeListener {
 
     public SettingsFragment(Context mContext) {
         this.mContext = mContext;
@@ -63,4 +64,8 @@ public class SettingsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDataChange() {
+        
+    }
 }

@@ -160,5 +160,8 @@
         "Send feedback to the developer and also you can suggest new ideas for this platform"
         "We make it possible soon. Thanks :)"
     </string>
+    <string name="remove_photo">Remove Photo</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 
 </resources>

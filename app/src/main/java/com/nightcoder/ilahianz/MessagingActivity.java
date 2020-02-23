@@ -11,11 +11,13 @@ import android.database.sqlite.SQLiteException;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -73,7 +75,8 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
     private RecyclerView recyclerView;
     private TextView status;
     protected ChatDBHelper chatDBHelper;
-    private ImageButton sentButton, emojiButton;
+    private ImageButton sentButton, backButton,
+            emojiButton, cameraButton, attachButton;
     private EmojiEditText message;
     private MediaPlayer mp;
     private final String TAG = "MESSAGE_ACTIVITY";
@@ -102,25 +105,31 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                     emojiPopup.dismiss();
                     emojiButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_insert_emoticon_black_24dp));
                     break;
-                case R.id.btn_sent: {
-                    if (!String.valueOf(message.getText()).trim().isEmpty()) {
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put(SENDER, myId);
-                        hashMap.put(RECEIVER, userId);
-                        hashMap.put(REFERENCE, "null");
-                        hashMap.put(IS_SEEN, false);
-                        hashMap.put(IS_DELIVERED, false);
-                        hashMap.put(IS_SENT, false);
-                        hashMap.put(LINK, "null");
-                        hashMap.put(MESSAGE, String.valueOf(message.getText()).trim());
-                        sendMessage(hashMap, MESSAGE_LINK);
-                    }
-                    message.setText("");
+                case R.id.btn_sent:
+                    getMessage();
                     break;
-                }
+                case R.id.back_btn:
+                    onBackPressed();
+                    break;
             }
         }
     };
+
+    private void getMessage() {
+        if (!String.valueOf(message.getText()).trim().isEmpty()) {
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put(SENDER, myId);
+            hashMap.put(RECEIVER, userId);
+            hashMap.put(REFERENCE, "null");
+            hashMap.put(IS_SEEN, false);
+            hashMap.put(IS_DELIVERED, false);
+            hashMap.put(IS_SENT, false);
+            hashMap.put(LINK, "null");
+            hashMap.put(MESSAGE, String.valueOf(message.getText()).trim());
+            sendMessage(hashMap, MESSAGE_LINK);
+        }
+        message.setText("");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +146,9 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         toolbarContainer.setOnClickListener(clickListener);
         emojiButton.setOnClickListener(clickListener);
         sentButton.setOnClickListener(clickListener);
+        attachButton.setOnClickListener(clickListener);
+        cameraButton.setOnClickListener(clickListener);
+        backButton.setOnClickListener(clickListener);
 
     }
 
@@ -147,6 +159,9 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         status = findViewById(R.id.status);
         recyclerView = findViewById(R.id.recycler_view);
         toolbarContainer = findViewById(R.id.toolbar_container);
+        cameraButton = findViewById(R.id.camera_btn);
+        attachButton = findViewById(R.id.attach_btn);
+        backButton = findViewById(R.id.back_btn);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);
@@ -178,6 +193,45 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         chatReference = FirebaseDatabase.getInstance()
                 .getReference(KEY_CHATS);
         chatReference.addValueEventListener(checkMessage);
+
+        message.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (count == 0 && s.toString().trim().isEmpty()) {
+                    sentButtonAnimation(R.drawable.ic_mic_black_24dp);
+                    cameraButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+                    cameraButton.setVisibility(View.VISIBLE);
+                    attachButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+                    attachButton.setVisibility(View.VISIBLE);
+                } else if (before == 0) {
+                    sentButtonAnimation(R.drawable.ic_send_black_24dp);
+                    cameraButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+                    cameraButton.setVisibility(View.GONE);
+                    attachButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+                    attachButton.setVisibility(View.GONE);
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+    }
+
+    private void sentButtonAnimation(int drawable) {
+        sentButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        sentButton.setVisibility(View.INVISIBLE);
+        sentButton.setImageDrawable(getResources().getDrawable(drawable));
+        sentButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        sentButton.setVisibility(View.VISIBLE);
     }
 
     private void sendMessage(final HashMap<String, Object> message, String link) {
@@ -442,6 +496,13 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
 //        assert notificationManager != null;
 //        notificationManager.notify(1, b.build());
 //    }
+}
+
+interface MessageListener {
+
+    void onMessageType();
+
+    void onMessageClear();
 }
 
 
