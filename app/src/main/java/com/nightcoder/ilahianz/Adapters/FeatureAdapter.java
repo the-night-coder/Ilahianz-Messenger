@@ -10,12 +10,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nightcoder.ilahianz.BloodConsoleActivity;
 import com.nightcoder.ilahianz.Models.FeatureModel;
+import com.nightcoder.ilahianz.NoticeBoardActivity;
 import com.nightcoder.ilahianz.R;
 
 import java.util.List;
@@ -53,6 +55,14 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
                 switch (data.getImageId()) {
                     case R.mipmap.blood_transfusion:
                         mContext.startActivity(new Intent(mContext, BloodConsoleActivity.class));
+                        break;
+                    case R.mipmap.megaphone:
+                        mContext.startActivity(new Intent(mContext, NoticeBoardActivity.class));
+                        break;
+
+                    default:
+                        Toast.makeText(mContext, "This feature Coming soon", Toast.LENGTH_SHORT).show();
+                        
                 }
             }
         });

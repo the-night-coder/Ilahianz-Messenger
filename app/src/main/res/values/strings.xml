@@ -163,5 +163,7 @@
     <string name="remove_photo">Remove Photo</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
+    <string name="notice_board">Notice Board</string>
+    <string name="all">All</string>
 
 </resources>
