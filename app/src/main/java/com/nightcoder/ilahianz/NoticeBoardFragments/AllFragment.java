@@ -32,9 +32,8 @@ public class AllFragment extends Fragment implements RefershListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_all, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        recyclerView.setHasFixedSize(true);
         return view;
     }
 
