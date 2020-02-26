@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical"
     tools:context=".NoticeBoardActivity">
@@ -32,6 +33,7 @@
                     android:textSize="18sp" />
 
                 <ImageButton
+                    android:id="@+id/refresh_button"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
@@ -47,8 +49,24 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/blue_dark" />
+            android:layout_height="50dp"
+            android:elevation="5dp"
+            android:foregroundGravity="center"
+            android:textAlignment="center"
+            app:layout_collapseMode="pin"
+            app:tabGravity="fill"
+            app:tabIndicator="@drawable/tab_shape_indicator"
+            app:tabIndicatorAnimationDuration="500"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorFullWidth="false"
+            app:tabTextColor="#dddd"
+            app:tabIndicatorGravity="bottom"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabRippleColor="@color/transparent_blue"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
 
