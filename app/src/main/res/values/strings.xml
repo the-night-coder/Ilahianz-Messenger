@@ -160,6 +160,12 @@
         "Send feedback to the developer and also you can suggest new ideas for this platform"
         "We make it possible soon. Thanks :)"
     </string>
+    <string name="notice_instruction">
+        Notices are a means of formal communication targeted at a particular person or a group of persons.\n
+        It is like a news item informing such person or persons of some important event. \n
+        This can be an invitation to a meeting, an announcement of any event, to issue certain instructions, make appeals etc.\n
+        Note: This Notice responsible to you.
+    </string>
     <string name="remove_photo">Remove Photo</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
@@ -174,5 +180,6 @@
     <string name="this_notice_for">This Notice for</string>
     <string name="target_to_a_department">Target to a Department</string>
     <string name="subject">Subject</string>
+    <string name="attachment_not_found">Attachment not found</string>
 
 </resources>

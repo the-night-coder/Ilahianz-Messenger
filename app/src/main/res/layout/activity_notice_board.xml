@@ -11,25 +11,20 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
+        android:background="@color/white"
         android:layout_height="wrap_content">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="?android:actionBarSize"
-            android:background="@color/blue_dark">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="?android:actionBarSize"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:fontFamily="@font/roboto_bold"
                     android:text="@string/notice_board"
-                    android:textColor="@color/white"
                     android:textSize="18sp" />
 
                 <ImageButton
@@ -41,10 +36,9 @@
                     android:layout_marginEnd="10dp"
                     android:background="@drawable/button_material_circle"
                     android:src="@drawable/ic_cached_black_24dp"
-                    android:tint="@color/white" />
+                    android:tint="@color/blue_dark" />
 
             </RelativeLayout>
-        </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -57,14 +51,14 @@
             app:tabGravity="fill"
             app:tabIndicator="@drawable/tab_shape_indicator"
             app:tabIndicatorAnimationDuration="500"
-            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorColor="@color/blue_dark"
             app:tabIndicatorFullWidth="false"
-            app:tabTextColor="#dddd"
+            app:tabTextColor="#9E9E9E"
             app:tabIndicatorGravity="bottom"
             app:tabIndicatorHeight="3dp"
             app:tabMode="fixed"
             app:tabRippleColor="@color/transparent_blue"
-            app:tabSelectedTextColor="@color/white"
+            app:tabSelectedTextColor="@color/blue_dark"
             app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget" />
 
     </com.google.android.material.appbar.AppBarLayout>

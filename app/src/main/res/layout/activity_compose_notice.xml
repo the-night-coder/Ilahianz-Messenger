@@ -1,38 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ComposeNoticeActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        android:background="@color/blue_dark">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_person" />
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:elevation="5dp"
+        android:gravity="center">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/roboto_bold"
                 android:text="@string/compose_notice"
-                android:textColor="@color/white"
                 android:textSize="18sp" />
         </LinearLayout>
-    </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -49,6 +41,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="17sp"
                 android:fontFamily="@font/roboto_regular"
                 android:text="@string/attach_file" />
 
@@ -139,6 +132,68 @@
                     android:inputType="textMultiLine"
                     android:padding="16dp" />
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/material_grey_outline_rect"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/attach_image"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_margin="6dp"
+                            android:background="@drawable/material_circle_option"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            android:src="@mipmap/attach" />
+
+                        <TextView
+                            android:id="@+id/attach_file_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_toEndOf="@id/attach_image"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="@string/attachment_not_found"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/attach_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/attach_file_name"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toEndOf="@id/attach_image"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="102kb"
+                            android:textColor="@color/blue_dark" />
+
+
+                    </RelativeLayout>
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/online_dot"
+                        android:src="@drawable/ic_close_black_24dp"
+                        android:tint="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -168,9 +223,21 @@
                         android:fontFamily="@font/roboto_regular"
                         android:text="@string/target_to_a_department" />
                 </RadioGroup>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/personal_info_outline"
+                    android:fontFamily="@font/roboto_regular"
+                    android:padding="10dp"
+                    android:text="@string/notice_instruction" />
             </LinearLayout>
 
         </ScrollView>
+
 
         <Button
             android:id="@+id/compose_btn"
@@ -182,6 +249,12 @@
             android:text="@string/compose_notice"
             android:textAllCaps="false"
             android:textColor="@color/blue_dark" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@id/compose_btn"
+            android:background="@color/view_color" />
 
     </RelativeLayout>
 

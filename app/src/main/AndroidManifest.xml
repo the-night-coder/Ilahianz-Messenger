@@ -27,12 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".ComposeNoticeActivity"
-            android:theme="@style/NoticeStyle" />
-        <activity
-            android:name=".NoticeBoardActivity"
-            android:theme="@style/NoticeStyle" />
+        <activity android:name=".ComposeNoticeActivity" />
+        <activity android:name=".NoticeBoardActivity" />
         <activity android:name=".BloodConsoleActivity" />
         <activity
             android:name=".ProfileImageViewActivity"
