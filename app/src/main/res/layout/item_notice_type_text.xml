@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:background="@drawable/material_loading_dialog_bg"
+    android:background="@drawable/material_grey_outline_rect"
     android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -14,7 +14,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:src="@drawable/ic_person" />
+        android:src="@mipmap/ppro" />
 
     <TextView
         android:id="@+id/username"
@@ -26,7 +26,7 @@
         android:fontFamily="@font/roboto_bold"
         android:text="@string/username"
         android:textColor="@color/black"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/time"
@@ -51,20 +51,32 @@
         android:background="@color/view_color" />
 
     <TextView
-        android:id="@+id/content"
+        android:id="@+id/contents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/view"
         android:layout_marginTop="6dp"
         android:fontFamily="@font/roboto_regular"
         android:paddingStart="20dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
         android:paddingEnd="20dp"
         android:text="@string/blood_donation_banner_quotes" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/bottom_view"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/view_color" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:id="@+id/bottom_view"
         android:layout_height="wrap_content"
-        android:layout_below="@id/content"
+        android:layout_below="@id/contents"
+        android:layout_margin="10dp"
         android:layout_marginTop="10dp">
 
         <LinearLayout
@@ -78,13 +90,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
                 android:src="@drawable/ic_thumb_up_black_24dp"
                 android:tint="#A7A7A7" />
 
             <TextView
+                android:id="@+id/thanks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -105,8 +119,9 @@
             app:layout_constraintVertical_bias="0.0">
 
             <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
                 android:src="@drawable/ic_comment_black_24dp"
                 android:tint="#A7A7A7" />
 
@@ -129,9 +144,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
                 android:src="@drawable/ic_reply_black_24dp"
                 android:tint="#A7A7A7" />
 

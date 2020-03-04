@@ -1,5 +1,6 @@
 package com.nightcoder.ilahianz.NoticeBoardFragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,14 +27,21 @@ public class AllFragment extends Fragment implements RefershListener {
 
     private RecyclerView recyclerView;
 
+    private Context mContext;
+
+    public AllFragment(Context context) {
+        this.mContext = context;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_all, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        setContents();
         return view;
     }
 
@@ -49,8 +57,9 @@ public class AllFragment extends Fragment implements RefershListener {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Notice notice = snapshot.getValue(Notice.class);
                     notices.add(notice);
+                    Log.d("Notice", "added");
                 }
-                NoticeAdapter noticeAdapter = new NoticeAdapter(notices, getContext());
+                NoticeAdapter noticeAdapter = new NoticeAdapter(notices, mContext);
                 recyclerView.setAdapter(noticeAdapter);
             }
 

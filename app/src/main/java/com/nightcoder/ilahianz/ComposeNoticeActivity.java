@@ -384,6 +384,7 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 attachType = TYPE_IMAGE;
                 assert uri != null;
+                removeAttach();
                 setAttach(uri);
                 attachUri = uri;
                 //attachFile = new File(uri.toString());
@@ -399,10 +400,18 @@ public class ComposeNoticeActivity extends AppCompatActivity {
             }
 
         } else if (requestCode == DOC_REQUEST && resultCode == RESULT_OK && data != null) {
+            removeAttach();
             setAttach(data.getData());
             attachUri = data.getData();
+        } else if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            attachType = TYPE_IMAGE;
+            assert uri != null;
+            removeAttach();
+            attachUri = uri;
             try {
-                attachFile = FileUtils.from(mContext, data.getData());
+                attachFile = FileUtils.from(mContext, uri);
+                compressImage(attachFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }

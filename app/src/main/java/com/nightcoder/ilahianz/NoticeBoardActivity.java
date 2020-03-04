@@ -35,9 +35,9 @@ public class NoticeBoardActivity extends AppCompatActivity {
 
         tab.setupWithViewPager(viewPager);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new AllFragment(), "All");
-        viewPagerAdapter.addFragment(new AllFragment(), "Your Notice");
-        viewPagerAdapter.addFragment(new AllFragment(), "College");
+        viewPagerAdapter.addFragment(new AllFragment(this), "All");
+        viewPagerAdapter.addFragment(new AllFragment(this), "Your Notice");
+        viewPagerAdapter.addFragment(new AllFragment(this), "College");
         refershListener = (RefershListener) viewPagerAdapter.getFragment(1);
 
         viewPager.setAdapter(viewPagerAdapter);
