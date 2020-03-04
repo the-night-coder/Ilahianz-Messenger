@@ -1,8 +1,10 @@
 package com.nightcoder.ilahianz.Utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,10 +15,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.util.Objects;
 
 public class FileUtils {
     private static final int EOF = -1;
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+    private static final String TAG = "File Utils";
 
     private FileUtils() {
 
@@ -103,6 +108,53 @@ public class FileUtils {
         }
         return count;
     }
+
+    public static class FileDetail {
+
+        public String fileName;
+        public long fileSize;
+
+        FileDetail() {
+
+        }
+    }
+
+    public static String getFileSize(long size) {
+        if (size <= 0)
+            return "0";
+
+        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public static FileDetail getFileDetailFromUri(final Context context, final Uri uri) {
+        FileDetail fileDetail = null;
+        if (uri != null) {
+            fileDetail = new FileDetail();
+            // File Scheme.
+            if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+                File file = new File(Objects.requireNonNull(uri.getPath()));
+                fileDetail.fileName = file.getName();
+                fileDetail.fileSize = file.length();
+            }
+            // Content Scheme.
+            else if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+                Cursor returnCursor =
+                        context.getContentResolver().query(uri, null, null, null, null);
+                if (returnCursor != null && returnCursor.moveToFirst()) {
+                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                    fileDetail.fileName = returnCursor.getString(nameIndex);
+                    fileDetail.fileSize = returnCursor.getLong(sizeIndex);
+                    returnCursor.close();
+                }
+            }
+        }
+        return fileDetail;
+    }
+
 
     /*public static void saveProImage(Context context, ImageView imageView, User user) {
         BitmapDrawable draw = (BitmapDrawable) imageView.getDrawable();

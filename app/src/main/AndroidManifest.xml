@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.nightcoder.ilahianz">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -26,7 +25,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        android:requestLegacyExternalStorage="true"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="q">
         <activity android:name=".ComposeNoticeActivity" />
         <activity android:name=".NoticeBoardActivity" />
         <activity android:name=".BloodConsoleActivity" />
@@ -63,6 +64,10 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity android:name=".QRCodeActivity" />
         <activity

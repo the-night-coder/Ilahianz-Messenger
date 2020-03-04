@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ComposeNoticeActivity">
@@ -30,80 +31,66 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/option_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="@string/attach_file" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-                <ImageButton
-                    android:id="@+id/audio_option"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/material_circle_option"
-                    android:padding="10dp"
-                    android:scaleType="fitCenter"
-                    android:src="@mipmap/mic" />
-
-                <ImageButton
-                    android:id="@+id/image_option"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/material_circle_option"
-                    android:padding="10dp"
-                    android:scaleType="fitCenter"
-                    android:src="@mipmap/photo" />
-
-                <ImageButton
-                    android:id="@+id/doc_option"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/material_circle_option"
-                    android:padding="10dp"
-                    android:scaleType="fitCenter"
-                    android:src="@mipmap/doc" />
-
-                <ImageButton
-                    android:id="@+id/camera_option"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/material_circle_option"
-                    android:padding="10dp"
-                    android:scaleType="fitCenter"
-                    android:src="@mipmap/photo_camera" />
-            </LinearLayout>
-
-        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/compose_btn"
-            android:layout_below="@id/option_container">
+            android:layout_above="@id/compose_btn">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/option_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/audio_option"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/material_circle_option"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/mic" />
+
+                    <ImageButton
+                        android:id="@+id/image_option"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/material_circle_option"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/photo" />
+
+                    <ImageButton
+                        android:id="@+id/doc_option"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/material_circle_option"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/doc" />
+
+                    <ImageButton
+                        android:id="@+id/camera_option"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/material_circle_option"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/photo_camera" />
+                </LinearLayout>
+
 
                 <EditText
                     android:id="@+id/subject"
@@ -116,6 +103,19 @@
                     android:hint="@string/subject"
                     android:inputType="textMultiLine"
                     android:padding="10dp" />
+
+                <ImageView
+                    android:id="@+id/attach_image_file"
+                    android:layout_width="wrap_content"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="10dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
 
 
                 <EditText
@@ -133,6 +133,7 @@
                     android:padding="16dp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/attach_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
@@ -176,13 +177,15 @@
                             android:layout_marginTop="2dp"
                             android:layout_toEndOf="@id/attach_image"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="102kb"
-                            android:textColor="@color/blue_dark" />
+                            android:text="---"
+                            android:textColor="@color/blue_dark"
+                            tools:ignore="HardcodedText" />
 
 
                     </RelativeLayout>
 
                     <ImageButton
+                        android:id="@+id/attach_file_close_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
@@ -193,15 +196,16 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:fontFamily="@font/roboto_bold"
+                    android:fontFamily="@font/roboto_regular"
                     android:text="@string/this_notice_for"
                     android:textColor="@color/blue_dark"
-                    android:textSize="17sp" />
+                    android:textSize="16sp" />
 
                 <RadioGroup
                     android:id="@+id/notice_option"
@@ -212,12 +216,14 @@
                     android:orientation="horizontal">
 
                     <RadioButton
+                        android:id="@+id/btn_all"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
                         android:text="@string/all" />
 
                     <RadioButton
+                        android:id="@+id/btn_target"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_regular"
@@ -232,7 +238,7 @@
                     android:layout_marginTop="20dp"
                     android:background="@drawable/personal_info_outline"
                     android:fontFamily="@font/roboto_regular"
-                    android:padding="10dp"
+                    android:padding="16dp"
                     android:text="@string/notice_instruction" />
             </LinearLayout>
 
