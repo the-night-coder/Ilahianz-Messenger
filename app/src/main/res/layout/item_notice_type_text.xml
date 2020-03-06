@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:id="@+id/container"
+    android:layout_marginStart="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="5dp"
     android:background="@drawable/material_grey_outline_rect"
     android:orientation="vertical">
 
@@ -51,14 +55,27 @@
         android:background="@color/view_color" />
 
     <TextView
-        android:id="@+id/contents"
+        android:id="@+id/subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/view"
+        android:fontFamily="@font/roboto_bold"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/subject"
+        android:textColor="@color/blue_dark" />
+
+    <TextView
+        android:id="@+id/contents"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/subject"
+        android:textColor="@color/black"
         android:layout_marginTop="6dp"
+        android:textSize="16sp"
         android:fontFamily="@font/roboto_regular"
         android:paddingStart="20dp"
-        android:paddingTop="5dp"
         android:paddingBottom="10dp"
         android:paddingEnd="20dp"
         android:text="@string/blood_donation_banner_quotes" />
@@ -71,11 +88,48 @@
         android:layout_marginEnd="10dp"
         android:background="@color/view_color" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/react_con"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/view_color" />
+
+    <RelativeLayout
+        android:id="@+id/react_con"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contents">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:padding="5dp"
+            android:text="1k Thanks"
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:padding="5dp"
+            android:text="10 Comments"
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:id="@+id/bottom_view"
         android:layout_height="wrap_content"
-        android:layout_below="@id/contents"
+        android:layout_below="@id/react_con"
         android:layout_margin="10dp"
         android:layout_marginTop="10dp">
 
@@ -91,6 +145,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
+                android:id="@+id/thanks_button_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
@@ -102,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/roboto_bold"
                 android:text="@string/thanks" />
         </LinearLayout>
 
@@ -129,7 +184,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/roboto_bold"
                 android:text="@string/comment" />
         </LinearLayout>
 
@@ -155,7 +210,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/roboto_bold"
                 android:text="@string/reply" />
         </LinearLayout>
 
