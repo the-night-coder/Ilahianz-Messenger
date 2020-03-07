@@ -181,5 +181,6 @@
     <string name="target_to_a_department">Target to a Department</string>
     <string name="subject">Subject</string>
     <string name="attachment_not_found">Attachment not found</string>
+    <string name="write_comment">Write Comment...</string>
 
 </resources>
