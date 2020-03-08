@@ -35,7 +35,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="10dp"
                     android:background="@drawable/button_material_circle"
-                    android:src="@drawable/ic_cached_black_24dp"
+                    android:src="@drawable/ic_star_black_24dp"
                     android:tint="@color/blue_dark" />
 
             </RelativeLayout>

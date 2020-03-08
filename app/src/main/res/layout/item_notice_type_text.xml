@@ -20,24 +20,62 @@
         android:layout_marginTop="10dp"
         android:src="@mipmap/ppro" />
 
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
+    <ImageButton
+        android:id="@+id/star_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_star_border_black_24dp"
+        android:tag="NOT_STARRED" />
+
+    <LinearLayout
+        android:id="@+id/cont"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
+        android:layout_toStartOf="@id/star_button"
         android:layout_toEndOf="@id/profile_image"
-        android:fontFamily="@font/roboto_bold"
-        android:text="========"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        tools:ignore="HardcodedText" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_bold"
+            android:text="========"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/ic_play_arrow_black_24dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/target"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/item_content_background"
+            android:fontFamily="@font/roboto_bold"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="All"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/username"
+        android:layout_below="@id/cont"
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@id/profile_image"
         android:fontFamily="@font/roboto_regular"
@@ -57,13 +95,17 @@
 
     <TextView
         android:id="@+id/subject"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:textAlignment="center"
+        android:background="@drawable/material_grey_outline_rect"
         android:layout_below="@id/view"
         android:fontFamily="@font/roboto_bold"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:paddingStart="10dp"
-        android:paddingTop="10dp"
         android:paddingEnd="10dp"
         android:text="@string/subject"
         android:textColor="#16701B" />
@@ -73,16 +115,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/subject"
-        android:layout_margin="5dp"
         android:textColor="@color/black"
+        android:layout_margin="5dp"
+        android:background="@drawable/item_content_background"
+        android:gravity="center"
         android:paddingTop="5dp"
         android:textAlignment="center"
         android:fontFamily="@font/roboto_regular"
+        android:minHeight="80dp"
         android:paddingStart="20dp"
         android:paddingBottom="10dp"
-        android:textSize="20sp"
+        android:text="knfcdnzkvzlkjnv CKNxn C>MNlkvxz ZKJNVNcxzmnv xzvmnzv "
         android:paddingEnd="20dp"
-        android:text="@string/blood_donation_banner_quotes" />
+        android:textSize="17sp"
+        tools:ignore="HardcodedText" />
 
     <View
         android:layout_width="match_parent"
@@ -97,27 +143,26 @@
         android:id="@+id/react_con"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
         android:layout_below="@id/contents">
 
         <TextView
+            android:id="@+id/thanks_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:fontFamily="@font/roboto_regular"
-            android:padding="5dp"
-            android:text="143 Thanks"
             android:textColor="@color/blue_dark"
+            android:paddingBottom="5dp"
             tools:ignore="HardcodedText" />
 
         <TextView
+            android:id="@+id/comment_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:paddingBottom="5dp"
             android:layout_marginEnd="10dp"
             android:fontFamily="@font/roboto_regular"
-            android:padding="5dp"
-            android:text="10 Comments"
             android:textColor="@color/blue_dark"
             tools:ignore="HardcodedText" />
 
@@ -145,6 +190,7 @@
             <ImageView
                 android:id="@+id/thanks_button_view"
                 android:layout_width="wrap_content"
+                android:tag="UNLIKE"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:scaleType="center"
@@ -156,6 +202,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
+                android:textColor="@color/dark_grey"
                 android:fontFamily="@font/roboto_bold"
                 android:text="@string/thanks" />
         </LinearLayout>

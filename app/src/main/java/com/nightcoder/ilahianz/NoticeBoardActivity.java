@@ -15,7 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.nightcoder.ilahianz.NoticeBoardFragments.AllFragment;
-import com.nightcoder.ilahianz.NoticeBoardFragments.RefershListener;
+import com.nightcoder.ilahianz.NoticeBoardFragments.FragmentListener;
 
 import java.util.ArrayList;
 
@@ -24,8 +24,9 @@ public class NoticeBoardActivity extends AppCompatActivity {
     private TabLayout tab;
     private ViewPager viewPager;
     private ImageButton composeButton;
-    private ImageButton refreshButtn;
-    RefershListener refershListener;
+    private ImageButton starredButton;
+
+    private FragmentListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +35,7 @@ public class NoticeBoardActivity extends AppCompatActivity {
         init();
 
         tab.setupWithViewPager(viewPager);
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new AllFragment(this), "All");
-        viewPagerAdapter.addFragment(new AllFragment(this), "Your Notice");
-        viewPagerAdapter.addFragment(new AllFragment(this), "College");
-        refershListener = (RefershListener) viewPagerAdapter.getFragment(1);
-
-        viewPager.setAdapter(viewPagerAdapter);
-
+        setTab();
         composeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,13 +43,38 @@ public class NoticeBoardActivity extends AppCompatActivity {
             }
         });
 
+        starredButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(NoticeBoardActivity.this, NoticeStarredActivity.class));
+            }
+        });
+
     }
+
+    private void setTab() {
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragment(new AllFragment(this), "All");
+        viewPagerAdapter.addFragment(new AllFragment(this), "Your Notice");
+        viewPagerAdapter.addFragment(new AllFragment(this), "College");
+
+        listener = (FragmentListener) viewPagerAdapter.getFragment(0);
+
+        viewPager.setAdapter(viewPagerAdapter);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        listener.onSyncData();
+    }
+
 
     private void init() {
         tab = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         composeButton = findViewById(R.id.compose_button);
-        refreshButtn = findViewById(R.id.refresh_button);
+        starredButton = findViewById(R.id.refresh_button);
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {

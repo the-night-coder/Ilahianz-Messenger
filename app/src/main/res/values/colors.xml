@@ -16,7 +16,6 @@
     <color name="blue_dark">#1A73E9</color>
     <color name="transparent_blue">#271A73E9</color>
     <color name="sky_blue">#64D0D4</color>
-    <color name="dark_grey">#5F5F5F</color>
     <color name="background_verify_fr">#677082</color>
     <color name="blue_transparent">#401A73E9</color>
     <color name="deep_blue">#00558B</color>
@@ -25,4 +24,6 @@
     <color name="button_bg_color">#192196F3</color>
     <color name="transparent_black">#A1000000</color>
     <color name="red_favorite">#D50000</color>
+    <color name="grey">#A7A7A7</color>
+    <color name="dark_grey">#5F5F5F</color>
 </resources>

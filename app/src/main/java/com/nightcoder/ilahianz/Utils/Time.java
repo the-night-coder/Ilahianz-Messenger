@@ -14,7 +14,7 @@ public class Time {
 
         String timeAgo = null;
 
-        String suffix = "Ago";
+        String suffix = "ago";
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
@@ -30,21 +30,21 @@ public class Time {
             long day = TimeUnit.MILLISECONDS.toDays(dateDiff);
 
             if (second < 60) {
-                timeAgo = second + " Seconds " + suffix;
+                timeAgo = second + " seconds " + suffix;
             } else if (minute < 60) {
-                timeAgo = minute + " Minutes " + suffix;
+                timeAgo = minute + " minutes " + suffix;
             } else if (hour < 24) {
-                timeAgo = hour + " Hours " + suffix;
+                timeAgo = hour + " hours " + suffix;
             } else if (day >= 7) {
                 if (day > 360) {
-                    timeAgo = (day / 30) + " Years " + suffix;
+                    timeAgo = (day / 30) + " years " + suffix;
                 } else if (day > 30) {
-                    timeAgo = (day / 360) + " Months " + suffix;
+                    timeAgo = (day / 360) + " months " + suffix;
                 } else {
-                    timeAgo = (day / 7) + " Week " + suffix;
+                    timeAgo = (day / 7) + " week " + suffix;
                 }
             } else {
-                timeAgo = day + " Days " + suffix;
+                timeAgo = day + " days " + suffix;
             }
 
         } catch (ParseException e) {

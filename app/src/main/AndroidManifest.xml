@@ -28,9 +28,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
-        <activity android:name=".CommentActivity"></activity>
+        <activity android:name=".NoticeStarredActivity" />
+        <activity android:name=".CommentActivity" />
         <activity android:name=".ComposeNoticeActivity" />
-        <activity android:name=".NoticeBoardActivity" />
+        <activity
+            android:name=".NoticeBoardActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".BloodConsoleActivity" />
         <activity
             android:name=".ProfileImageViewActivity"
