@@ -460,7 +460,6 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "PAUSED");
-        myApp.setOffline();
         clearReference();
         chatReference.removeEventListener(checkMessage);
         stateReference.removeEventListener(stateChangeListener);
@@ -471,7 +470,6 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         chatReference.removeEventListener(checkMessage);
         stateReference.removeEventListener(stateChangeListener);
         clearReference();
-        myApp.setOffline();
         super.onDestroy();
         Log.d(TAG, "DESTROYED");
     }

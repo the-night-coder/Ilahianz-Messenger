@@ -20,16 +20,21 @@ import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.Adapters.NoticeAdapter;
 import com.nightcoder.ilahianz.Models.Notice;
 import com.nightcoder.ilahianz.R;
+import com.nightcoder.ilahianz.Supports.MemorySupports;
 
 import java.util.ArrayList;
 
-public class AllFragment extends Fragment implements FragmentListener{
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
+
+public class MyNoticeFragment extends Fragment implements FragmentListener {
 
     private RecyclerView recyclerView;
 
     private Context mContext;
 
-    public AllFragment(Context context) {
+    private String id;
+
+    public MyNoticeFragment(Context context) {
         this.mContext = context;
     }
 
@@ -40,10 +45,8 @@ public class AllFragment extends Fragment implements FragmentListener{
         View view = inflater.inflate(R.layout.fragment_all, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        linearLayoutManager.setStackFromEnd(true);
-        linearLayoutManager.setReverseLayout(true);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        id = MemorySupports.getUserInfo(mContext, KEY_ID);
         setContents();
         return view;
     }
@@ -58,7 +61,9 @@ public class AllFragment extends Fragment implements FragmentListener{
                 notices.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Notice notice = snapshot.getValue(Notice.class);
-                    notices.add(notice);
+                    assert notice != null;
+                    if (id.equals(notice.getComposerId()))
+                        notices.add(notice);
                 }
                 NoticeAdapter noticeAdapter = new NoticeAdapter(notices, mContext);
                 recyclerView.setAdapter(noticeAdapter);

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:layout_gravity="bottom"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/material_loading_dialog_bg"
+    android:elevation="5dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/ic_info_black_24dp" />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_toEndOf="@id/icon"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Delete this Notification ?"
+        android:textColor="@color/black"
+        tools:ignore="HardcodedText" />
+
+    <ImageButton
+        android:id="@+id/option_delete"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:tint="@color/red_favorite"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_check_circle_blue_24dp" />
+
+</RelativeLayout>

@@ -23,7 +23,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.EventsFragment;
-import com.nightcoder.ilahianz.MainActivityFragments.NoticeFragment;
+import com.nightcoder.ilahianz.MainActivityFragments.NotificationFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.SearchFragment;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
                     heading.setText(R.string.search);
                     break;
                 case R.id.nav_favorite:
-                    changeFragment(new NoticeFragment(), HELP_FRAGMENT_TAG);
+                    changeFragment(new NotificationFragment(mContext), HELP_FRAGMENT_TAG);
                     heading.setText(R.string.notifications);
                     break;
             }
@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         initViews();
         initInterface();
         init();
-
     }
 
     private void init() {
@@ -149,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
                 .addToBackStack(CHAT_FRAGMENT_TAG)
                 .commit();
         currentFragment = SEARCH_USER_FRAGMENT_TAG;
+
         hideAppBarAnimation();
     }
 
@@ -195,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
                     .remove(getFragment(currentFragment))
                     .commit();
             currentFragment = tag;
+//            dataChangeListener = (DataChangeListener) fragment;
             listener.onFragmentChanged();
         }
     }

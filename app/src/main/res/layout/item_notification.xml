@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="5dp"
+    android:background="@drawable/item_content_background"
+    android:elevation="5dp"
+    android:minHeight="80dp"
+    android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@mipmap/ppro" />
+
+    <ImageView
+        android:id="@+id/notification_icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignEnd="@+id/profile_image"
+        android:layout_alignBottom="@+id/profile_image"
+        android:layout_marginEnd="-5dp"
+        android:layout_marginBottom="-5dp"
+        android:src="@drawable/comment" />
+
+    <com.vanniktech.emoji.EmojiTextView
+        android:id="@+id/message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@id/profile_image"
+        android:fontFamily="@font/roboto_regular"
+        android:padding="5dp"
+        android:text="Username"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        tools:ignore="HardcodedText" />
+
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@id/profile_image"
+        android:fontFamily="@font/roboto_regular"
+        android:text="1 hours ago"
+        android:textColor="@color/blue_dark"
+        tools:ignore="HardcodedText" />
+
+</RelativeLayout>

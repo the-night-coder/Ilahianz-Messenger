@@ -15,6 +15,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
         android:layout_width="45dp"
+        android:padding="2dp"
         android:layout_height="45dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
@@ -110,69 +111,68 @@
         android:text="@string/subject"
         android:textColor="#16701B" />
 
-    <TextView
-        android:id="@+id/contents"
+    <LinearLayout
+        android:id="@+id/contents_con"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/subject"
-        android:textColor="@color/black"
-        android:layout_margin="5dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="7dp"
         android:background="@drawable/item_content_background"
-        android:gravity="center"
-        android:paddingTop="5dp"
-        android:textAlignment="center"
-        android:fontFamily="@font/roboto_regular"
-        android:minHeight="80dp"
-        android:paddingStart="20dp"
-        android:paddingBottom="10dp"
-        android:text="knfcdnzkvzlkjnv CKNxn C>MNlkvxz ZKJNVNcxzmnv xzvmnzv "
-        android:paddingEnd="20dp"
-        android:textSize="17sp"
-        tools:ignore="HardcodedText" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@id/bottom_view"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="@color/view_color" />
-
-
-    <RelativeLayout
-        android:id="@+id/react_con"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/contents">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/thanks_count"
-            android:layout_width="wrap_content"
+            android:id="@+id/contents"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/blue_dark"
+            android:gravity="center"
+            android:minHeight="80dp"
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
             android:paddingBottom="5dp"
+            android:text="knfcdnzkvzlkjnv CKNxn C>MNlkvxz ZKJNVNcxzmnv xzvmnzv fhgdhczzjfghzbvnxbvxcvnbxnbv"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="17sp"
             tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/comment_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:paddingBottom="5dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/blue_dark"
-            tools:ignore="HardcodedText" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/react_con"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/thanks_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/blue_dark"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/comment_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/blue_dark"
+                tools:ignore="HardcodedText" />
+
+        </RelativeLayout>
+    </LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:id="@+id/bottom_view"
         android:layout_height="wrap_content"
-        android:layout_below="@id/react_con"
+        android:layout_below="@id/contents_con"
         android:layout_margin="10dp"
         android:layout_marginTop="10dp">
 
@@ -261,5 +261,56 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/comment_container"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/bottom_view"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="6dp">
+
+        <ImageButton
+            android:id="@+id/emoji_btn"
+            android:layout_width="30dp"
+            android:layout_centerVertical="true"
+            android:layout_height="30dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_insert_emoticon_black_24dp"
+            android:tint="@color/grey"
+            tools:layout_editor_absoluteX="10dp"
+            tools:layout_editor_absoluteY="3dp" />
+
+        <EditText
+            android:id="@+id/comment_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/btn_sent"
+            android:layout_toEndOf="@id/emoji_btn"
+            android:background="@drawable/item_content_background"
+            android:hint="type comment..."
+            android:padding="8dp"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            android:id="@+id/btn_sent"
+            android:layout_width="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_send_black_24dp"
+            android:tint="@color/blue_dark"
+            android:background="@android:color/transparent"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            tools:layout_editor_absoluteX="352dp"
+            tools:layout_editor_absoluteY="3dp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

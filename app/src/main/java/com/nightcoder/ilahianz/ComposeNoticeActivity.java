@@ -120,8 +120,8 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         Button cancel = dialog.findViewById(R.id.cancel_action);
         final ListView listView = dialog.findViewById(R.id.list);
         ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("Bachelor Of Computer Applications (BCA)");
-        arrayList.add("Bachelor Of Business Administrations (BBA)");
+        arrayList.add("BCA");
+        arrayList.add("BBA");
         arrayList.add("B.COM");
         arrayList.add("BA");
         arrayList.add("MCA");
@@ -367,6 +367,7 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Log.d("Notice", "Sent");
+                    onBackPressed();
                 }
             });
 

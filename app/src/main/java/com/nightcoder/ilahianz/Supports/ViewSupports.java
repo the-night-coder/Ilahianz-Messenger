@@ -50,6 +50,19 @@ public class ViewSupports {
         return dialog;
     }
 
+    public static Dialog materialSnackBarDialog(Context context, int id) {
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(id);
+        Window window = dialog.getWindow();
+        assert window != null;
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        window.setGravity(Gravity.BOTTOM);
+        window.setWindowAnimations(R.style.SnackBarAnimation);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        return dialog;
+    }
+
     public static Dialog materialLoadingDialog(Context context) {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.material_loading_dialog);
