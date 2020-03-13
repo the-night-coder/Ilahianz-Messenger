@@ -4,12 +4,22 @@ public class Comment {
 
     private String id;
     private String message;
+    private String key;
     private double timestamp;
 
-    public Comment(String id, String message, double timestamp) {
+    public Comment(String id, String message, String key, double timestamp) {
         this.id = id;
         this.message = message;
+        this.key = key;
         this.timestamp = timestamp;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Comment() {

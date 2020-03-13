@@ -2,23 +2,42 @@ package com.nightcoder.ilahianz;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.nightcoder.ilahianz.Databases.NotificationDBHelper;
+import com.nightcoder.ilahianz.Models.Notice;
 import com.nightcoder.ilahianz.Models.Notification;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
+import com.nightcoder.ilahianz.Supports.Network;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LAST_SEEN_DATE;
@@ -27,6 +46,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_STATUS;
 public class MyApp extends Application {
     NotificationDBHelper notificationDBHelper;
     String id;
+    Handler handler = new Handler(Looper.getMainLooper());
     @Override
     public void onCreate() {
         super.onCreate();
@@ -91,5 +111,94 @@ public class MyApp extends Application {
 //                1000, R.drawable.heart);
     }
 
+    public void uploadNotice(Uri uri, final int type, final String subject, final String target) {
+        if (Network.Connected(this)) {
+            final Dialog dialog = ViewSupports.materialSnackBarDialog(getCurrentActivity(), R.layout.upload_task_progress);
+            Button cancel = dialog.findViewById(R.id.option_close);
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.cancel();
+                    if (getCurrentActivity() instanceof ComposeNoticeActivity) {
+                        getCurrentActivity().onBackPressed();
+                    }
+                }
+            });
+            dialog.setCancelable(false);
+            dialog.show();
+
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
+            final String key = reference.push().getKey();
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference("Notice");
+            final StorageReference fileReference = storageReference.child(id).child(key + ".jpg");
+
+            StorageTask uploadTask = fileReference.putFile(uri);
+
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw Objects.requireNonNull(task.getException());
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = (Uri) task.getResult();
+                        assert downloadUri != null;
+                        String mUri = downloadUri.toString();
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put(Notice.KEY_COMPOSER_ID, id);
+                        hashMap.put(Notice.KEY_CONTENT_PATH, mUri);
+                        hashMap.put(Notice.KEY_CONTENT_TYPE, type);
+                        hashMap.put(Notice.KEY_SUBJECT, subject);
+                        hashMap.put(Notice.KEY_TEXT, "");
+                        hashMap.put(Notice.KEY_TARGET, target);
+                        hashMap.put(Notice.KEY_TIMESTAMP, ServerValue.TIMESTAMP);
+                        hashMap.put(Notice.KEY_ID, key);
+                        assert key != null;
+                        reference.child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    final Dialog dialog = ViewSupports.materialSnackBar(getCurrentActivity(),
+                                            "Notice Uploaded.", R.drawable.ic_info_black_24dp);
+                                    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialog) {
+                                            if (getCurrentActivity() instanceof ComposeNoticeActivity) {
+                                                getCurrentActivity().onBackPressed();
+                                            }
+                                        }
+                                    });
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialog.cancel();
+                                            if (getCurrentActivity() instanceof ComposeNoticeActivity) {
+                                                getCurrentActivity().onBackPressed();
+                                            }
+                                        }
+                                    }, 3000);
+                                }
+                            }
+                        });
+                        dialog.cancel();
+                    } else {
+                        dialog.cancel();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    dialog.cancel();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Connect to the Internet !", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }

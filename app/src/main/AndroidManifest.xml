@@ -28,6 +28,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
+        <activity android:name=".ImageViewActivity"></activity>
         <activity android:name=".NoticeStarredActivity" />
         <activity android:name=".CommentActivity" />
         <activity android:name=".ComposeNoticeActivity" />

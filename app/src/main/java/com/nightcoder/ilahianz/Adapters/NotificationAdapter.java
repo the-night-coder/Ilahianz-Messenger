@@ -72,8 +72,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.container.setBackground(mContext.getDrawable(R.drawable.notification_item_background));
             holder.notType.setImageDrawable(mContext.getDrawable(R.drawable.heart));
         } else if (notification.getType() == Notification.TYPE_COMMENT) {
-            holder.container.setBackground(mContext.getDrawable(R.drawable.item_comment_background));
+            holder.container.setBackground(mContext.getDrawable(R.drawable.item_content_background));
             holder.notType.setImageDrawable(mContext.getDrawable(R.drawable.comment));
+        }
+
+        if (notification.isSeen()) {
+            holder.seenDot.setVisibility(View.GONE);
+        } else {
+            holder.seenDot.setVisibility(View.VISIBLE);
         }
 
         holder.notType.setVisibility(View.VISIBLE);
@@ -124,6 +130,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         CircleImageView profileImage;
         ImageView notType;
         RelativeLayout container;
+        ImageView seenDot;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -132,6 +139,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             profileImage = itemView.findViewById(R.id.profile_image);
             notType = itemView.findViewById(R.id.notification_icon);
             container = itemView.findViewById(R.id.container);
+            seenDot = itemView.findViewById(R.id.seen_dot);
             container.setVisibility(View.GONE);
             notType.setVisibility(View.GONE);
         }

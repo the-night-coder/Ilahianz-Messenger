@@ -76,6 +76,11 @@ public class NotificationDBHelper extends SQLiteOpenHelper {
         db.insertWithOnConflict("Notification", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
+    public void setSeen(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE Notification SET seen=1 WHERE keyid='" + id + "'");
+    }
+
     private int getInt(boolean value) {
         return value ? 1 : 0;
     }

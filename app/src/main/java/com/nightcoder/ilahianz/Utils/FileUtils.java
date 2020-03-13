@@ -3,11 +3,16 @@ package com.nightcoder.ilahianz.Utils;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.Locale;
 import java.util.Objects;
 
 public class FileUtils {
@@ -156,27 +162,26 @@ public class FileUtils {
     }
 
 
-    /*public static void saveProImage(Context context, ImageView imageView, User user) {
+    public static void saveProImage(Context context, ImageView imageView) {
         BitmapDrawable draw = (BitmapDrawable) imageView.getDrawable();
         Bitmap bitmap = draw.getBitmap();
         FileOutputStream outStream;
         File dataDirectory = Environment.getDataDirectory();
-        File dir = new File(dataDirectory.getAbsolutePath() + "/data/" + context.getPackageName() + user.getUsername());
+        File dir = new File(dataDirectory.getAbsolutePath() + "/data/" + context.getPackageName() + "Notice");
         if (!dir.exists())
-            dir.mkdirs();
-        String fileName = String.format("%d.jpg", System.currentTimeMillis());
-        File outFile = new File(dir, fileName);
-        try {
-            outStream = new FileOutputStream(outFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-            outStream.flush();
-            outStream.close();
-            Toast.makeText(context,
-                    "saved to the gallery", Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
+            if (dir.mkdirs()) {
+                String fileName = System.currentTimeMillis() + ".jpg";
+                File outFile = new File(dir, fileName);
+                try {
+                    outStream = new FileOutputStream(outFile);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                    outStream.flush();
+                    outStream.close();
+                    Toast.makeText(context,
+                            "saved to the gallery", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
 }

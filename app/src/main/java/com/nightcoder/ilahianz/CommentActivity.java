@@ -22,6 +22,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.Adapters.CommentAdapter;
 import com.nightcoder.ilahianz.Models.Comment;
+import com.nightcoder.ilahianz.Models.Notification;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.MESSAGE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.TIMESTAMP;
 
@@ -41,11 +43,13 @@ public class CommentActivity extends AppCompatActivity {
     private ImageButton sendButton;
     private EmojiPopup emojiPopup;
     private RecyclerView recyclerView;
-
+    private CommentAdapter commentAdapter;
     private MediaPlayer mediaPlayer;
     private Context mContext;
     private String TAG = "COMMENT_ACTIVITY";
+    private String keyId;
     private String id;
+    private String subject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,25 +97,52 @@ public class CommentActivity extends AppCompatActivity {
                 super.run();
 
                 final ArrayList<Comment> comments = new ArrayList<>();
-
+                comments.clear();
                 DatabaseReference reference = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Comments").child(id);
+                        .getReference("NoticeReaction").child("Comments").child(keyId);
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        comments.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Comment comment = snapshot.getValue(Comment.class);
-                            comments.add(comment);
+
+                        if (comments.size() == 0) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Comment comment = snapshot.getValue(Comment.class);
+                                comments.add(comment);
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    commentAdapter = new CommentAdapter(mContext, comments);
+                                    recyclerView.setAdapter(commentAdapter);
+                                }
+                            });
+                        } else {
+                            int startPos = comments.size();
+                            int count = 0;
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Comment comment = snapshot.getValue(Comment.class);
+                                assert comment != null;
+                                boolean same = true;
+                                for (int i = 0; i <= startPos - 1; i++) {
+                                    if (comments.get(i).getKey().equals(comment.getKey())) {
+                                        same = true;
+                                        break;
+                                    } else {
+                                        same = false;
+                                    }
+
+                                }
+
+                                if (!same) {
+                                    comments.add(comment);
+                                    count++;
+                                }
+
+                            }
+                            commentAdapter.notifyItemRangeInserted(startPos, count);
+                            recyclerView.scrollToPosition(comments.size() - 1);
                         }
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                CommentAdapter commentAdapter = new CommentAdapter(mContext, comments);
-                                recyclerView.setAdapter(commentAdapter);
-                            }
-                        });
 
                     }
 
@@ -127,21 +158,45 @@ public class CommentActivity extends AppCompatActivity {
 
     private void composeComment() {
         DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("NoticeReaction").child("Comments").child(id);
-
+                .getReference("NoticeReaction").child("Comments").child(keyId);
+        String key = reference.push().getKey();
         HashMap<String, Object> hashMap = new HashMap<>();
-        String message = Objects.requireNonNull(this.message.getText()).toString().trim();
+        final String message = Objects.requireNonNull(this.message.getText()).toString().trim();
         if (!message.isEmpty()) {
             hashMap.put(KEY_ID, MemorySupports.getUserInfo(this, KEY_ID));
             hashMap.put(MESSAGE, message);
             hashMap.put(TIMESTAMP, ServerValue.TIMESTAMP);
+            hashMap.put("key", key);
             this.message.setText("");
-            reference.push().setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            assert key != null;
+            reference.child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         mediaPlayer = MediaPlayer.create(mContext, R.raw.tik);
                         mediaPlayer.start();
+                        String messageStr;
+                        if (subject.toLowerCase().contains("notice")) {
+                            messageStr = " Commented on your : '" + subject + "' : " + message;
+                        } else {
+                            messageStr = " Commented on your Notice : '" + subject + "' : " + message;
+                        }
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Notifications")
+                                .child(id);
+
+                        String key1 = reference1.push().getKey();
+
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("id", id);
+                        hashMap.put("message", messageStr);
+                        hashMap.put("type", Notification.TYPE_COMMENT);
+                        hashMap.put("ref", keyId);
+                        hashMap.put("timestamp", ServerValue.TIMESTAMP);
+                        hashMap.put("seen", false);
+                        hashMap.put("key", key1);
+                        hashMap.put("username", MemorySupports.getUserInfo(mContext, KEY_USERNAME));
+                        assert key1 != null;
+                        reference1.child(key1).setValue(hashMap);
                     }
                 }
             });
@@ -154,7 +209,9 @@ public class CommentActivity extends AppCompatActivity {
         message = findViewById(R.id.message);
         emojiButton = findViewById(R.id.emoji_btn);
         sendButton = findViewById(R.id.btn_sent);
+        keyId = getIntent().getStringExtra("key");
         id = getIntent().getStringExtra("id");
+        subject = getIntent().getStringExtra("subject");
         RelativeLayout root = findViewById(R.id.root_view);
         emojiPopup = EmojiPopup.Builder.fromRootView(root).build(message);
         recyclerView = findViewById(R.id.recycler_view);

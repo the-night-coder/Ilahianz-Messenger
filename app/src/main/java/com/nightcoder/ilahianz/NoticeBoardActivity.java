@@ -57,8 +57,8 @@ public class NoticeBoardActivity extends AppCompatActivity {
 
     private void setTab() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new AllFragment(this), "All");
-        viewPagerAdapter.addFragment(new MyNoticeFragment(this), "My Notice");
+        viewPagerAdapter.addFragment(new AllFragment(NoticeBoardActivity.this), "All");
+        viewPagerAdapter.addFragment(new MyNoticeFragment(NoticeBoardActivity.this), "My Notice");
         //viewPagerAdapter.addFragment(new AllFragment(this), "College");
 
         listener = (FragmentListener) viewPagerAdapter.getFragment(0);
@@ -77,6 +77,12 @@ public class NoticeBoardActivity extends AppCompatActivity {
         super.onResume();
         myApp.setCurrentActivity(this);
         myApp.setOnline();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        clearReference();
     }
 
     private void clearReference() {

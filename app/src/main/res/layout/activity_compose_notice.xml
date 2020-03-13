@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
         android:layout_gravity="center"
+        android:elevation="3dp"
         android:background="@color/white"
-        android:elevation="5dp"
         android:gravity="center">
 
             <TextView
@@ -91,39 +91,40 @@
                         android:src="@mipmap/photo_camera" />
                 </LinearLayout>
 
+                <ImageView
+                    android:id="@+id/attach_image_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:adjustViewBounds="true"
+                    android:src="@mipmap/ppro"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
 
                 <EditText
                     android:id="@+id/subject"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/material_grey_outline_rect"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/notification_item_background"
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/subject"
                     android:inputType="textMultiLine"
                     android:padding="10dp" />
 
-                <ImageView
-                    android:id="@+id/attach_image_file"
-                    android:layout_width="wrap_content"
-                    android:layout_height="300dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:padding="10dp"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
-
-
                 <EditText
                     android:id="@+id/content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/material_grey_outline_rect"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/item_content_background"
                     android:gravity="start"
                     android:layout_marginTop="10dp"
                     android:minHeight="150dp"
@@ -190,6 +191,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginEnd="15dp"
+                        android:visibility="gone"
                         android:background="@drawable/online_dot"
                         android:src="@drawable/ic_close_black_24dp"
                         android:tint="@color/white"
@@ -253,6 +255,7 @@
             android:background="@android:color/transparent"
             android:fontFamily="@font/roboto_regular"
             android:text="@string/compose_notice"
+            android:textSize="16sp"
             android:textAllCaps="false"
             android:textColor="@color/blue_dark" />
 

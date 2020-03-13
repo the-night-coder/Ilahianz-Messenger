@@ -2,6 +2,7 @@ package com.nightcoder.ilahianz;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -36,25 +37,36 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.nightcoder.ilahianz.Models.Notice;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
+import com.nightcoder.ilahianz.Supports.Network;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 import com.nightcoder.ilahianz.Utils.FileUtils;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import id.zelory.compressor.Compressor;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 import static com.nightcoder.ilahianz.Literals.IntegerConstants.CAMERA_REQUEST;
 import static com.nightcoder.ilahianz.Literals.IntegerConstants.IMAGE_REQUEST;
@@ -77,6 +89,9 @@ public class ComposeNoticeActivity extends AppCompatActivity {
     private ImageButton attachCloseBtn;
     private ConstraintLayout attachContainer;
     private ImageView attachImageFile;
+    private String id;
+    private StorageTask uploadTask;
+    protected MyApp myApp;
 
 
     private String target = null;
@@ -120,6 +135,7 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         Button cancel = dialog.findViewById(R.id.cancel_action);
         final ListView listView = dialog.findViewById(R.id.list);
         ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("All");
         arrayList.add("BCA");
         arrayList.add("BBA");
         arrayList.add("B.COM");
@@ -142,12 +158,19 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = (String) listView.getAdapter().getItem(position);
-                department.setText(item);
-                target = item;
-                Log.d("TARGET", item);
+                if (item.toLowerCase().equals("all")) {
+                    department.setText("Target to a Department");
+                    target = item;
+                    ((RadioButton) findViewById(R.id.btn_all)).setChecked(true);
+                } else {
+                    department.setText(item);
+                }
+
+
                 dialog.cancel();
             }
         });
@@ -195,6 +218,27 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         attachImageFile = findViewById(R.id.attach_image_file);
         attachImageFile.setVisibility(View.GONE);
         attachCloseBtn.setOnClickListener(clickListener);
+        id = MemorySupports.getUserInfo(mContext, KEY_ID);
+        myApp = (MyApp) this.getApplicationContext();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        myApp.setCurrentActivity(this);
+        myApp.setOnline();
+    }
+    @Override
+    protected void onDestroy() {
+        clearReference();
+        super.onDestroy();
+    }
+    private void clearReference() {
+        Activity activity = myApp.getCurrentActivity();
+        if (this.equals(activity)) {
+            myApp.setCurrentActivity(this);
+        }
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {
@@ -323,12 +367,13 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         FileUtils.FileDetail fileDetail = FileUtils.getFileDetailFromUri(mContext, uri);
         attachFileName.setText(fileDetail.fileName);
         attachFileSize.setText(FileUtils.getFileSize(fileDetail.fileSize));
+        attachCloseBtn.setVisibility(View.VISIBLE);
         if (attachType == TYPE_IMAGE) {
-            //compressImage(attachFile);
-            //attachImageFile.setImageURI(uri);
             attachImageFile.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
             attachImageFile.setVisibility(View.VISIBLE);
             attachImage.setImageDrawable(getResources().getDrawable(R.mipmap.photo));
+            content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+            content.setVisibility(View.GONE);
         }
     }
 
@@ -337,41 +382,57 @@ public class ComposeNoticeActivity extends AppCompatActivity {
             attachImageFile.setVisibility(View.GONE);
             attachImageFile.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
         }
+        content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        content.setVisibility(View.VISIBLE);
         attachType = TYPE_TEXT;
         attachFileSize.setText("---");
         attachFileName.setText(getResources().getString(R.string.attachment_not_found));
         attachImage.setImageDrawable(getResources().getDrawable(R.mipmap.attach));
+        attachCloseBtn.setVisibility(View.GONE);
     }
 
     private void composeNotice() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
         String key = reference.push().getKey();
 
-        if (content.getText().toString().trim().isEmpty()) {
-            Toast.makeText(mContext, "Empty Message", Toast.LENGTH_SHORT).show();
-        } else if (target == null) {
-            Toast.makeText(mContext, "Select Target", Toast.LENGTH_SHORT).show();
-        } else {
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put(Notice.KEY_COMPOSER_ID, MemorySupports.getUserInfo(this, KEY_ID));
-            hashMap.put(Notice.KEY_CONTENT_PATH, "null");
-            hashMap.put(Notice.KEY_CONTENT_TYPE, TYPE_TEXT);
-            hashMap.put(Notice.KEY_SUBJECT, subject.getText().toString());
-            hashMap.put(Notice.KEY_TEXT, content.getText().toString());
-            hashMap.put(Notice.KEY_TARGET, target);
-            hashMap.put(Notice.KEY_TIMESTAMP, ServerValue.TIMESTAMP);
-            hashMap.put(Notice.KEY_ID, key);
+        if (attachType == TYPE_TEXT) {
+            if (content.getText().toString().trim().isEmpty()) {
+                Toast.makeText(mContext, "Empty Message", Toast.LENGTH_SHORT).show();
+            } else if (target == null) {
+                Toast.makeText(mContext, "Select Target", Toast.LENGTH_SHORT).show();
+            } else {
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put(Notice.KEY_COMPOSER_ID, MemorySupports.getUserInfo(this, KEY_ID));
+                hashMap.put(Notice.KEY_CONTENT_PATH, "null");
+                hashMap.put(Notice.KEY_CONTENT_TYPE, TYPE_TEXT);
+                hashMap.put(Notice.KEY_SUBJECT, subject.getText().toString());
+                hashMap.put(Notice.KEY_TEXT, content.getText().toString());
+                hashMap.put(Notice.KEY_TARGET, target);
+                hashMap.put(Notice.KEY_TIMESTAMP, ServerValue.TIMESTAMP);
+                hashMap.put(Notice.KEY_ID, key);
 
-            assert key != null;
-            reference.child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Log.d("Notice", "Sent");
-                    onBackPressed();
+                assert key != null;
+                reference.child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("Notice", "Sent");
+                        onBackPressed();
+                    }
+                });
+
+                content.setText("");
+            }
+        } else if (attachType == TYPE_IMAGE) {
+            if (target == null) {
+                Toast.makeText(mContext, "Select Target", Toast.LENGTH_SHORT).show();
+            } else {
+                if (attachFile == null) {
+                    Toast.makeText(mContext, "Attach Failed", Toast.LENGTH_SHORT).show();
+                } else {
+                    myApp.uploadNotice(Uri.fromFile(attachFile), TYPE_IMAGE, subject.getText().toString(), target);
+                    //removeAttach();
                 }
-            });
-
-            content.setText("");
+            }
         }
     }
 
@@ -385,10 +446,8 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 attachType = TYPE_IMAGE;
                 assert uri != null;
-                removeAttach();
                 setAttach(uri);
                 attachUri = uri;
-                //attachFile = new File(uri.toString());
 
                 try {
                     attachFile = FileUtils.from(mContext, uri);
@@ -467,8 +526,10 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                         @Override
                         public void accept(File file) {
                             pd.dismiss();
-                            attachImageFile.setImageURI(Uri.fromFile(file));
+                            Transformation transformation = new MaskTransformation(mContext, R.drawable.image_corner_transformation);
+                            Picasso.with(mContext).load(Uri.fromFile(file)).transform(transformation).into(attachImageFile);
                             setAttach(Uri.fromFile(file));
+                            attachFile = file;
                         }
                     }, new Consumer<Throwable>() {
                         @Override
@@ -480,4 +541,6 @@ public class ComposeNoticeActivity extends AppCompatActivity {
 
         }
     }
+
+
 }

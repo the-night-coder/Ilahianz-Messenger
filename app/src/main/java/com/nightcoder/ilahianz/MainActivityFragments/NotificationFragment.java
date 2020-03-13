@@ -25,6 +25,9 @@ import com.nightcoder.ilahianz.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class NotificationFragment extends Fragment {
 
@@ -33,7 +36,7 @@ public class NotificationFragment extends Fragment {
     //private String id;
     private NotificationDBHelper notificationDBHelper;
     private Handler handler = new Handler();
-
+    private NotificationAdapter notificationAdapter;
     public NotificationFragment(Context mContext) {
         this.mContext = mContext;
         notificationDBHelper = new NotificationDBHelper(mContext);
@@ -47,10 +50,26 @@ public class NotificationFragment extends Fragment {
         //id = MemorySupports.getUserInfo(mContext, KEY_ID);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         ((SimpleItemAnimator) Objects.requireNonNull(recyclerView.getItemAnimator())).setSupportsChangeAnimations(false);
-        setNotifications();
+
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                notificationAdapter.notify();
+                Log.d("ss", "Scheduler");
+            }
+        }, 10, 30, TimeUnit.SECONDS);
         return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setNotifications();
     }
 
     private void setNotifications() {
@@ -73,10 +92,13 @@ public class NotificationFragment extends Fragment {
                         notification.setSeen(cursor.getInt(NotificationDBHelper.INDEX_SEEN) == 1);
                         notification.setUsername(cursor.getString(NotificationDBHelper.INDEX_USERNAME));
 
+                        if (!notification.isSeen())
+                            notificationDBHelper.setSeen(notification.getKey());
+
                         notifications.add(notification);
                     }
 
-                    final NotificationAdapter notificationAdapter = new NotificationAdapter(mContext, notifications);
+                    notificationAdapter = new NotificationAdapter(mContext, notifications);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

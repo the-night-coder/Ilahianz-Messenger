@@ -1,11 +1,9 @@
-package com.nightcoder.ilahianz.Adapters;
+package com.nightcoder.ilahianz.Helper;
 
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +28,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.CommentActivity;
-import com.nightcoder.ilahianz.ImageViewActivity;
-import com.nightcoder.ilahianz.MainActivity;
 import com.nightcoder.ilahianz.Models.Comment;
 import com.nightcoder.ilahianz.Models.Like;
 import com.nightcoder.ilahianz.Models.Notice;
@@ -39,12 +35,9 @@ import com.nightcoder.ilahianz.Models.Notification;
 import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.ProfileActivity;
 import com.nightcoder.ilahianz.R;
-import com.nightcoder.ilahianz.StartActivity;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.nightcoder.ilahianz.UserProfileActivity;
 import com.nightcoder.ilahianz.Utils.Time;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 import com.vanniktech.emoji.EmojiPopup;
 
 import java.util.HashMap;
@@ -52,7 +45,6 @@ import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
@@ -79,7 +71,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (viewType == Notice.TYPE_TEXT) {
             return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_notice_type_text, parent, false));
         } else if (viewType == Notice.TYPE_IMAGE) {
-            return new ImageViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_notice_type_image, parent, false));
+            return new ImageViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_notice_type_text, parent, false));
         } else {
             return null;
         }
@@ -95,6 +87,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ImageViewHolder viewHolder = (ImageViewHolder) holders;
             initImageViewHolder(viewHolder, notice, position);
         }
+
+
+
     }
 
     private void initTextViewHolder(final ViewHolder holder, final Notice notice, int position){
@@ -143,7 +138,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.time.setText(Time.covertTimeToText(notice.getTimestamp()));
         holder.content.setText(notice.getText());
         holder.container.setVisibility(View.VISIBLE);
-        holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+        holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.snackbar_enter_animation));
         holder.target.setText(notice.getTarget());
 
         if (notice.getSubject().isEmpty()) {
@@ -257,20 +252,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
         holder.time.setText(Time.covertTimeToText(notice.getTimestamp()));
-        Transformation transformation = new MaskTransformation(mContext, R.drawable.image_corner_transformation);
-        Picasso.with(mContext).load(notice.getContentPath()).transform(transformation).into(holder.image);
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                ActivityOptions options = ActivityOptions
-//                        .makeSceneTransitionAnimation(mContext, new Pair<View, String>(holder.image, "imageTransition"));
-
-                mContext.startActivity(new Intent(mContext, ImageViewActivity.class)
-                        .putExtra("path", notice.getContentPath()));
-            }
-        });
+        holder.content.setText(notice.getText());
         holder.container.setVisibility(View.VISIBLE);
-        holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+        holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.snackbar_enter_animation));
         holder.target.setText(notice.getTarget());
 
         if (notice.getSubject().isEmpty()) {
@@ -664,7 +648,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
     private void commentActivity(String key, String id, String subject) {
         mContext.startActivity(new Intent(mContext, CommentActivity.class).putExtra("id", id)
-                .putExtra("key", key).putExtra("subject", subject));
+        .putExtra("key", key).putExtra("subject", subject));
         mediaPlayer = MediaPlayer.create(mContext, R.raw.tik);
         mediaPlayer.start();
     }
@@ -681,7 +665,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             holder.commentContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
                             String message;
                             if (notice.getSubject().toLowerCase().contains("notice")) {
-                                message = " say thanks for your '" + notice.getSubject() + "'";
+                                 message = " say thanks for your '" + notice.getSubject() + "'";
                             } else {
                                 message = " say thanks for your '" + notice.getSubject() + "' notice";
                             }
@@ -727,7 +711,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             holder.commentContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
                             String message;
                             if (notice.getSubject().toLowerCase().contains("notice")) {
-                                message = " say thanks for your '" + notice.getSubject() + "'";
+                                 message = " say thanks for your '" + notice.getSubject() + "'";
                             } else {
                                 message = " say thanks for your '" + notice.getSubject() + "' notice";
                             }
@@ -906,7 +890,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     class ImageViewHolder extends RecyclerView.ViewHolder {
-        TextView username, time, thanks;
+        TextView content, username, time, thanks;
         LinearLayout thanksButton, commentButton, replyButton;
         RelativeLayout container;
         ImageView thanksButtonView;
@@ -919,52 +903,10 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         CircleImageView profileImage;
         ImageButton sendButton;
         TextView subject;
-        ImageView image;
+
         ImageViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.image);
-            username = itemView.findViewById(R.id.username);
-            thanks = itemView.findViewById(R.id.thanks);
-            time = itemView.findViewById(R.id.time);
-            container = itemView.findViewById(R.id.container);
-            container.setVisibility(View.GONE);
-
-            thanksButton = itemView.findViewById(R.id.thanks_button);
-            commentButton = itemView.findViewById(R.id.comment_button);
-            replyButton = itemView.findViewById(R.id.reply_button);
-            commentCount = itemView.findViewById(R.id.comment_count);
-            thanksCount = itemView.findViewById(R.id.thanks_count);
-            starButton = itemView.findViewById(R.id.star_button);
-            target = itemView.findViewById(R.id.target);
-            subject = itemView.findViewById(R.id.subject);
-            commentContainer = itemView.findViewById(R.id.comment_container);
-            sendButton = itemView.findViewById(R.id.btn_sent);
-            emojiButton = itemView.findViewById(R.id.emoji_btn);
-            commentContent = itemView.findViewById(R.id.comment_edit_text);
-            profileImage = itemView.findViewById(R.id.profile_image);
-            commentContainer.setVisibility(View.GONE);
-
-            thanksButtonView = itemView.findViewById(R.id.thanks_button_view);
-        }
-    }
-    class DocViewHolder extends RecyclerView.ViewHolder {
-        TextView username, time, thanks;
-        LinearLayout thanksButton, commentButton, replyButton;
-        RelativeLayout container;
-        ImageView thanksButtonView;
-        TextView commentCount, thanksCount;
-        ImageButton starButton;
-        RelativeLayout commentContainer;
-        TextView target;
-        EditText commentContent;
-        ImageButton emojiButton;
-        CircleImageView profileImage;
-        ImageButton sendButton;
-        TextView subject;
-        ImageView image;
-        DocViewHolder(@NonNull View itemView) {
-            super(itemView);
-            image = itemView.findViewById(R.id.image);
+            content = itemView.findViewById(R.id.contents);
             username = itemView.findViewById(R.id.username);
             thanks = itemView.findViewById(R.id.thanks);
             time = itemView.findViewById(R.id.time);

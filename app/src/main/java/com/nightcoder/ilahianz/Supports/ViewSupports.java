@@ -150,6 +150,23 @@ public class ViewSupports {
             }
         }, duration);
     }
+    public static Dialog materialSnackBar(Context context, String content, int icon) {
+        Activity activity = ((MyApp) context.getApplicationContext()).getCurrentActivity();
+        final Dialog dialog = new Dialog(activity);
+        dialog.setContentView(R.layout.custom_snack_bar);
+        Window window = dialog.getWindow();
+        assert window != null;
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        window.setGravity(Gravity.BOTTOM);
+        window.setWindowAnimations(R.style.SnackBarAnimation);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        ((TextView) dialog.findViewById(R.id.message)).setText(content);
+        ((ImageView) dialog.findViewById(R.id.icon)).setImageResource(icon);
+        dialog.show();
+
+        return dialog;
+    }
 
     public static void materialLoadingSnackBar(Context context, String content, long duration) {
         final Dialog dialog = new Dialog(context);
