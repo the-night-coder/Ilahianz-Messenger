@@ -42,6 +42,9 @@ import java.util.Objects;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LAST_SEEN_DATE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_STATUS;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_AUDIO;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_DOC;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_IMAGE;
 
 public class MyApp extends Application {
     NotificationDBHelper notificationDBHelper;
@@ -111,7 +114,7 @@ public class MyApp extends Application {
 //                1000, R.drawable.heart);
     }
 
-    public void uploadNotice(Uri uri, final int type, final String subject, final String target) {
+    public void uploadNotice(Uri uri, final int type, final String subject, final String target, final String content) {
         if (Network.Connected(this)) {
             final Dialog dialog = ViewSupports.materialSnackBarDialog(getCurrentActivity(), R.layout.upload_task_progress);
             Button cancel = dialog.findViewById(R.id.option_close);
@@ -130,7 +133,17 @@ public class MyApp extends Application {
             final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
             final String key = reference.push().getKey();
             StorageReference storageReference = FirebaseStorage.getInstance().getReference("Notice");
-            final StorageReference fileReference = storageReference.child(id).child(key + ".jpg");
+            final StorageReference fileReference;
+            if (type == TYPE_IMAGE) {
+                fileReference = storageReference.child(id).child(key + ".jpg");
+            } else if (type == TYPE_AUDIO){
+                fileReference = storageReference.child(id).child(key + ".3gp");
+            } else if (type == TYPE_DOC){
+                fileReference = storageReference.child(id).child(key + ".pdf");
+            } else {
+                fileReference = storageReference.child(id).child(key + ".jpg");
+            }
+
 
             StorageTask uploadTask = fileReference.putFile(uri);
 
@@ -154,7 +167,7 @@ public class MyApp extends Application {
                         hashMap.put(Notice.KEY_CONTENT_PATH, mUri);
                         hashMap.put(Notice.KEY_CONTENT_TYPE, type);
                         hashMap.put(Notice.KEY_SUBJECT, subject);
-                        hashMap.put(Notice.KEY_TEXT, "");
+                        hashMap.put(Notice.KEY_TEXT, content);
                         hashMap.put(Notice.KEY_TARGET, target);
                         hashMap.put(Notice.KEY_TIMESTAMP, ServerValue.TIMESTAMP);
                         hashMap.put(Notice.KEY_ID, key);

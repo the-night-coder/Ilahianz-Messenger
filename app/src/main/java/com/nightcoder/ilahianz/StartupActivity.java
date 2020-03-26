@@ -34,7 +34,23 @@ public class StartupActivity extends AppCompatActivity {
         next_btn = findViewById(R.id.next_btn);
         back_btn = findViewById(R.id.back_btn);
         back_btn.setVisibility(View.GONE);
-        SlideAdapter slideAdapter = new SlideAdapter(this);
+        int[] slideImages = {
+                R.mipmap.welcome,
+                R.mipmap.chat_onboard,
+                R.mipmap.location,
+                R.mipmap.helpline
+        };
+        String[] SlideHeading = {
+                "Welcome", "Chat", "Location", "Help"
+        };
+        String[] slide_contents = {
+                "To make better Community. and Friendship",
+                "Chat with your Ilahianz , loved once " +
+                        "And Teachers",
+                "Locate your friends.",
+                "Use Help if you need Check it out our Help Center"
+        };
+        SlideAdapter slideAdapter = new SlideAdapter(this, SlideHeading, slide_contents, slideImages);
         viewPager.setAdapter(slideAdapter);
         addDotsIndicator(0);
         viewPager.addOnPageChangeListener(viewListener);

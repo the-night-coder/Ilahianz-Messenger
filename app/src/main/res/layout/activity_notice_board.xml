@@ -1,31 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/id_container"
+    android:background="@color/white"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".NoticeBoardActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
+        android:elevation="5dp"
         android:background="@color/white"
         android:layout_height="wrap_content">
 
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collaps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="exitUntilCollapsed|scroll|snap"
+            app:titleEnabled="false">
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="?android:actionBarSize"
+                android:layout_height="80dp"
+                android:layout_marginTop="30dp"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:fontFamily="@font/roboto_bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
                     android:text="@string/notice_board"
-                    android:textSize="18sp" />
+                    tools:ignore="HardcodedText" />
+
+                <ImageButton
+                    android:id="@+id/compose_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toStartOf="@id/refresh_button"
+                    android:background="@drawable/button_material_circle"
+                    android:src="@drawable/ic_edit_grey_24dp"
+                    android:tint="@color/black" />
 
                 <ImageButton
                     android:id="@+id/refresh_button"
@@ -35,52 +60,14 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="10dp"
                     android:background="@drawable/button_material_circle"
-                    android:src="@drawable/ic_star_black_24dp"
-                    android:tint="@color/blue_dark" />
-
+                    android:src="@drawable/ic_star_black_24dp" />
             </RelativeLayout>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:elevation="5dp"
-            android:foregroundGravity="center"
-            android:textAlignment="center"
-            app:layout_collapseMode="pin"
-            app:tabGravity="fill"
-            app:tabIndicator="@drawable/tab_shape_indicator"
-            app:tabIndicatorAnimationDuration="500"
-            app:tabIndicatorColor="@color/blue_dark"
-            app:tabIndicatorFullWidth="false"
-            app:tabTextColor="#9E9E9E"
-            app:tabIndicatorGravity="bottom"
-            app:tabIndicatorHeight="3dp"
-            app:tabMode="fixed"
-            app:tabRippleColor="@color/transparent_blue"
-            app:tabSelectedTextColor="@color/blue_dark"
-            app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
-
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appbar" />
-
-    <ImageButton
-        android:id="@+id/compose_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="30sp"
-        android:background="@drawable/online_dot"
-        android:elevation="5dp"
-        android:src="@drawable/ic_edit_black_24dp"
-        android:tint="@color/white" />
-
-</RelativeLayout>
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

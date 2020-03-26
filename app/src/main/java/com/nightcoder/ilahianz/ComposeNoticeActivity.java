@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +27,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,22 +42,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
-import com.google.firebase.storage.UploadTask;
 import com.nightcoder.ilahianz.Models.Notice;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
-import com.nightcoder.ilahianz.Supports.Network;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
 import com.nightcoder.ilahianz.Utils.FileUtils;
+import com.nightcoder.ilahianz.Utils.Time;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -60,7 +59,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import id.zelory.compressor.Compressor;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -71,6 +71,7 @@ import jp.wasabeef.picasso.transformations.MaskTransformation;
 import static com.nightcoder.ilahianz.Literals.IntegerConstants.CAMERA_REQUEST;
 import static com.nightcoder.ilahianz.Literals.IntegerConstants.IMAGE_REQUEST;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_AUDIO;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_IMAGE;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_TEXT;
 
@@ -90,7 +91,13 @@ public class ComposeNoticeActivity extends AppCompatActivity {
     private ConstraintLayout attachContainer;
     private ImageView attachImageFile;
     private String id;
-    private StorageTask uploadTask;
+    private ImageView playButtonIcon;
+    private SeekBar audioDurationProgress;
+    private TextView audioDuration;
+    private RelativeLayout playButton;
+    private RelativeLayout audioContainer;
+    private ProgressBar buffering;
+    private Timer timer;
     protected MyApp myApp;
 
 
@@ -98,6 +105,9 @@ public class ComposeNoticeActivity extends AppCompatActivity {
     private int attachType = 0;
     private Uri attachUri = null;
     private File attachFile = null;
+    private static String mFileName = null;
+    private MediaRecorder mRecorder = null;
+    private MediaPlayer mPlayer = null;
 
     private static int DOC_REQUEST = 678;
 
@@ -128,6 +138,194 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void startRecording() {
+
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.LOLLIPOP) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 45);
+                } else {
+                    prepareRecord();
+                }
+
+            } else
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECORD_AUDIO}, 32);
+        } else {
+            prepareRecord();
+        }
+
+
+    }
+
+    private void prepareRecord() {
+        mPlayer = MediaPlayer.create(mContext, R.raw.when);
+        mPlayer.start();
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/notice_audio.3gp";
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+            mRecorder.start();
+            changeAudioPlayerIcon(R.drawable.ic_close_black_24dp);
+            playButtonIcon.setTag("STOP");
+        } catch (IOException e) {
+            Log.e("TAG", "prepare() failed");
+        }
+    }
+
+    private void changeAudioPlayerIcon(int icon) {
+        playButtonIcon.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        playButtonIcon.setVisibility(View.GONE);
+        playButtonIcon.setImageDrawable(getResources().getDrawable(icon));
+        playButtonIcon.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        playButtonIcon.setVisibility(View.VISIBLE);
+    }
+
+    private void stopRecording() {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
+        changeAudioPlayerIcon(R.drawable.ic_play_arrow_black_24dp);
+        playButtonIcon.setTag("PLAY");
+        attachFile = new File(mFileName);
+        attachType = TYPE_AUDIO;
+        setAttach(Uri.fromFile(attachFile));
+        mPlayer = MediaPlayer.create(mContext, R.raw.tik);
+        mPlayer.start();
+    }
+
+
+    private void syncDuration() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        audioDurationProgress.setProgress(mPlayer.getCurrentPosition());
+                        audioDuration.setText(Time.formateMilliSeccond(mPlayer.getCurrentPosition()));
+                        Log.d("MediaPlayer At", Time.formateMilliSeccond(mPlayer.getCurrentPosition()));
+                    }
+                });
+
+            }
+        }, 0, 1000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mRecorder != null)
+            stopRecording();
+        if (mPlayer != null)
+            mPlayer.release();
+        mPlayer = null;
+    }
+
+    private void startPlaying() {
+        mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(mFileName);
+            mPlayer.prepare();
+            int duration = mPlayer.getDuration();
+            audioDuration.setText(Time.formateMilliSeccond(duration));
+            audioDurationProgress.setMax(duration);
+            mPlayer.start();
+            syncDuration();
+            changeAudioPlayerIcon(R.drawable.ic_stop_black_24dp);
+            playButtonIcon.setTag("STOP_PLAY");
+
+            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if (!mp.isPlaying()) {
+                        stopPlaying();
+                    }
+                }
+            });
+            audioDurationProgress.setOnSeekBarChangeListener(seekBarChangeListener);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    private static String getDuration(File file) {
+//        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+//        mediaMetadataRetriever.setDataSource(file.getAbsolutePath());
+//        String durationStr = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+//        return Time.formateMilliSeccond(Long.parseLong(durationStr));
+//    }
+
+    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            pausePlaying();
+            timer.cancel();
+            timer.purge();
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            mPlayer.seekTo(seekBar.getProgress());
+            resumePlaying();
+        }
+    };
+
+    private void stopPlaying() {
+        mPlayer.stop();
+        //mPlayer = null;
+        changeAudioPlayerIcon(R.drawable.ic_play_arrow_black_24dp);
+        playButtonIcon.setTag("PLAY");
+        timer.cancel();
+        timer.purge();
+        audioDurationProgress.setOnSeekBarChangeListener(null);
+        audioDurationProgress.setProgress(0);
+    }
+
+    private void pausePlaying() {
+        mPlayer.pause();
+        timer.cancel();
+        timer.purge();
+        changeAudioPlayerIcon(R.drawable.ic_pause_black_24dp);
+        playButtonIcon.setTag("PLAY");
+    }
+
+    private void resumePlaying() {
+        mPlayer.start();
+        syncDuration();
+        changeAudioPlayerIcon(R.drawable.ic_stop_black_24dp);
+        playButtonIcon.setTag("STOP_PLAY");
+    }
+
+    private void voiceRecord() {
+        if (playButtonIcon.getTag().equals("RECORD")) {
+            startRecording();
+        } else if (playButtonIcon.getTag().equals("STOP")) {
+            stopRecording();
+        } else if (playButtonIcon.getTag().equals("PLAY")) {
+            startPlaying();
+        } else if (playButtonIcon.getTag().equals("STOP_PLAY")) {
+            stopPlaying();
+        }
     }
 
     private void openDepartmentDialog() {
@@ -218,6 +416,13 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         attachImageFile = findViewById(R.id.attach_image_file);
         attachImageFile.setVisibility(View.GONE);
         attachCloseBtn.setOnClickListener(clickListener);
+        playButton = findViewById(R.id.play_button);
+        audioDuration = findViewById(R.id.duration);
+        audioDurationProgress = findViewById(R.id.progressBar);
+        playButtonIcon = findViewById(R.id.play_button_icon);
+        audioContainer = findViewById(R.id.audio_container);
+        buffering = findViewById(R.id.buffer);
+        playButton.setOnClickListener(clickListener);
         id = MemorySupports.getUserInfo(mContext, KEY_ID);
         myApp = (MyApp) this.getApplicationContext();
 
@@ -231,8 +436,9 @@ public class ComposeNoticeActivity extends AppCompatActivity {
     }
     @Override
     protected void onDestroy() {
-        clearReference();
         super.onDestroy();
+
+        clearReference();
     }
     private void clearReference() {
         Activity activity = myApp.getCurrentActivity();
@@ -249,41 +455,65 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                     composeNotice();
                     break;
                 case R.id.audio_option:
+                    if (audioContainer.getVisibility() == View.VISIBLE)
+                        hideAudioPanel();
+                    else
+                        openAudioPanel();
                     recordAudio();
                     break;
                 case R.id.image_option:
                     openGallery();
+                    hideAudioPanel();
                     break;
                 case R.id.doc_option:
                     openDocument();
+                    hideAudioPanel();
                     break;
                 case R.id.camera_option:
+                    hideAudioPanel();
                     openCamera();
                     break;
                 case R.id.attach_container:
                     if (attachUri != null)
-                        openAttach(attachType, attachUri);
+                        //openAttach(attachType, attachUri);
                     break;
                 case R.id.attach_file_close_btn:
                     removeAttach();
+                    break;
+                case R.id.play_button:
+                    voiceRecord();
                     break;
 
             }
         }
     };
 
-    private void openAttach(int type, Uri file) {
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//        intent.setDataAndType(Uri.fromFile(attachFile), "application/pdf");
-//
-//        try {
-//            startActivity(intent);
-//        } catch (ActivityNotFoundException e) {
-//            Toast.makeText(mContext, "ClassNotFound", Toast.LENGTH_SHORT).show();
-//        }
+    private void openAudioPanel() {
+        audioContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        audioContainer.setVisibility(View.VISIBLE);
+        content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        content.setVisibility(View.GONE);
     }
+
+    private void hideAudioPanel() {
+        audioContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        audioContainer.setVisibility(View.GONE);
+        content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        content.setVisibility(View.VISIBLE);
+    }
+
+//    private void openAttach(int type, Uri file) {
+////        Intent intent = new Intent(Intent.ACTION_VIEW);
+////        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////
+////        intent.setDataAndType(Uri.fromFile(attachFile), "application/pdf");
+////
+////        try {
+////            startActivity(intent);
+////        } catch (ActivityNotFoundException e) {
+////            Toast.makeText(mContext, "ClassNotFound", Toast.LENGTH_SHORT).show();
+////        }
+//    }
 
     private boolean checkPermission(String permission) {
         return (ContextCompat.checkSelfPermission(mContext, permission)
@@ -367,6 +597,7 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         FileUtils.FileDetail fileDetail = FileUtils.getFileDetailFromUri(mContext, uri);
         attachFileName.setText(fileDetail.fileName);
         attachFileSize.setText(FileUtils.getFileSize(fileDetail.fileSize));
+        attachCloseBtn.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
         attachCloseBtn.setVisibility(View.VISIBLE);
         if (attachType == TYPE_IMAGE) {
             attachImageFile.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
@@ -374,13 +605,27 @@ public class ComposeNoticeActivity extends AppCompatActivity {
             attachImage.setImageDrawable(getResources().getDrawable(R.mipmap.photo));
             content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
             content.setVisibility(View.GONE);
+        } else if (attachType == TYPE_AUDIO) {
+            attachImage.setImageDrawable(getResources().getDrawable(R.mipmap.mic));
+            if (content.getVisibility() == View.VISIBLE) {
+                content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+                content.setVisibility(View.GONE);
+            }
         }
+
+        attachContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        attachContainer.setVisibility(View.VISIBLE);
     }
 
     private void removeAttach() {
         if (attachType == TYPE_IMAGE) {
             attachImageFile.setVisibility(View.GONE);
             attachImageFile.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        } else if (attachType == TYPE_AUDIO) {
+            audioContainer.setVisibility(View.GONE);
+            audioContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+            changeAudioPlayerIcon(R.drawable.ic_mic_black_24dp);
+            playButtonIcon.setTag("RECORD");
         }
         content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
         content.setVisibility(View.VISIBLE);
@@ -388,7 +633,10 @@ public class ComposeNoticeActivity extends AppCompatActivity {
         attachFileSize.setText("---");
         attachFileName.setText(getResources().getString(R.string.attachment_not_found));
         attachImage.setImageDrawable(getResources().getDrawable(R.mipmap.attach));
+        attachCloseBtn.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.dialog_exit_animation));
         attachCloseBtn.setVisibility(View.GONE);
+        attachContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.dialog_exit_animation));
+        attachContainer.setVisibility(View.GONE);
     }
 
     private void composeNotice() {
@@ -429,8 +677,17 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 if (attachFile == null) {
                     Toast.makeText(mContext, "Attach Failed", Toast.LENGTH_SHORT).show();
                 } else {
-                    myApp.uploadNotice(Uri.fromFile(attachFile), TYPE_IMAGE, subject.getText().toString(), target);
-                    //removeAttach();
+                    myApp.uploadNotice(Uri.fromFile(attachFile), TYPE_IMAGE, subject.getText().toString(), target, "");
+                }
+            }
+        } else if (attachType == TYPE_AUDIO) {
+            if (target == null) {
+                Toast.makeText(mContext, "Select Target", Toast.LENGTH_SHORT).show();
+            } else {
+                if (attachFile == null) {
+                    Toast.makeText(mContext, "Attach Failed", Toast.LENGTH_SHORT).show();
+                } else {
+                    myApp.uploadNotice(Uri.fromFile(attachFile), TYPE_AUDIO, subject.getText().toString(), target, "");
                 }
             }
         }
@@ -476,7 +733,6 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

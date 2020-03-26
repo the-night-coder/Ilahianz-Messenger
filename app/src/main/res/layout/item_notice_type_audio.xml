@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,10 +7,9 @@
     android:layout_marginStart="15dp"
     android:layout_marginTop="10dp"
     android:layout_marginEnd="15dp"
-    app:cardBackgroundColor="@color/white"
     android:layout_marginBottom="5dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="@dimen/notice_elevation">
+    android:background="@drawable/notice_bg_item"
+    android:elevation="10dp">
 
     <RelativeLayout
         android:id="@+id/container"
@@ -117,7 +116,7 @@
             android:textAlignment="center"
             android:textColor="#16701B" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/contents_con"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -127,36 +126,104 @@
             android:layout_marginEnd="7dp"
             android:orientation="vertical">
 
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-            <ImageView
-                android:id="@+id/image"
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:minHeight="300dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/ppro" />
+                android:layout_height="match_parent"
+                android:background="@drawable/item_content_background"
+                android:elevation="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/attach_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/material_circle_option"
+                    android:elevation="5dp"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/mic" />
+
+                <SeekBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_toStartOf="@id/play_button"
+                    android:layout_toEndOf="@id/attach_image"
+                    android:elevation="5dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/progressBar"
+                    android:layout_marginStart="20dp"
+                    android:layout_toEndOf="@id/attach_image"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="1:20"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <RelativeLayout
+                    android:id="@+id/play_button"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/online_dot"
+                    android:elevation="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+
+                    <ImageView
+                        android:id="@+id/play_button_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_arrow_downward_black_24dp"
+                        android:tag="DOWNLOAD"
+                        android:tint="@color/white"
+                        android:visibility="visible" />
+
+                    <ProgressBar
+                        android:id="@+id/download_progress"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_centerInParent="true"
+                        android:indeterminateTint="@color/white"
+                        android:visibility="gone" />
+                </RelativeLayout>
+            </RelativeLayout>
 
 
             <RelativeLayout
                 android:id="@+id/react_con"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/image"
-                android:layout_marginTop="-25dp">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/thanks_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="5dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/white"
+                    android:textColor="@color/blue_dark"
                     tools:ignore="HardcodedText" />
 
                 <TextView
@@ -164,22 +231,30 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="16dp"
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/blue_dark"
                     tools:ignore="HardcodedText" />
 
             </RelativeLayout>
-        </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/view_color" />
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/contents_con"
-            android:layout_margin="10dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:id="@+id/thanks_button"
@@ -317,6 +392,6 @@
                 tools:layout_editor_absoluteY="3dp" />
 
         </RelativeLayout>
-    </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+    </RelativeLayout>
+</RelativeLayout>

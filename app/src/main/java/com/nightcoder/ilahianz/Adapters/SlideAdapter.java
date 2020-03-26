@@ -16,31 +16,20 @@ import com.nightcoder.ilahianz.R;
 public class SlideAdapter extends PagerAdapter {
 
     private Context context;
+    private String[] mHeadings;
+    private String[] mContents;
+    private int[] mImages;
 
-    public SlideAdapter(Context context) {
+    public SlideAdapter(Context context, String[] mHeadings, String[] mContents, int[] images) {
         this.context = context;
+        this.mContents = mContents;
+        this.mHeadings = mHeadings;
+        this.mImages = images;
     }
-
-    private int[] slideImages = {
-            R.mipmap.welcome,
-            R.mipmap.chat_onboard,
-            R.mipmap.location,
-            R.mipmap.helpline
-    };
-    private String[] SlideHeading = {
-            "Welcome", "Chat", "Location", "Help"
-    };
-    private String[] slide_contents = {
-            "To make better Community. and Friendship",
-            "Chat with your Ilahianz , loved once " +
-                    "And Teachers",
-            "Locate your friends.",
-            "Use Help if you need Check it out our Help Center"
-    };
 
     @Override
     public int getCount() {
-        return SlideHeading.length;
+        return mHeadings.length;
     }
 
     @Override
@@ -58,9 +47,9 @@ public class SlideAdapter extends PagerAdapter {
         ImageView imageView = view.findViewById(R.id.imageView);
         TextView heading = view.findViewById(R.id.heading);
         TextView contents = view.findViewById(R.id.contents);
-        heading.setText(SlideHeading[position]);
-        imageView.setImageResource(slideImages[position]);
-        contents.setText(slide_contents[position]);
+        heading.setText(mHeadings[position]);
+        imageView.setImageResource(mImages[position]);
+        contents.setText(mContents[position]);
         container.addView(view);
         return view;
     }

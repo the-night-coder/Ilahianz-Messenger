@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:background="@color/white"
-    android:focusable="true">
+    android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -89,8 +87,6 @@
             app:tabRippleColor="@color/transparent_blue"
             app:tabSelectedTextColor="@color/blue_dark"
             app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget" />
-
-
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"

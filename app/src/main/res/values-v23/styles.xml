@@ -9,6 +9,13 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+    <style name="NoticeStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_dark</item>
+        <item name="colorPrimaryDark">#80FFFFFF</item>
+        <item name="colorAccent">@color/blue_dark</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
     <style name="ProfileViewActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/black</item>

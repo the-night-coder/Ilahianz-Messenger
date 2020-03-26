@@ -148,7 +148,7 @@
                     android:src="@mipmap/doc" />
 
                 <TextView
-                    android:id="@+id/attach_file_name"
+                    android:id="@+id/file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -158,10 +158,10 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/attach_size"
+                    android:id="@+id/file_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/attach_file_name"
+                    android:layout_below="@id/file_name"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="2dp"
                     android:layout_toEndOf="@id/attach_image"
@@ -172,6 +172,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/open_button"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginEnd="15dp"
@@ -181,7 +182,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageButton
-                    android:id="@+id/attach_file_close_btn"
+                    android:id="@+id/open_button_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -191,6 +192,7 @@
                     android:visibility="visible" />
 
                 <ProgressBar
+                    android:id="@+id/progress"
                     android:layout_width="42dp"
                     android:indeterminateTint="@color/white"
                     android:layout_height="42dp"

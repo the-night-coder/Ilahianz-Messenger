@@ -32,8 +32,15 @@ public class NotificationDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS"
-                + " Notification(keyid TEXT PRIMARY KEY UNIQUE," +
-                "message TEXT, id TEXT, type INT, ref TEXT, timestamp DOUBLE, seen BOOLEAN, username TEXT)");
+                + " Notification(" +
+                "keyid TEXT PRIMARY KEY UNIQUE," +
+                "message TEXT, " +
+                "id TEXT, " +
+                "type INT, " +
+                "ref TEXT, " +
+                "timestamp DOUBLE, " +
+                "seen BOOLEAN, " +
+                "username TEXT)");
     }
 
     @Override

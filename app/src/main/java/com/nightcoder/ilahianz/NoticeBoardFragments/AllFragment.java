@@ -23,7 +23,7 @@ import com.nightcoder.ilahianz.R;
 
 import java.util.ArrayList;
 
-public class AllFragment extends Fragment implements FragmentListener{
+public class AllFragment extends Fragment{
 
     private RecyclerView recyclerView;
 
@@ -71,10 +71,5 @@ public class AllFragment extends Fragment implements FragmentListener{
         });
 
 
-    }
-
-    @Override
-    public void onSyncData() {
-        setContents();
     }
 }

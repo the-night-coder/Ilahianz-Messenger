@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -24,12 +25,16 @@ import com.nightcoder.ilahianz.Adapters.CommentAdapter;
 import com.nightcoder.ilahianz.Models.Comment;
 import com.nightcoder.ilahianz.Models.Notification;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
@@ -154,8 +159,6 @@ public class CommentActivity extends AppCompatActivity {
             }
         }.run();
     }
-
-
     private void composeComment() {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("NoticeReaction").child("Comments").child(keyId);
@@ -203,7 +206,6 @@ public class CommentActivity extends AppCompatActivity {
         }
 
     }
-
     private void init() {
         mContext = CommentActivity.this;
         message = findViewById(R.id.message);

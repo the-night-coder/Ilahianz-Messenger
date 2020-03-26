@@ -3,56 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:id="@+id/root_view"
-    android:background="@color/white"
     android:layout_height="match_parent"
     tools:context=".CommentActivity">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="45dp">
-
-            <ImageButton
-                android:id="@+id/thanks_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="16dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_thumb_up_black_24dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/thanks_button"
-                android:fontFamily="@font/roboto_regular"
-                android:gravity="center"
-                android:text="100"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="10 Comments"
-                tools:ignore="HardcodedText" />
-        </RelativeLayout>
-    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_above="@id/message_layout"
-        android:layout_below="@id/appbar" />
+        android:layout_height="match_parent" />
 
     <RelativeLayout
         android:id="@+id/message_layout"
@@ -88,7 +46,6 @@
             android:tint="@color/black" />
 
     </RelativeLayout>
-
     <ImageButton
         android:id="@+id/btn_sent"
         android:layout_width="50dp"
