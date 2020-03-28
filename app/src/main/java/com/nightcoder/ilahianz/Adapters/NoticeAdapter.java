@@ -1,8 +1,11 @@
 package com.nightcoder.ilahianz.Adapters;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,12 +18,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,6 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.nightcoder.ilahianz.BuildConfig;
 import com.nightcoder.ilahianz.CommentActivity;
 import com.nightcoder.ilahianz.ImageViewActivity;
 import com.nightcoder.ilahianz.Models.Comment;
@@ -66,6 +72,7 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.MESSAGE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.TIMESTAMP;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_AUDIO;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_DOC;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_TEXT;
 
 public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -85,13 +92,17 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == Notice.TYPE_TEXT) {
-            return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_notice_type_text, parent, false));
+            return new ViewHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.item_notice_type_text, parent, false));
         } else if (viewType == Notice.TYPE_IMAGE) {
-            return new ImageViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_notice_type_image, parent, false));
+            return new ImageViewHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.item_notice_type_image, parent, false));
         } else if (viewType == TYPE_AUDIO) {
-            return new AudioViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_notice_type_audio, parent, false));
+            return new AudioViewHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.item_notice_type_audio, parent, false));
         } else {
-            return null;
+            return new DocViewHolder(LayoutInflater.from(mContext)
+                    .inflate(R.layout.item_notice_type_doc, parent, false));
         }
     }
 
@@ -107,6 +118,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (getItemViewType(position) == TYPE_AUDIO) {
             AudioViewHolder viewHolder = (AudioViewHolder) holders;
             initAudioViewHolder(viewHolder, notice, position);
+        } else if (getItemViewType(position) == TYPE_DOC) {
+            DocViewHolder viewHolder = (DocViewHolder) holders;
+            initDocViewHolder(viewHolder, notice, position);
         }
     }
 
@@ -521,6 +535,202 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         syncStarredNotices(mNotices.get(position).getId(), holder);
     }
 
+    private void initDocViewHolder(final DocViewHolder holder, final Notice notice, int position) {
+        id = MemorySupports.getUserInfo(mContext, KEY_ID);
+        final EmojiPopup emojiPopup = EmojiPopup.Builder.fromRootView(holder.container).build(holder.commentContent);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.child(notice.getComposerId()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UserData userData = dataSnapshot.getValue(UserData.class);
+                assert userData != null;
+                holder.username.setText(userData.getUsername());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        final String[] fileDetails = notice.getText().split(",");
+        holder.fileName.setText(fileDetails[1]);
+        holder.fileSize.setText(fileDetails[0]);
+
+        //emoji setup
+        holder.emojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (emojiPopup.isShowing()) {
+                    emojiPopup.toggle();
+                    holder.emojiButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_insert_emoticon_black_24dp));
+                } else {
+                    emojiPopup.toggle();
+                    holder.emojiButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_keyboard_black_24dp));
+                }
+            }
+        });
+
+        holder.commentContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emojiPopup.dismiss();
+                holder.emojiButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_insert_emoticon_black_24dp));
+            }
+        });
+
+        //
+        File localFile = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), fileDetails[1]);
+        if (localFile.exists()) {
+            changeDocOpenButtonIcon(holder, "OPEN", R.drawable.ic_insert_drive_file_black_24dp, View.GONE);
+        }
+
+        holder.openButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Download", "Pressed");
+                if (holder.openButton.getTag().equals("DOWNLOAD")) {
+                    Log.d("Download", "downloading");
+                    changeDocOpenButtonIcon(holder, "DOWNLOADING",
+                            R.drawable.ic_schedule_black_24dp, View.VISIBLE);
+                    FirebaseStorage mStorage = FirebaseStorage.getInstance();
+                    StorageReference down = mStorage.getReferenceFromUrl(notice.getContentPath());
+                    try {
+                        File localFile = new File(Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOWNLOADS), fileDetails[1]);
+                        if (localFile.createNewFile()) {
+                            down.getFile(localFile).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        changeDocOpenButtonIcon(holder, "OPEN",
+                                                R.drawable.ic_insert_drive_file_black_24dp, View.GONE);
+                                    } else {
+                                        changeDocOpenButtonIcon(holder, "DOWNLOAD",
+                                                R.drawable.ic_arrow_downward_black_24dp, View.GONE);
+                                    }
+                                }
+                            });
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (holder.openButton.getTag().equals("OPEN")) {
+                    String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()
+                            + "/Download/" + fileDetails[1];
+                    File file = new File(filePath);
+                    Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
+                    pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Uri uri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".provider", file);
+                        mContext.grantUriPermission(mContext.getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        pdfOpenIntent
+                                .setDataAndType(uri, "application/pdf")
+                                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    } else {
+                        pdfOpenIntent.setDataAndType(Uri.fromFile(file), "application/pdf");
+                    }
+                    try {
+                        mContext.startActivity(pdfOpenIntent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(mContext, "Couldn't find an application", Toast.LENGTH_SHORT).show();
+                    }
+                } else if (holder.openButton.getTag().equals("DOWNLOADING")) {
+                    Toast.makeText(mContext, "Downloading..", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        holder.time.setText(Time.covertTimeToText(notice.getTimestamp()));
+        holder.container.setVisibility(View.VISIBLE);
+        holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+        holder.target.setText(notice.getTarget());
+
+        if (notice.getSubject().isEmpty()) {
+            holder.subject.setVisibility(View.GONE);
+        } else
+            holder.subject.setText(notice.getSubject());
+        holder.thanksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.thanksButtonView.getTag().equals("UNLIKE"))
+                    setThanks(notice, holder);
+                else setUnThanks(notice.getId(), holder);
+            }
+        });
+        holder.replyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()
+                        + "/Download/" + fileDetails[1];
+                File file = new File(filePath);
+                Intent intentShareFile = new Intent();
+                intentShareFile.setType("application/pdf");
+                intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                intentShareFile.putExtra(Intent.EXTRA_SUBJECT, notice.getSubject());
+                intentShareFile.putExtra(Intent.EXTRA_TEXT, String.format("Sharing from ilahianz {%s}",
+                        holder.username.getText().toString()));
+                mContext.startActivity(Intent.createChooser(intentShareFile, "Share Document File"));
+            }
+        });
+        holder.commentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                commentActivity(notice.getId(), notice.getComposerId(), notice.getSubject());
+            }
+        });
+
+        holder.starButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.starButton.getTag().toString().equals("STARRED"))
+                    setUnStarred(notice.getId(), holder);
+                else
+                    setStarred(notice, holder);
+            }
+        });
+
+        holder.sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendComment(notice.getId(), holder);
+            }
+        });
+
+        holder.profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (id.equals(notice.getComposerId()))
+                    mContext.startActivity(new Intent(mContext, ProfileActivity.class));
+                else
+                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class).putExtra(KEY_ID, notice.getComposerId()));
+            }
+        });
+        holder.username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (id.equals(notice.getComposerId()))
+                    mContext.startActivity(new Intent(mContext, ProfileActivity.class));
+                else
+                    mContext.startActivity(new Intent(mContext, UserProfileActivity.class).putExtra(KEY_ID, notice.getComposerId()));
+            }
+        });
+
+        syncThanks(mNotices.get(position).getId(), holder);
+        syncComments(mNotices.get(position).getId(), holder);
+        syncStarredNotices(mNotices.get(position).getId(), holder);
+    }
+
+    private void changeDocOpenButtonIcon(DocViewHolder holder, String tag, int drawable, int progressVisible) {
+        holder.openButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        holder.openButton.setVisibility(View.GONE);
+        holder.openButton.setImageResource(drawable);
+        holder.openButton.setTag(tag);
+        holder.loading.setVisibility(progressVisible);
+        holder.openButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        holder.openButton.setVisibility(View.VISIBLE);
+    }
     private void syncDuration(final AudioViewHolder holder) {
         holder.timer = new Timer();
         holder.timer.scheduleAtFixedRate(new TimerTask() {
@@ -537,7 +747,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }, 0, 1000);
     }
-
     private void startPlaying(final AudioViewHolder holder, String key) {
         holder.mediaPlayer = new MediaPlayer();
         String fileName = Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -588,7 +797,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             e.printStackTrace();
         }
     }
-
     private void changeAudioPlayerIcon(int icon, AudioViewHolder holder, String tag) {
         holder.playButtonIcon.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
         holder.playButtonIcon.setVisibility(View.GONE);
@@ -640,6 +848,47 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }.run();
     }
 
+    private synchronized void syncThanks(final String key, final NoticeAdapter.DocViewHolder holder) {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                DatabaseReference thanksRef = FirebaseDatabase.getInstance()
+                        .getReference("NoticeReaction").child("Thanks").child(key);
+                thanksRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int likes = 0;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Like data = snapshot.getValue(Like.class);
+                            assert data != null;
+                            likes++;
+                            if (id.equals(data.getId())) {
+                                setThanksRed(holder);
+                            }
+                        }
+                        if (likes != 0) {
+                            holder.thanksCount.setText(String.format("%s thanks", likes));
+                            holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
+                                    R.anim.fade_in));
+                            holder.thanksCount.setVisibility(View.VISIBLE);
+                            //holder.reactContainer.setVisibility(View.VISIBLE);
+                        } else {
+                            holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
+                                    R.anim.fade_out));
+                            holder.thanksCount.setVisibility(View.GONE);
+                            //holder.reactContainer.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }.run();
+    }
     private synchronized void syncThanks(final String key, final NoticeAdapter.ImageViewHolder holder) {
         new Thread() {
             @Override
@@ -681,7 +930,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncThanks(final String key, final NoticeAdapter.AudioViewHolder holder) {
         new Thread() {
             @Override
@@ -723,7 +971,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncComments(final String key, final NoticeAdapter.ViewHolder holder) {
         new Thread() {
             @Override
@@ -789,6 +1036,38 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }.run();
     }
 
+    private synchronized void syncComments(final String key, final NoticeAdapter.DocViewHolder holder) {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                DatabaseReference commentRef = FirebaseDatabase.getInstance()
+                        .getReference("NoticeReaction").child("Comments").child(key);
+                commentRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int comments = 0;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Comment data = snapshot.getValue(Comment.class);
+                            assert data != null;
+                            comments++;
+                        }
+                        if (comments != 0) {
+                            //holder.reactContainer.setVisibility(View.VISIBLE);
+                            holder.commentCount.setText(String.format("%s comments", comments));
+                            holder.commentCount.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+                            holder.commentCount.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }.run();
+    }
     private synchronized void syncComments(final String key, final NoticeAdapter.AudioViewHolder holder) {
         new Thread() {
             @Override
@@ -821,7 +1100,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncStarredNotices(final String key, final NoticeAdapter.ViewHolder holder) {
         new Thread() {
             @Override
@@ -851,7 +1129,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncStarredNotices(final String key, final NoticeAdapter.AudioViewHolder holder) {
         new Thread() {
             @Override
@@ -881,7 +1158,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncStarredNotices(final String key, final NoticeAdapter.ImageViewHolder holder) {
         new Thread() {
             @Override
@@ -912,6 +1188,35 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }.run();
     }
 
+    private synchronized void syncStarredNotices(final String key, final NoticeAdapter.DocViewHolder holder) {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
+
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Notice notice = snapshot.getValue(Notice.class);
+                            assert notice != null;
+                            if (notice.getId().equals(key)) {
+                                holder.starButton.setImageResource(R.drawable.ic_star_black_24dp);
+                                holder.starButton.setTag("STARRED");
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("Notice", "Not Found");
+                    }
+                });
+            }
+        }.run();
+    }
     private void setStarred(Notice notice, NoticeAdapter.ViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -945,7 +1250,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
     }
-
     private void setStarred(Notice notice, NoticeAdapter.ImageViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -979,7 +1283,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
     }
-
     private void setStarred(Notice notice, NoticeAdapter.AudioViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -1013,7 +1316,40 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
     }
-    //UnStarred
+
+    private void setStarred(Notice notice, NoticeAdapter.DocViewHolder holder) {
+        DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
+        HashMap<String, Object> hashMap = new HashMap<>();
+
+        hashMap.put(Notice.KEY_COMPOSER_ID, notice.getComposerId());
+        hashMap.put(Notice.KEY_CONTENT_PATH, "null");
+        hashMap.put(Notice.KEY_CONTENT_TYPE, TYPE_TEXT);
+        hashMap.put(Notice.KEY_SUBJECT, notice.getSubject());
+        hashMap.put(Notice.KEY_TEXT, notice.getText());
+        hashMap.put(Notice.KEY_TARGET, notice.getTarget());
+        hashMap.put(Notice.KEY_TIMESTAMP, notice.getTimestamp());
+        hashMap.put(Notice.KEY_ID, notice.getId());
+
+        starredRef.child(notice.getId()).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(mContext, "Starred", Toast.LENGTH_SHORT).show();
+                    mediaPlayer = MediaPlayer.create(mContext, R.raw.when);
+                    mediaPlayer.start();
+                }
+            }
+        });
+
+        holder.starButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        holder.starButton.setVisibility(View.GONE);
+        holder.starButton.setImageResource(R.drawable.ic_star_black_24dp);
+        holder.starButton.setTag("STARRED");
+        holder.starButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        holder.starButton.setVisibility(View.VISIBLE);
+
+
+    }
     private void setUnStarred(String key, NoticeAdapter.ViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         starredRef.child(key).setValue(null);
@@ -1025,7 +1361,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.starButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
         holder.starButton.setVisibility(View.VISIBLE);
     }
-
     private void setUnStarred(String key, NoticeAdapter.ImageViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         starredRef.child(key).setValue(null);
@@ -1037,7 +1372,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.starButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
         holder.starButton.setVisibility(View.VISIBLE);
     }
-
     private void setUnStarred(String key, NoticeAdapter.AudioViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         starredRef.child(key).setValue(null);
@@ -1049,7 +1383,18 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.starButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
         holder.starButton.setVisibility(View.VISIBLE);
     }
-    //setThanks
+
+    private void setUnStarred(String key, NoticeAdapter.DocViewHolder holder) {
+        DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
+        starredRef.child(key).setValue(null);
+
+        holder.starButton.setTag("NOT_STARRED");
+        holder.starButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        holder.starButton.setVisibility(View.GONE);
+        holder.starButton.setImageResource(R.drawable.ic_star_border_black_24dp);
+        holder.starButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        holder.starButton.setVisibility(View.VISIBLE);
+    }
     private void setThanksRed(NoticeAdapter.ViewHolder holder) {
         holder.thanks.setTextColor(mContext.getResources().getColor(R.color.red_favorite));
         holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_red_24dp);
@@ -1060,13 +1405,17 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_red_24dp);
         holder.thanksButtonView.setTag("THANKED");
     }
-
     private void setThanksRed(NoticeAdapter.AudioViewHolder holder) {
         holder.thanks.setTextColor(mContext.getResources().getColor(R.color.red_favorite));
         holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_red_24dp);
         holder.thanksButtonView.setTag("THANKED");
     }
 
+    private void setThanksRed(NoticeAdapter.DocViewHolder holder) {
+        holder.thanks.setTextColor(mContext.getResources().getColor(R.color.red_favorite));
+        holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_red_24dp);
+        holder.thanksButtonView.setTag("THANKED");
+    }
     private void setThankGrey(NoticeAdapter.ViewHolder holder) {
         holder.thanks.setTextColor(mContext.getResources().getColor(R.color.dark_grey));
         holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
@@ -1077,13 +1426,17 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         holder.thanksButtonView.setTag("UNLIKE");
     }
-
     private void setThankGrey(NoticeAdapter.AudioViewHolder holder) {
         holder.thanks.setTextColor(mContext.getResources().getColor(R.color.dark_grey));
         holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         holder.thanksButtonView.setTag("UNLIKE");
     }
 
+    private void setThankGrey(NoticeAdapter.DocViewHolder holder) {
+        holder.thanks.setTextColor(mContext.getResources().getColor(R.color.dark_grey));
+        holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        holder.thanksButtonView.setTag("UNLIKE");
+    }
     private void replyActivity() {
 
     }
@@ -1094,6 +1447,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         mediaPlayer.start();
     }
 
+    //set thanks
     private void setThanks(final Notice notice, final NoticeAdapter.ViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
         reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
@@ -1140,7 +1494,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.thanksButtonView.setVisibility(View.VISIBLE);
         setThanksRed(holder);
     }
-
     private void setThanks(final Notice notice, final NoticeAdapter.ImageViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
         reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
@@ -1187,7 +1540,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.thanksButtonView.setVisibility(View.VISIBLE);
         setThanksRed(holder);
     }
-
     private void setThanks(final Notice notice, final NoticeAdapter.AudioViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
         reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
@@ -1235,6 +1587,54 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         setThanksRed(holder);
     }
 
+    private void setThanks(final Notice notice, final NoticeAdapter.DocViewHolder holder) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
+        reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            syncThanks(notice.getId(), holder);
+                            holder.commentContainer.setVisibility(View.VISIBLE);
+                            holder.commentContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+                            String message;
+                            if (notice.getSubject().toLowerCase().contains("notice")) {
+                                message = " say thanks for your '" + notice.getSubject() + "'";
+                            } else {
+                                message = " say thanks for your '" + notice.getSubject() + "' notice";
+                            }
+                            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Notifications")
+                                    .child(notice.getComposerId());
+
+                            String key = reference1.push().getKey();
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("id", id);
+                            hashMap.put("message", message);
+                            hashMap.put("type", Notification.TYPE_THANKS);
+                            hashMap.put("ref", notice.getId());
+                            hashMap.put("timestamp", ServerValue.TIMESTAMP);
+                            hashMap.put("seen", false);
+                            hashMap.put("key", key);
+                            hashMap.put("username", MemorySupports.getUserInfo(mContext, KEY_USERNAME));
+                            assert key != null;
+                            reference1.child(key).setValue(hashMap);
+
+                        }
+                    }
+                });
+        mediaPlayer = MediaPlayer.create(mContext, R.raw.tik);
+        mediaPlayer.start();
+        holder.thanksButtonView.setTag("THANKED");
+        holder.thanksButtonView.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        holder.thanksButtonView.setVisibility(View.GONE);
+        holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_red_24dp);
+        holder.thanksButtonView.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        holder.thanksButtonView.setVisibility(View.VISIBLE);
+        setThanksRed(holder);
+    }
+
+    //set unThank
     private void setUnThanks(final String key, final NoticeAdapter.ViewHolder holder) {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction").child("Thanks").child(key);
@@ -1278,6 +1678,27 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         setThankGrey(holder);
     }
 
+    private void setUnThanks(final String key, final NoticeAdapter.DocViewHolder holder) {
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction").child("Thanks").child(key);
+        reference.child(id).child("id").setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    syncThanks(key, holder);
+                    holder.commentContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_out));
+                    holder.commentContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+        holder.thanksButtonView.setTag("UNLIKE");
+        holder.thanksButtonView.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        holder.thanksButtonView.setVisibility(View.GONE);
+        holder.thanksButtonView.setImageResource(R.drawable.ic_favorite_black_24dp);
+        holder.thanksButtonView.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        holder.thanksButtonView.setVisibility(View.VISIBLE);
+        setThankGrey(holder);
+    }
     private void setUnThanks(final String key, final NoticeAdapter.AudioViewHolder holder) {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction").child("Thanks").child(key);
@@ -1300,6 +1721,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         setThankGrey(holder);
     }
 
+    //set Comments
     private void sendComment(String key, NoticeAdapter.ViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("NoticeReaction").child("Comments").child(key);
@@ -1322,7 +1744,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             });
         }
     }
-
     private void sendComment(String key, NoticeAdapter.ImageViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("NoticeReaction").child("Comments").child(key);
@@ -1345,8 +1766,30 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             });
         }
     }
-
     private void sendComment(String key, NoticeAdapter.AudioViewHolder holder) {
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference("NoticeReaction").child("Comments").child(key);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        String message = Objects.requireNonNull(holder.commentContent.getText()).toString().trim();
+        if (!message.isEmpty()) {
+            hashMap.put(KEY_ID, id);
+            hashMap.put(MESSAGE, message);
+            hashMap.put(TIMESTAMP, ServerValue.TIMESTAMP);
+            holder.commentContent.setText("");
+            reference.push().setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        mediaPlayer = MediaPlayer.create(mContext, R.raw.tik);
+                        mediaPlayer.start();
+                    }
+                }
+            });
+        }
+    }
+
+    private void sendComment(String key, NoticeAdapter.DocViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("NoticeReaction").child("Comments").child(key);
 
@@ -1481,6 +1924,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         CircleImageView profileImage;
         ImageButton sendButton;
         TextView subject;
+        ProgressBar loading;
+        ImageButton openButton;
+        TextView fileName, fileSize;
         ImageView image;
 
         DocViewHolder(@NonNull View itemView) {
@@ -1506,8 +1952,12 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             commentContent = itemView.findViewById(R.id.comment_edit_text);
             profileImage = itemView.findViewById(R.id.profile_image);
             commentContainer.setVisibility(View.GONE);
-
             thanksButtonView = itemView.findViewById(R.id.thanks_button_view);
+            loading = itemView.findViewById(R.id.progress);
+            fileName = itemView.findViewById(R.id.file_name);
+            fileSize = itemView.findViewById(R.id.file_size);
+            openButton = itemView.findViewById(R.id.open_button_icon);
+            loading.setVisibility(View.GONE);
         }
     }
 

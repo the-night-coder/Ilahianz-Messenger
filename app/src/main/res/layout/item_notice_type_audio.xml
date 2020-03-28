@@ -4,17 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/container"
     android:layout_marginStart="15dp"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="15dp"
     android:layout_marginEnd="15dp"
-    android:layout_marginBottom="5dp"
     android:background="@drawable/notice_bg_item"
+    android:layout_marginBottom="5dp"
     android:elevation="10dp">
-
-    <RelativeLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -394,4 +390,3 @@
         </RelativeLayout>
 
     </RelativeLayout>
-</RelativeLayout>

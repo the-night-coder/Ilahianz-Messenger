@@ -2,15 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="10dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginEnd="10dp"
+    android:id="@+id/container"
+    android:layout_marginStart="15dp"
+    android:layout_marginTop="15dp"
+    android:layout_marginEnd="15dp"
+    android:background="@drawable/notice_bg_item"
     android:layout_marginBottom="5dp"
-    android:background="@drawable/material_grey_outline_rect"
-    android:orientation="vertical">
+    android:elevation="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
@@ -29,7 +29,8 @@
         android:layout_margin="10dp"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_star_border_black_24dp"
-        android:tag="NOT_STARRED" />
+        android:tag="NOT_STARRED"
+        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:id="@+id/cont"
@@ -56,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            tools:ignore="ContentDescription"
             android:src="@drawable/ic_play_arrow_black_24dp" />
 
         <TextView
@@ -126,7 +128,7 @@
             android:id="@+id/attach_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/material_grey_outline_rect"
+            android:background="@drawable/item_content_background"
             android:orientation="horizontal">
 
             <RelativeLayout
@@ -145,7 +147,8 @@
                     android:background="@drawable/material_circle_option"
                     android:padding="10dp"
                     android:scaleType="fitCenter"
-                    android:src="@mipmap/doc" />
+                    android:src="@mipmap/doc"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:id="@+id/file_name"
@@ -172,9 +175,12 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:clickable="true"
+                android:elevation="5dp"
                 android:id="@+id/open_button"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
+                android:focusable="true"
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/online_dot"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -187,15 +193,18 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/ic_close_black_24dp"
+                    android:src="@drawable/ic_arrow_downward_black_24dp"
                     android:tint="@color/white"
-                    android:visibility="visible" />
+                    android:tag="DOWNLOAD"
+                    android:visibility="visible"
+                    tools:ignore="ContentDescription" />
 
                 <ProgressBar
                     android:id="@+id/progress"
                     android:layout_width="42dp"
                     android:indeterminateTint="@color/white"
                     android:layout_height="42dp"
+                    android:visibility="gone"
                     android:layout_centerInParent="true" />
             </RelativeLayout>
 
@@ -204,6 +213,7 @@
         <RelativeLayout
             android:id="@+id/react_con"
             android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
             android:layout_height="wrap_content">
 
             <TextView
@@ -211,9 +221,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginBottom="5dp"
+                android:textAlignment="center"
                 android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/white"
+                android:textColor="@color/blue_dark"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -222,12 +232,17 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/blue_dark"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText,RelativeOverlap" />
 
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/view_color" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -257,7 +272,8 @@
                 android:background="@android:color/transparent"
                 android:scaleType="center"
                 android:src="@drawable/ic_favorite_border_black_24dp"
-                android:tag="UNLIKE" />
+                android:tag="UNLIKE"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/thanks"
@@ -279,7 +295,8 @@
             app:layout_constraintEnd_toStartOf="@+id/reply_button"
             app:layout_constraintStart_toEndOf="@+id/thanks_button"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -311,7 +328,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_reply_black_24dp"
+                android:src="@drawable/ic_share_black_24dp"
                 android:tint="#A7A7A7" />
 
             <TextView
@@ -319,7 +336,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:fontFamily="@font/roboto_bold"
-                android:text="@string/reply" />
+                android:text="@string/share" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,6 +72,7 @@ import static com.nightcoder.ilahianz.Literals.IntegerConstants.CAMERA_REQUEST;
 import static com.nightcoder.ilahianz.Literals.IntegerConstants.IMAGE_REQUEST;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_AUDIO;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_DOC;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_IMAGE;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_TEXT;
 
@@ -611,6 +612,12 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
                 content.setVisibility(View.GONE);
             }
+        } else if (attachType == TYPE_DOC){
+            attachImage.setImageDrawable(getResources().getDrawable(R.mipmap.doc));
+            if (content.getVisibility() == View.VISIBLE) {
+                content.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+                content.setVisibility(View.GONE);
+            }
         }
 
         attachContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
@@ -690,6 +697,18 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                     myApp.uploadNotice(Uri.fromFile(attachFile), TYPE_AUDIO, subject.getText().toString(), target, "");
                 }
             }
+        } else if (attachType == TYPE_DOC) {
+            if (target == null) {
+                Toast.makeText(mContext, "Select Target", Toast.LENGTH_SHORT).show();
+            } else {
+                if (attachFile == null) {
+                    Toast.makeText(mContext, "Attach Failed", Toast.LENGTH_SHORT).show();
+                } else {
+                    FileUtils.FileDetail fileDetail = FileUtils.getFileDetailFromUri(mContext, Uri.fromFile(attachFile));
+                    myApp.uploadNotice(Uri.fromFile(attachFile), TYPE_DOC, subject.getText().toString(),
+                            target, FileUtils.getFileSize(fileDetail.fileSize) + "," + fileDetail.fileName);
+                }
+            }
         }
     }
 
@@ -701,25 +720,32 @@ public class ComposeNoticeActivity extends AppCompatActivity {
             if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     && checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 Uri uri = data.getData();
-                attachType = TYPE_IMAGE;
                 assert uri != null;
-                setAttach(uri);
-                attachUri = uri;
-
                 try {
                     attachFile = FileUtils.from(mContext, uri);
                     compressImage(attachFile);
+                    attachType = TYPE_IMAGE;
+                    setAttach(uri);
+                    attachUri = uri;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Toast.makeText(mContext, "Attachment failed !", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 askPermission(IMAGE_REQUEST);
             }
 
         } else if (requestCode == DOC_REQUEST && resultCode == RESULT_OK && data != null) {
-            removeAttach();
-            setAttach(data.getData());
-            attachUri = data.getData();
+            try {
+                attachFile = FileUtils.from(mContext, data.getData());
+                removeAttach();
+                attachType = TYPE_DOC;
+                setAttach(data.getData());
+                attachUri = data.getData();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(mContext, "Attachment failed !", Toast.LENGTH_SHORT).show();
+            }
         } else if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null) {
             Uri uri = data.getData();
             attachType = TYPE_IMAGE;

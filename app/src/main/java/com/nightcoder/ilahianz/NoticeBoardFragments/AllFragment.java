@@ -51,11 +51,10 @@ public class AllFragment extends Fragment{
     private void setContents() {
         final ArrayList<Notice> notices = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
-
+        notices.clear();
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                notices.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Notice notice = snapshot.getValue(Notice.class);
                     notices.add(notice);

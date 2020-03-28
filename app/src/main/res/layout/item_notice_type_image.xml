@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/container"
     android:layout_marginStart="15dp"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="15dp"
     android:layout_marginEnd="15dp"
-    app:cardBackgroundColor="@color/white"
+    android:background="@drawable/notice_bg_item"
     android:layout_marginBottom="5dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="@dimen/notice_elevation">
-
-    <RelativeLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    android:elevation="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -317,6 +312,5 @@
                 tools:layout_editor_absoluteY="3dp" />
 
         </RelativeLayout>
-    </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+</RelativeLayout>

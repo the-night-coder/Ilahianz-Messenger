@@ -175,13 +175,14 @@
     <string name="comment">Comment</string>
     <string name="reply">Reply</string>
     <string name="compose_notice">Compose Notice</string>
-    <string name="write_something">Write Something...</string>
+    <string name="write_something">Write Something…</string>
     <string name="attach_file">Attach File</string>
     <string name="this_notice_for">This Notice for</string>
     <string name="target_to_a_department">Target to a Department</string>
     <string name="subject">Subject</string>
     <string name="attachment_not_found">Attachment not found</string>
-    <string name="write_comment">Write Comment...</string>
+    <string name="write_comment">Write Comment…</string>
     <string name="starred_notices">Starred Notices</string>
+    <string name="share">Share</string>
 
 </resources>
