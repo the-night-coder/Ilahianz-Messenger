@@ -54,7 +54,7 @@ public class NotificationFragment extends Fragment {
         linearLayoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         ((SimpleItemAnimator) Objects.requireNonNull(recyclerView.getItemAnimator())).setSupportsChangeAnimations(false);
-
+        setNotifications();
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new Runnable() {
             public void run() {
@@ -69,7 +69,6 @@ public class NotificationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        setNotifications();
     }
 
     private void setNotifications() {

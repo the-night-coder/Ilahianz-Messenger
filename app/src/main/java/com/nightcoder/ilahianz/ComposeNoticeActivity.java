@@ -35,15 +35,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -80,7 +77,7 @@ public class ComposeNoticeActivity extends AppCompatActivity {
 
     private RadioGroup options;
     private EditText content, subject;
-    private Button composeButton;
+    private ImageButton composeButton;
     private ImageButton audioOption, imageOption, docOption, cameraOption;
     private Context mContext;
     private RadioButton department;
@@ -103,7 +100,7 @@ public class ComposeNoticeActivity extends AppCompatActivity {
 
 
     private String target = null;
-    private int attachType = 0;
+    private int attachType = TYPE_TEXT;
     private Uri attachUri = null;
     private File attachFile = null;
     private static String mFileName = null;
@@ -667,13 +664,7 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 hashMap.put(Notice.KEY_ID, key);
 
                 assert key != null;
-                reference.child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d("Notice", "Sent");
-                        onBackPressed();
-                    }
-                });
+                myApp.composeTextNotice(hashMap, key);
 
                 content.setText("");
             }
@@ -710,6 +701,11 @@ public class ComposeNoticeActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override

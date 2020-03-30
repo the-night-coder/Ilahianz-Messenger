@@ -716,10 +716,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     mContext.startActivity(new Intent(mContext, UserProfileActivity.class).putExtra(KEY_ID, notice.getComposerId()));
             }
         });
-
-        syncThanks(mNotices.get(position).getId(), holder);
-        syncComments(mNotices.get(position).getId(), holder);
-        syncStarredNotices(mNotices.get(position).getId(), holder);
     }
 
     private void changeDocOpenButtonIcon(DocViewHolder holder, String tag, int drawable, int progressVisible) {
@@ -848,47 +844,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }.run();
     }
 
-    private synchronized void syncThanks(final String key, final NoticeAdapter.DocViewHolder holder) {
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                DatabaseReference thanksRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Thanks").child(key);
-                thanksRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int likes = 0;
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Like data = snapshot.getValue(Like.class);
-                            assert data != null;
-                            likes++;
-                            if (id.equals(data.getId())) {
-                                setThanksRed(holder);
-                            }
-                        }
-                        if (likes != 0) {
-                            holder.thanksCount.setText(String.format("%s thanks", likes));
-                            holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
-                                    R.anim.fade_in));
-                            holder.thanksCount.setVisibility(View.VISIBLE);
-                            //holder.reactContainer.setVisibility(View.VISIBLE);
-                        } else {
-                            holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
-                                    R.anim.fade_out));
-                            holder.thanksCount.setVisibility(View.GONE);
-                            //holder.reactContainer.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        }.run();
-    }
     private synchronized void syncThanks(final String key, final NoticeAdapter.ImageViewHolder holder) {
         new Thread() {
             @Override
@@ -1588,13 +1543,12 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void setThanks(final Notice notice, final NoticeAdapter.DocViewHolder holder) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
-        reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
+        reference.child(notice.getId()).child("Thanks").child(id).child("id").setValue(id)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            syncThanks(notice.getId(), holder);
                             holder.commentContainer.setVisibility(View.VISIBLE);
                             holder.commentContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
                             String message;
@@ -1679,13 +1633,11 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void setUnThanks(final String key, final NoticeAdapter.DocViewHolder holder) {
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction").child("Thanks").child(key);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice").child(key).child("Thanks");
         reference.child(id).child("id").setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    syncThanks(key, holder);
                     holder.commentContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_out));
                     holder.commentContainer.setVisibility(View.GONE);
                 }

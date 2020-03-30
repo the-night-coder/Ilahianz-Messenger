@@ -325,7 +325,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/ic_reply_black_24dp"
+                    android:src="@drawable/ic_share_black_24dp"
                     android:tint="#A7A7A7" />
 
                 <TextView

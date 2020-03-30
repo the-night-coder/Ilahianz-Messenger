@@ -114,6 +114,59 @@ public class MyApp extends Application {
 //                1000, R.drawable.heart);
     }
 
+    public void composeTextNotice(HashMap<String, Object> hashMap, String key) {
+        if (Network.Connected(this)) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
+            final Dialog dialog = ViewSupports.materialSnackBarDialog(getCurrentActivity(), R.layout.upload_task_progress);
+            Button cancel = dialog.findViewById(R.id.option_close);
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.cancel();
+                    if (getCurrentActivity() instanceof ComposeNoticeActivity) {
+                        getCurrentActivity().onBackPressed();
+                    }
+                }
+            });
+            dialog.setCancelable(false);
+            dialog.show();
+
+            reference.child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.d("Notice", "Sent");
+                    dialog.cancel();
+                    if (task.isSuccessful()) {
+                        if (getCurrentActivity() instanceof ComposeNoticeActivity) {
+                            getCurrentActivity().onBackPressed();
+                        }
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Dialog dialog = ViewSupports.materialSnackBar(getCurrentActivity(),
+                                        "Notice Uploaded.", R.drawable.ic_check_circle_green_24dp);
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.cancel();
+                                    }
+                                }, 3000);
+                            }
+                        }, 1000);
+                    } else {
+                        final Dialog dialog = ViewSupports.materialSnackBar(getCurrentActivity(),
+                                "Notice Failed to Upload", R.drawable.ic_info_black_24dp);
+                        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
     public void uploadNotice(Uri uri, final int type, final String subject, final String target, final String content) {
         if (Network.Connected(this)) {
             final Dialog dialog = ViewSupports.materialSnackBarDialog(getCurrentActivity(), R.layout.upload_task_progress);
@@ -177,7 +230,7 @@ public class MyApp extends Application {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     final Dialog dialog = ViewSupports.materialSnackBar(getCurrentActivity(),
-                                            "Notice Uploaded.", R.drawable.ic_info_black_24dp);
+                                            "Notice Uploaded.", R.drawable.ic_check_circle_green_24dp);
                                     dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                                         @Override
                                         public void onCancel(DialogInterface dialog) {
@@ -195,6 +248,17 @@ public class MyApp extends Application {
                                             }
                                         }
                                     }, 3000);
+                                } else {
+                                    final Dialog dialog = ViewSupports.materialSnackBar(getCurrentActivity(),
+                                            "Notice failed to Upload.", R.drawable.ic_info_black_24dp);
+                                    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialog) {
+                                            if (getCurrentActivity() instanceof ComposeNoticeActivity) {
+                                                getCurrentActivity().onBackPressed();
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });

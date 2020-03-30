@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -105,11 +106,6 @@ public class NoticeBoardActivity extends AppCompatActivity {
         this.title.setText(title);
         this.title.setAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
         this.title.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
     }
 
     @Override

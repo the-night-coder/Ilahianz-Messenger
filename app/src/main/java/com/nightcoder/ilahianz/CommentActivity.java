@@ -104,7 +104,7 @@ public class CommentActivity extends AppCompatActivity {
                 final ArrayList<Comment> comments = new ArrayList<>();
                 comments.clear();
                 DatabaseReference reference = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Comments").child(keyId);
+                        .getReference("Notice").child(keyId).child("Thanks");
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -161,7 +161,7 @@ public class CommentActivity extends AppCompatActivity {
     }
     private void composeComment() {
         DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("NoticeReaction").child("Comments").child(keyId);
+                .getReference("Notice").child(keyId).child("Comments");
         String key = reference.push().getKey();
         HashMap<String, Object> hashMap = new HashMap<>();
         final String message = Objects.requireNonNull(this.message.getText()).toString().trim();
