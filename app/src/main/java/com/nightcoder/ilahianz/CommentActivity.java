@@ -1,12 +1,17 @@
 package com.nightcoder.ilahianz;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,18 +28,15 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.Adapters.CommentAdapter;
 import com.nightcoder.ilahianz.Models.Comment;
+import com.nightcoder.ilahianz.Models.Like;
 import com.nightcoder.ilahianz.Models.Notification;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-
-import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
@@ -51,10 +53,13 @@ public class CommentActivity extends AppCompatActivity {
     private CommentAdapter commentAdapter;
     private MediaPlayer mediaPlayer;
     private Context mContext;
-    private String TAG = "COMMENT_ACTIVITY";
+    //private String TAG = "COMMENT_ACTIVITY";
     private String keyId;
     private String id;
     private String subject;
+    private LinearLayout noComments, loading;
+    private ImageButton thanksButton;
+    private TextView thanksCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +71,13 @@ public class CommentActivity extends AppCompatActivity {
         emojiButton.setOnClickListener(clickListener);
         sendButton.setOnClickListener(clickListener);
         message.setOnClickListener(clickListener);
+        thanksButton.setOnClickListener(clickListener);
 
+        message.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
+        imm.showSoftInput(message, InputMethodManager.SHOW_IMPLICIT);
+        syncThanksCount();
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {
@@ -89,10 +100,93 @@ public class CommentActivity extends AppCompatActivity {
                     emojiPopup.dismiss();
                     emojiButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_insert_emoticon_black_24dp));
                     break;
+                case R.id.thanks_button:
+                    if (thanksButton.getTag().equals("THANKED"))
+                        setUnLike();
+                    else setLike();
 
             }
         }
     };
+
+
+    private void syncThanksCount() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseReference thanksRef = FirebaseDatabase.getInstance()
+                        .getReference("Notice").child(keyId).child("Thanks");
+                thanksRef.addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int likes = 0;
+                        boolean iLiked = false;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Like data = snapshot.getValue(Like.class);
+                            assert data != null;
+                            likes++;
+                            if (id.equals(data.getId())) {
+                                iLiked = true;
+                            }
+                        }
+                        if (likes != 0) {
+                            if (iLiked) {
+                                thanksButton.setTag("THANKED");
+                                thanksButton.setImageResource(R.drawable.ic_favorite_red_24dp);
+                                thanksCount.setText(String.format("You, and %s others", likes - 1));
+                            } else {
+                                thanksCount.setText(String.format("%s", likes));
+                            }
+                        } else {
+                            thanksCount.setText("No thanks yet.");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    private void setLike() {
+        DatabaseReference thanksRef = FirebaseDatabase.getInstance()
+                .getReference("Notice").child(keyId).child("Thanks");
+        thanksRef.child(id).child("id").setValue(id).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
+
+        thanksButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        thanksButton.setVisibility(View.GONE);
+        thanksButton.setImageResource(R.drawable.ic_favorite_red_24dp);
+        thanksButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        thanksButton.setVisibility(View.VISIBLE);
+        thanksButton.setTag("THANKED");
+    }
+
+    private void setUnLike() {
+        DatabaseReference thanksRef = FirebaseDatabase.getInstance()
+                .getReference("Notice").child(keyId).child("Thanks");
+        thanksRef.child(id).child("id").setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
+
+        thanksButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        thanksButton.setVisibility(View.GONE);
+        thanksButton.setImageResource(R.drawable.ic_favorite_border_dark_black_24dp);
+        thanksButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        thanksButton.setVisibility(View.VISIBLE);
+        thanksButton.setTag("UNLIKE");
+    }
 
     private void showComments() {
 
@@ -104,12 +198,12 @@ public class CommentActivity extends AppCompatActivity {
                 final ArrayList<Comment> comments = new ArrayList<>();
                 comments.clear();
                 DatabaseReference reference = FirebaseDatabase.getInstance()
-                        .getReference("Notice").child(keyId).child("Thanks");
+                        .getReference("Notice").child(keyId).child("Comments");
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        if (comments.size() == 0) {
+                        if (comments.isEmpty()) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 Comment comment = snapshot.getValue(Comment.class);
                                 comments.add(comment);
@@ -135,7 +229,6 @@ public class CommentActivity extends AppCompatActivity {
                                     } else {
                                         same = false;
                                     }
-
                                 }
 
                                 if (!same) {
@@ -147,7 +240,15 @@ public class CommentActivity extends AppCompatActivity {
                             commentAdapter.notifyItemRangeInserted(startPos, count);
                             recyclerView.scrollToPosition(comments.size() - 1);
                         }
-
+                        loading.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_out));
+                        loading.setVisibility(View.GONE);
+                        if (comments.isEmpty()) {
+                            noComments.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in));
+                            noComments.setVisibility(View.VISIBLE);
+                        } else {
+                            noComments.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_out));
+                            noComments.setVisibility(View.GONE);
+                        }
 
                     }
 
@@ -221,5 +322,10 @@ public class CommentActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+        noComments = findViewById(R.id.no_comments);
+        noComments.setVisibility(View.GONE);
+        loading = findViewById(R.id.loading);
+        thanksButton = findViewById(R.id.thanks_button);
+        thanksCount = findViewById(R.id.thanks_count);
     }
 }

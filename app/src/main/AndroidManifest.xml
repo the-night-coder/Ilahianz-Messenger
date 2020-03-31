@@ -40,7 +40,8 @@
         </provider>
         <activity android:name=".ImageViewActivity"/>
         <activity android:name=".NoticeStarredActivity" />
-        <activity android:name=".CommentActivity" />
+        <activity android:name=".CommentActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity android:name=".ComposeNoticeActivity" />
         <activity
             android:name=".NoticeBoardActivity"

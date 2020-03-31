@@ -3,14 +3,107 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:id="@+id/root_view"
+    android:background="@drawable/material_loading_dialog_bg"
     android:layout_height="match_parent"
+    android:elevation="10dp"
     tools:context=".CommentActivity">
 
+    <RelativeLayout
+        android:id="@+id/heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/thanks_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/blue_dark"
+                android:src="@drawable/ic_favorite_border_black_24dp" />
+
+            <TextView
+                android:id="@+id/thanks_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/thanks_button"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_alignParentEnd="true"
+            android:tag="UNLIKE"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_favorite_border_dark_black_24dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/thanks_button"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/view_color" />
+    </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/heading"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_above="@id/message_layout"
         android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="150dp"
+            android:layout_height="10dp"
+            android:indeterminate="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/no_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@mipmap/comment" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="No Comments yet."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/message_layout"
@@ -28,7 +121,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@id/emoji_btn"
-            android:background="@drawable/message_box_background"
+            android:background="@drawable/item_content_background"
             android:fontFamily="@font/roboto_regular"
             android:hint="@string/write_comment"
             android:inputType="textMultiLine"

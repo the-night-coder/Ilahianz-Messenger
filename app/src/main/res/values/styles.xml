@@ -12,6 +12,16 @@
         <item name="colorAccent">@color/blue_dark</item>
     </style>
 
+    <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@android:color/transparent</item> <!-- Or any transparency or color you need -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">#B2000000</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="colorPrimary">@color/blue_dark</item>
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="colorAccent">@color/blue_dark</item>
+    </style>
     <style name="MainActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/black</item>

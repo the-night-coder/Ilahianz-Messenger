@@ -1,5 +1,6 @@
 package com.nightcoder.ilahianz.Adapters;
 
+import android.app.ActivityOptions;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -716,6 +717,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     mContext.startActivity(new Intent(mContext, UserProfileActivity.class).putExtra(KEY_ID, notice.getComposerId()));
             }
         });
+        syncStarredNotices(notice.getId(), holder);
+        syncComments(notice.getId(), holder);
+        syncThanks(notice.getId(), holder);
     }
 
     private void changeDocOpenButtonIcon(DocViewHolder holder, String tag, int drawable, int progressVisible) {
@@ -808,26 +812,34 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void run() {
                 super.run();
                 DatabaseReference thanksRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Thanks").child(key);
+                        .getReference("Notice").child(key).child("Thanks");
                 thanksRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int likes = 0;
+                        boolean iLike = false;
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Like data = snapshot.getValue(Like.class);
                             assert data != null;
                             likes++;
                             if (id.equals(data.getId())) {
-                                setThanksRed(holder);
+                                iLike = true;
                             }
                         }
                         if (likes != 0) {
-                            holder.thanksCount.setText(String.format("%s thanks", likes));
+                            if (iLike) {
+                                setThanksRed(holder);
+                                holder.thanksCount.setText(String.format("You, and %s others", likes - 1));
+                            } else {
+                                setThankGrey(holder);
+                                holder.thanksCount.setText(String.format("%s thanks", likes));
+                            }
                             holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
                                     R.anim.fade_in));
                             holder.thanksCount.setVisibility(View.VISIBLE);
                             //holder.reactContainer.setVisibility(View.VISIBLE);
                         } else {
+                            setThankGrey(holder);
                             holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
                                     R.anim.fade_out));
                             holder.thanksCount.setVisibility(View.GONE);
@@ -843,33 +855,40 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncThanks(final String key, final NoticeAdapter.ImageViewHolder holder) {
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 DatabaseReference thanksRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Thanks").child(key);
+                        .getReference("Notice").child(key).child("Thanks");
                 thanksRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int likes = 0;
+                        boolean iLike = false;
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Like data = snapshot.getValue(Like.class);
                             assert data != null;
                             likes++;
                             if (id.equals(data.getId())) {
-                                setThanksRed(holder);
+                                iLike = true;
                             }
                         }
                         if (likes != 0) {
-                            holder.thanksCount.setText(String.format("%s thanks", likes));
+                            if (iLike) {
+                                setThanksRed(holder);
+                                holder.thanksCount.setText(String.format("You, and %s others", likes - 1));
+                            } else {
+                                setThankGrey(holder);
+                                holder.thanksCount.setText(String.format("%s thanks", likes));
+                            }
                             holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
                                     R.anim.fade_in));
                             holder.thanksCount.setVisibility(View.VISIBLE);
                             //holder.reactContainer.setVisibility(View.VISIBLE);
                         } else {
+                            setThankGrey(holder);
                             holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
                                     R.anim.fade_out));
                             holder.thanksCount.setVisibility(View.GONE);
@@ -891,26 +910,34 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void run() {
                 super.run();
                 DatabaseReference thanksRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Thanks").child(key);
+                        .getReference("Notice").child(key).child("Thanks");
                 thanksRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int likes = 0;
+                        boolean iLike = false;
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Like data = snapshot.getValue(Like.class);
                             assert data != null;
                             likes++;
                             if (id.equals(data.getId())) {
-                                setThanksRed(holder);
+                                iLike = true;
                             }
                         }
                         if (likes != 0) {
-                            holder.thanksCount.setText(String.format("%s thanks", likes));
+                            if (iLike) {
+                                setThanksRed(holder);
+                                holder.thanksCount.setText(String.format("You, and %s others", likes - 1));
+                            } else {
+                                setThankGrey(holder);
+                                holder.thanksCount.setText(String.format("%s thanks", likes));
+                            }
                             holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
                                     R.anim.fade_in));
                             holder.thanksCount.setVisibility(View.VISIBLE);
                             //holder.reactContainer.setVisibility(View.VISIBLE);
                         } else {
+                            setThankGrey(holder);
                             holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
                                     R.anim.fade_out));
                             holder.thanksCount.setVisibility(View.GONE);
@@ -926,13 +953,63 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
+    private synchronized void syncThanks(final String key, final NoticeAdapter.DocViewHolder holder) {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                DatabaseReference thanksRef = FirebaseDatabase.getInstance()
+                        .getReference("Notice").child(key).child("Thanks");
+                thanksRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int likes = 0;
+                        boolean iLike = false;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Like data = snapshot.getValue(Like.class);
+                            assert data != null;
+                            likes++;
+                            if (id.equals(data.getId())) {
+                                iLike = true;
+                            }
+                        }
+                        if (likes != 0) {
+                            if (iLike) {
+                                setThanksRed(holder);
+                                holder.thanksCount.setText(String.format("You, and %s others", likes - 1));
+                            } else {
+                                setThankGrey(holder);
+                                holder.thanksCount.setText(String.format("%s thanks", likes));
+                            }
+                            holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
+                                    R.anim.fade_in));
+                            holder.thanksCount.setVisibility(View.VISIBLE);
+                            //holder.reactContainer.setVisibility(View.VISIBLE);
+                        } else {
+                            setThankGrey(holder);
+                            holder.thanksCount.setAnimation(AnimationUtils.loadAnimation(mContext,
+                                    R.anim.fade_out));
+                            holder.thanksCount.setVisibility(View.GONE);
+                            //holder.reactContainer.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }.run();
+    }
+
     private synchronized void syncComments(final String key, final NoticeAdapter.ViewHolder holder) {
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 DatabaseReference commentRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Comments").child(key);
+                        .getReference("Notice").child(key).child("Comments");
                 commentRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -964,7 +1041,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void run() {
                 super.run();
                 DatabaseReference commentRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Comments").child(key);
+                        .getReference("Notice").child(key).child("Comments");
                 commentRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -990,14 +1067,13 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncComments(final String key, final NoticeAdapter.DocViewHolder holder) {
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 DatabaseReference commentRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Comments").child(key);
+                        .getReference("Notice").child(key).child("Comments");
                 commentRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1029,7 +1105,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void run() {
                 super.run();
                 DatabaseReference commentRef = FirebaseDatabase.getInstance()
-                        .getReference("NoticeReaction").child("Comments").child(key);
+                        .getReference("Notice").child(key).child("Comments");
                 commentRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1055,6 +1131,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
+
     private synchronized void syncStarredNotices(final String key, final NoticeAdapter.ViewHolder holder) {
         new Thread() {
             @Override
@@ -1142,7 +1219,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
-
     private synchronized void syncStarredNotices(final String key, final NoticeAdapter.DocViewHolder holder) {
         new Thread() {
             @Override
@@ -1172,13 +1248,14 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }.run();
     }
+
     private void setStarred(Notice notice, NoticeAdapter.ViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         HashMap<String, Object> hashMap = new HashMap<>();
 
         hashMap.put(Notice.KEY_COMPOSER_ID, notice.getComposerId());
-        hashMap.put(Notice.KEY_CONTENT_PATH, "null");
-        hashMap.put(Notice.KEY_CONTENT_TYPE, TYPE_TEXT);
+        hashMap.put(Notice.KEY_CONTENT_PATH, notice.getContentPath());
+        hashMap.put(Notice.KEY_CONTENT_TYPE, notice.getContentType());
         hashMap.put(Notice.KEY_SUBJECT, notice.getSubject());
         hashMap.put(Notice.KEY_TEXT, notice.getText());
         hashMap.put(Notice.KEY_TARGET, notice.getTarget());
@@ -1210,8 +1287,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         HashMap<String, Object> hashMap = new HashMap<>();
 
         hashMap.put(Notice.KEY_COMPOSER_ID, notice.getComposerId());
-        hashMap.put(Notice.KEY_CONTENT_PATH, "null");
-        hashMap.put(Notice.KEY_CONTENT_TYPE, TYPE_TEXT);
+        hashMap.put(Notice.KEY_CONTENT_PATH, notice.getContentPath());
+        hashMap.put(Notice.KEY_CONTENT_TYPE, notice.getContentType());
         hashMap.put(Notice.KEY_SUBJECT, notice.getSubject());
         hashMap.put(Notice.KEY_TEXT, notice.getText());
         hashMap.put(Notice.KEY_TARGET, notice.getTarget());
@@ -1243,8 +1320,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         HashMap<String, Object> hashMap = new HashMap<>();
 
         hashMap.put(Notice.KEY_COMPOSER_ID, notice.getComposerId());
-        hashMap.put(Notice.KEY_CONTENT_PATH, "null");
-        hashMap.put(Notice.KEY_CONTENT_TYPE, TYPE_TEXT);
+        hashMap.put(Notice.KEY_CONTENT_PATH, notice.getContentPath());
+        hashMap.put(Notice.KEY_CONTENT_TYPE, notice.getContentType());
         hashMap.put(Notice.KEY_SUBJECT, notice.getSubject());
         hashMap.put(Notice.KEY_TEXT, notice.getText());
         hashMap.put(Notice.KEY_TARGET, notice.getTarget());
@@ -1271,14 +1348,13 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
     }
-
     private void setStarred(Notice notice, NoticeAdapter.DocViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         HashMap<String, Object> hashMap = new HashMap<>();
 
         hashMap.put(Notice.KEY_COMPOSER_ID, notice.getComposerId());
-        hashMap.put(Notice.KEY_CONTENT_PATH, "null");
-        hashMap.put(Notice.KEY_CONTENT_TYPE, TYPE_TEXT);
+        hashMap.put(Notice.KEY_CONTENT_PATH, notice.getContentPath());
+        hashMap.put(Notice.KEY_CONTENT_TYPE, notice.getContentType());
         hashMap.put(Notice.KEY_SUBJECT, notice.getSubject());
         hashMap.put(Notice.KEY_TEXT, notice.getText());
         hashMap.put(Notice.KEY_TARGET, notice.getTarget());
@@ -1305,6 +1381,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
     }
+
     private void setUnStarred(String key, NoticeAdapter.ViewHolder holder) {
         DatabaseReference starredRef = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
         starredRef.child(key).setValue(null);
@@ -1396,16 +1473,18 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     }
     private void commentActivity(String key, String id, String subject) {
+        ActivityOptions options =
+                ActivityOptions.makeCustomAnimation(mContext, R.anim.slide_up, R.anim.slide_down);
         mContext.startActivity(new Intent(mContext, CommentActivity.class).putExtra("id", id)
-                .putExtra("key", key).putExtra("subject", subject));
+                .putExtra("key", key).putExtra("subject", subject), options.toBundle());
         mediaPlayer = MediaPlayer.create(mContext, R.raw.tik);
         mediaPlayer.start();
     }
 
     //set thanks
     private void setThanks(final Notice notice, final NoticeAdapter.ViewHolder holder) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
-        reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
+        reference.child(notice.getId()).child("Thanks").child(id).child("id").setValue(id)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -1450,8 +1529,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         setThanksRed(holder);
     }
     private void setThanks(final Notice notice, final NoticeAdapter.ImageViewHolder holder) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
-        reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
+        reference.child(notice.getId()).child("Thanks").child(id).child("id").setValue(id)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -1496,8 +1575,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         setThanksRed(holder);
     }
     private void setThanks(final Notice notice, final NoticeAdapter.AudioViewHolder holder) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction");
-        reference.child("Thanks").child(notice.getId()).child(id).child("id").setValue(id)
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
+        reference.child(notice.getId()).child("Thanks").child(id).child("id").setValue(id)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -1541,7 +1620,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.thanksButtonView.setVisibility(View.VISIBLE);
         setThanksRed(holder);
     }
-
     private void setThanks(final Notice notice, final NoticeAdapter.DocViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
         reference.child(notice.getId()).child("Thanks").child(id).child("id").setValue(id)
@@ -1591,7 +1669,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     //set unThank
     private void setUnThanks(final String key, final NoticeAdapter.ViewHolder holder) {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction").child("Thanks").child(key);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice").child(key).child("Thanks");
         reference.child(id).child("id").setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -1612,7 +1690,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
     private void setUnThanks(final String key, final NoticeAdapter.ImageViewHolder holder) {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction").child("Thanks").child(key);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice").child(key).child("Thanks");
         reference.child(id).child("id").setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -1631,7 +1709,6 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.thanksButtonView.setVisibility(View.VISIBLE);
         setThankGrey(holder);
     }
-
     private void setUnThanks(final String key, final NoticeAdapter.DocViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice").child(key).child("Thanks");
         reference.child(id).child("id").setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -1676,7 +1753,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     //set Comments
     private void sendComment(String key, NoticeAdapter.ViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("NoticeReaction").child("Comments").child(key);
+                .getReference("Notice").child(key).child("Comments");
 
         HashMap<String, Object> hashMap = new HashMap<>();
         String message = Objects.requireNonNull(holder.commentContent.getText()).toString().trim();
@@ -1698,7 +1775,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
     private void sendComment(String key, NoticeAdapter.ImageViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("NoticeReaction").child("Comments").child(key);
+                .getReference("Notice").child(key).child("Comments");
 
         HashMap<String, Object> hashMap = new HashMap<>();
         String message = Objects.requireNonNull(holder.commentContent.getText()).toString().trim();
@@ -1720,7 +1797,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
     private void sendComment(String key, NoticeAdapter.AudioViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("NoticeReaction").child("Comments").child(key);
+                .getReference("Notice").child(key).child("Comments");
 
         HashMap<String, Object> hashMap = new HashMap<>();
         String message = Objects.requireNonNull(holder.commentContent.getText()).toString().trim();
@@ -1740,10 +1817,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             });
         }
     }
-
     private void sendComment(String key, NoticeAdapter.DocViewHolder holder) {
         DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("NoticeReaction").child("Comments").child(key);
+                .getReference("Notice").child(key).child("Comments");
 
         HashMap<String, Object> hashMap = new HashMap<>();
         String message = Objects.requireNonNull(holder.commentContent.getText()).toString().trim();

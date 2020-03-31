@@ -1,5 +1,7 @@
 package com.nightcoder.ilahianz;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,7 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.nightcoder.ilahianz.Adapters.StarredNoticeAdapter;
+import com.nightcoder.ilahianz.Adapters.NoticeAdapter;
 import com.nightcoder.ilahianz.Models.Notice;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 
@@ -29,16 +31,25 @@ public class NoticeStarredActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LinearLayout nothing, loading;
     private Handler handler = new Handler();
+    private ArrayList<Notice> notices = new ArrayList<>();
+    private NoticeAdapter noticeAdapter;
+    protected Context mContext;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notice_starred);
+        mContext = NoticeStarredActivity.this;
         recyclerView = findViewById(R.id.recycler_view);
+        id = MemorySupports.getUserInfo(mContext, KEY_ID);
         loading = findViewById(R.id.loading);
         nothing = findViewById(R.id.nothing);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
         setLoading();
         handler.postDelayed(new Runnable() {
             @Override
@@ -74,33 +85,74 @@ public class NoticeStarredActivity extends AppCompatActivity {
     }
 
     private void loadContents() {
-        final ArrayList<Notice> notices = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("StarredNotices")
-                .child(MemorySupports.getUserInfo(this, KEY_ID));
-        reference.addValueEventListener(new ValueEventListener() {
+        AsyncTask.execute(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void run() {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("StarredNotices").child(id);
                 notices.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Notice notice = snapshot.getValue(Notice.class);
-                    notices.add(notice);
-                }
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (notices.isEmpty()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Notice notice = snapshot.getValue(Notice.class);
+                                notices.add(notice);
+                            }
+                            if (notices.isEmpty()) {
+                                setNoting();
+                            } else {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        noticeAdapter = new NoticeAdapter(notices, mContext);
+                                        recyclerView.setAdapter(noticeAdapter);
+                                        setRecyclerView();
+                                    }
+                                });
 
-                if (notices.isEmpty()) {
-                    setNoting();
-                } else {
-                    StarredNoticeAdapter noticeAdapter = new StarredNoticeAdapter(notices, NoticeStarredActivity.this);
-                    recyclerView.setAdapter(noticeAdapter);
-                    setRecyclerView();
-                }
+                            }
+                        } else {
+                            final ArrayList<Notice> mList = new ArrayList<>();
+                            mList.clear();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Notice notice = snapshot.getValue(Notice.class);
+                                assert notice != null;
+                                mList.add(notice);
+                            }
+                            if (mList.isEmpty()) {
+                                setNoting();
+                            } else if (mList.size() < notices.size()) {
+                                for (int i = 0; i < notices.size(); i++) {
+                                    boolean equal = true;
+                                    for (Notice notice : mList) {
+                                        if (notices.get(i).getId().equals(notice.getId())) {
+                                            equal = true;
+                                            break;
+                                        } else {
+                                            equal = false;
+                                        }
+                                    }
+                                    if (!equal) {
+                                        removeItem(i);
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Notice", "Not Found");
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("Notice", "Not Found");
+                    }
+                });
             }
         });
+    }
+
+    private void removeItem(int i) {
+        notices.remove(i);
+        noticeAdapter.notifyItemRemoved(i);
+        Log.d("Remove", "Item " + i);
+        noticeAdapter.notifyItemRangeChanged(i, notices.size());
     }
 }
