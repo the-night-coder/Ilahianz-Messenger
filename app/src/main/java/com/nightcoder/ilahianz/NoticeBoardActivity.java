@@ -42,6 +42,7 @@ public class NoticeBoardActivity extends AppCompatActivity {
     private LinearLayout dotLayout;
     private TextView[] dots;
     private ImageButton back_btn;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,13 @@ public class NoticeBoardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(NoticeBoardActivity.this, NoticeStarredActivity.class));
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
 
@@ -98,6 +106,7 @@ public class NoticeBoardActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void changeTitle(String title) {
@@ -131,6 +140,7 @@ public class NoticeBoardActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.view_pager);
         composeButton = findViewById(R.id.compose_button);
         starredButton = findViewById(R.id.refresh_button);
+        backButton = findViewById(R.id.back_btn);
         CoordinatorLayout container = findViewById(R.id.id_container);
         title = findViewById(R.id.title);
         container.setSystemUiVisibility(
@@ -276,9 +286,9 @@ public class NoticeBoardActivity extends AppCompatActivity {
             titles.add(title);
         }
 
-        Fragment getFragment(int pos) {
-            return fragments.get(pos);
-        }
+//        Fragment getFragment(int pos) {
+//            return fragments.get(pos);
+//        }
 
         @Nullable
         @Override

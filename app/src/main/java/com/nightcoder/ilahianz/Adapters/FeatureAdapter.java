@@ -46,8 +46,6 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
         holder.content.setText(data.getContent());
         holder.heading.setText(data.getHeading());
         holder.button.setText(data.getButtonName());
-        holder.container.setVisibility(View.VISIBLE);
-        holder.container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.feature_item_animation));
 
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +73,7 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private RelativeLayout container;
+        //private RelativeLayout container;
         private Button button;
         private TextView heading, content;
         private ImageView imageView;
@@ -83,12 +81,12 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            container = itemView.findViewById(R.id.container);
+            //container = itemView.findViewById(R.id.container);
             button = itemView.findViewById(R.id.btn);
             heading = itemView.findViewById(R.id.heading);
             content = itemView.findViewById(R.id.text);
             imageView = itemView.findViewById(R.id.image);
-            container.setVisibility(View.GONE);
+            //container.setVisibility(View.GONE);
         }
     }
 }

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DonationForms.BloodFormFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/editTextTitleTextStyle"
+            android:layout_marginTop="5dp"
+            android:text="@string/name_lower" />
+
+        <EditText
+            android:id="@+id/name"
+            style="@style/editTextStyle"
+            android:layout_marginTop="5dp"
+            android:hint="@string/name_lower"
+            android:inputType="textPersonName"
+            tools:ignore="Autofill" />
+
+        <TextView
+            style="@style/editTextTitleTextStyle"
+            android:layout_marginTop="5dp"
+            android:text="@string/gender" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/male" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/female" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/other" />
+        </RadioGroup>
+
+        <TextView
+            style="@style/editTextTitleTextStyle"
+            android:layout_marginTop="5dp"
+            android:text="@string/age" />
+
+        <EditText
+            android:id="@+id/age"
+            style="@style/editTextStyle"
+            android:layout_marginTop="5dp"
+            android:hint="@string/age"
+            android:inputType="number" />
+
+        <TextView
+            style="@style/editTextTitleTextStyle"
+            android:layout_marginTop="5dp"
+            android:text="@string/blood_group" />
+
+        <RadioGroup
+            android:id="@+id/blood_groups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radio_a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/a" />
+
+            <RadioButton
+                android:id="@+id/radio_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/b" />
+
+            <RadioButton
+                android:id="@+id/radio_ab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/ab" />
+
+            <RadioButton
+                android:id="@+id/radio_o"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/o" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/blood_group_anti_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radio_negative"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:text="-"
+                tools:ignore="HardcodedText" />
+
+            <RadioButton
+                android:id="@+id/radio_positive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:text="+"
+                tools:ignore="HardcodedText" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/blood_group"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_material_circle"
+            android:fontFamily="@font/roboto_bold"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="25sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:padding="10dp"
+            android:text="@string/policy_blood_donation"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

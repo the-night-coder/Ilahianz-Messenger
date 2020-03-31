@@ -1575,8 +1575,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         setThanksRed(holder);
     }
     private void setThanks(final Notice notice, final NoticeAdapter.AudioViewHolder holder) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice");
-        reference.child(notice.getId()).child("Thanks").child(id).child("id").setValue(id)
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice").child(notice.getId());
+        reference.child("Thanks").child(id).child("id").setValue(id)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -1730,7 +1730,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
     private void setUnThanks(final String key, final NoticeAdapter.AudioViewHolder holder) {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("NoticeReaction").child("Thanks").child(key);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notice").child(key).child("Thanks");
         reference.child(id).child("id").setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

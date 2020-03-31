@@ -14,7 +14,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -29,6 +29,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
+        <activity android:name=".DonationRequestActivity"></activity>
+        <activity android:name=".SearchActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.nightcoder.ilahianz.provider"
@@ -38,15 +41,17 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-        <activity android:name=".ImageViewActivity"/>
+
+        <activity android:name=".ImageViewActivity" />
         <activity android:name=".NoticeStarredActivity" />
-        <activity android:name=".CommentActivity"
-            android:theme="@style/Theme.AppCompat.Translucent"/>
+        <activity
+            android:name=".CommentActivity"
+            android:theme="@style/Theme.AppCompat.Translucent" />
         <activity android:name=".ComposeNoticeActivity" />
         <activity
             android:name=".NoticeBoardActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoticeStyle"/>
+            android:theme="@style/NoticeStyle" />
         <activity android:name=".BloodConsoleActivity" />
         <activity
             android:name=".ProfileImageViewActivity"

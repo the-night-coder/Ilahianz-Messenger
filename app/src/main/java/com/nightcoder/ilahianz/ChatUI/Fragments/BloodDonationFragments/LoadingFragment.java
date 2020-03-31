@@ -5,7 +5,8 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ public class LoadingFragment extends Fragment {
 
     private BloodDonationActivityCallbacks callbacks;
     private RelativeLayout layoutContainer;
-
+    private Handler handler = new Handler(Looper.getMainLooper());
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -46,17 +47,12 @@ public class LoadingFragment extends Fragment {
             }
         });
         colorAnimation.start();
-        new CountDownTimer(2000, 100) {
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
+            public void run() {
                 callbacks.onProcessLoadingComplete();
             }
-        }.start();
+        }, 2000);
         return root;
     }
 

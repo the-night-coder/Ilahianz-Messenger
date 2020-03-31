@@ -6,51 +6,42 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.EventsFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.NotificationFragment;
-import com.nightcoder.ilahianz.MainActivityFragments.SearchFragment;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.nightcoder.ilahianz.Literals.StringConstants.CHAT_FRAGMENT_TAG;
-import static com.nightcoder.ilahianz.Literals.StringConstants.HELP_FRAGMENT_TAG;
-import static com.nightcoder.ilahianz.Literals.StringConstants.SEARCH_FRAGMENT_TAG;
-import static com.nightcoder.ilahianz.Literals.StringConstants.SEARCH_USER_FRAGMENT_TAG;
-
-public class MainActivity extends AppCompatActivity implements FragmentCallbackListener {
+public class MainActivity extends AppCompatActivity {
 
     protected MyApp myApp;
     private BottomNavigationView navigationView;
     private Context mContext;
     private TextView heading;
-    private AppBarLayout appBarLayout;
-    private String currentFragment;
-    private FragmentCallbackListener listener;
     private CircleImageView profileImage;
     private ImageButton searchButton;
-    private SearchFragment searchFragment;
+    private ViewPager viewPager;
+
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -66,6 +57,51 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
             }
         }
     };
+
+    private void openSearch() {
+        startActivity(new Intent(mContext, SearchActivity.class));
+    }
+
+    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            switch (position) {
+                case 0:
+                    heading.setText(R.string.chats);
+                    navigationView.setSelectedItemId(R.id.nav_chats);
+                    break;
+                case 1:
+                    heading.setText(R.string.search);
+                    navigationView.setSelectedItemId(R.id.nav_search);
+                    break;
+                case 2:
+                    heading.setText(R.string.notifications);
+                    navigationView.setSelectedItemId(R.id.nav_favorite);
+                    break;
+            }
+            int colorFrom = getResources().getColor(R.color.white);
+            int colorTo = getResources().getColor(R.color.black);
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(500);
+            colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    heading.setTextColor((int) animation.getAnimatedValue());
+                }
+            });
+            colorAnimation.start();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -73,16 +109,16 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
 
             switch (menuItem.getItemId()) {
                 case R.id.nav_chats:
-                    changeFragment(new ChatFragment(), CHAT_FRAGMENT_TAG);
                     heading.setText(R.string.chats);
+                    viewPager.setCurrentItem(0);
                     break;
                 case R.id.nav_search:
-                    changeFragment(new EventsFragment(mContext), SEARCH_FRAGMENT_TAG);
                     heading.setText(R.string.search);
+                    viewPager.setCurrentItem(1);
                     break;
                 case R.id.nav_favorite:
-                    changeFragment(new NotificationFragment(mContext), HELP_FRAGMENT_TAG);
                     heading.setText(R.string.notifications);
+                    viewPager.setCurrentItem(2);
                     break;
             }
 
@@ -109,107 +145,43 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
         initViews();
         initInterface();
         init();
+        setViewPager();
     }
 
     private void init() {
         myApp = (MyApp) this.getApplicationContext();
         navigationView.setOnNavigationItemSelectedListener(navListener);
-        Fragment fragment = new ChatFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.frame, fragment, CHAT_FRAGMENT_TAG)
-                .commit();
-        currentFragment = CHAT_FRAGMENT_TAG;
         EmojiManager.destroy();
         EmojiManager.install(new GoogleEmojiProvider());
-        listener = this;
+    }
+
+    private void setViewPager() {
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragment(new ChatFragment(), "Chat Fragment");
+        viewPagerAdapter.addFragment(new EventsFragment(mContext), "Search Fragment");
+        viewPagerAdapter.addFragment(new NotificationFragment(mContext), "Notice Fragment");
+        viewPager.setAdapter(viewPagerAdapter);
     }
 
     private void initInterface() {
         searchButton.setOnClickListener(clickListener);
         profileImage.setOnClickListener(clickListener);
+        viewPager.setOnPageChangeListener(pageChangeListener);
     }
 
     private void initViews() {
         navigationView = findViewById(R.id.bottom_nav);
         mContext = MainActivity.this;
         heading = findViewById(R.id.heading);
-        appBarLayout = findViewById(R.id.appbar);
         profileImage = findViewById(R.id.profile_photo);
         searchButton = findViewById(R.id.search_button);
-    }
-
-    private void openSearch() {
-        searchFragment = new SearchFragment(mContext);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                .add(R.id.frame, searchFragment, SEARCH_USER_FRAGMENT_TAG)
-                .addToBackStack(CHAT_FRAGMENT_TAG)
-                .commit();
-        currentFragment = SEARCH_USER_FRAGMENT_TAG;
-
-        hideAppBarAnimation();
+        viewPager = findViewById(R.id.view_pager);
     }
 
     @Override
     public void onBackPressed() {
-        if (!currentFragment.equals(CHAT_FRAGMENT_TAG)) {
-            if (getFragment(SEARCH_USER_FRAGMENT_TAG) == searchFragment && searchFragment != null) {
-                Fragment fragment = getFragment(SEARCH_USER_FRAGMENT_TAG);
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                        .detach(fragment)
-                        .commit();
-                changeFragment(new ChatFragment(), CHAT_FRAGMENT_TAG);
-                openAppBarAnimation();
-            } else {
-                changeFragment(new ChatFragment(), CHAT_FRAGMENT_TAG);
-                openAppBarAnimation();
-            }
-        } else {
-            MainActivity.this.moveTaskToBack(true);
-        }
-    }
-
-    private void hideAppBarAnimation() {
-        appBarLayout.setVisibility(View.GONE);
-        navigationView.setVisibility(View.GONE);
-        appBarLayout.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.appbar_exit_anim));
-        navigationView.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.snackbar_exit_animation));
-    }
-
-    private void openAppBarAnimation() {
-        appBarLayout.setVisibility(View.VISIBLE);
-        navigationView.setVisibility(View.VISIBLE);
-        appBarLayout.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.appbar_enter_anim));
-        navigationView.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.snackbar_enter_animation));
-    }
-
-    private void changeFragment(Fragment fragment, String tag) {
-        if (getFragment(tag) != getFragment(currentFragment)) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.frame, fragment, tag)
-                    .remove(getFragment(currentFragment))
-                    .commit();
-            currentFragment = tag;
-//            dataChangeListener = (DataChangeListener) fragment;
-            listener.onFragmentChanged();
-        }
-    }
-
-    private Fragment getFragment(String tag) {
-        return getSupportFragmentManager().findFragmentByTag(tag);
-    }
-
-
-    @Override
-    public void onFragmentChanged() {
-        if (CHAT_FRAGMENT_TAG.equals(currentFragment)) {
-            navigationView.setSelectedItemId(R.id.nav_chats);
-        }
+        super.onBackPressed();
+        moveTaskToBack(true);
     }
 
     @Override
@@ -227,8 +199,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
 
     @Override
     protected void onPause() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM yyyy", Locale.US);
-        Log.d("Time", simpleDateFormat.format(new Date()));
         clearReference();
         super.onPause();
     }
@@ -239,8 +209,45 @@ public class MainActivity extends AppCompatActivity implements FragmentCallbackL
             myApp.setCurrentActivity(this);
         }
     }
+
+    private class ViewPagerAdapter extends FragmentPagerAdapter {
+
+        private ArrayList<Fragment> fragments;
+        private ArrayList<String> titles;
+
+        ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+            this.fragments = new ArrayList<>();
+            this.titles = new ArrayList<>();
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int i) {
+            return fragments.get(i);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        void addFragment(Fragment fragment, String title) {
+            fragments.add(fragment);
+            titles.add(title);
+        }
+
+        Fragment getFragment(int pos) {
+            return fragments.get(pos);
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles.get(position);
+        }
+
+    }
 }
 
-interface FragmentCallbackListener {
-    void onFragmentChanged();
-}
+
