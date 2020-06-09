@@ -9,6 +9,7 @@
         <item>OK</item>
         <item>Lets Go.</item>
     </string-array>
+
     <string-array name="qr_code_verification">
         <item>Scan the QR Code</item>
         <item>To Verify Who you are</item>

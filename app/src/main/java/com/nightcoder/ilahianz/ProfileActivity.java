@@ -16,6 +16,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +30,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -39,6 +42,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -85,6 +90,7 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
     protected MyApp myApp;
     private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
     private EventChangeListener eventChangeListener;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,18 +106,13 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
         viewPager.setVisibility(View.GONE);
         myApp = (MyApp) this.getApplicationContext();
 
-        new CountDownTimer(200, 100) {
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onTick(long millisUntilFinished) {
-
+            public void run() {
+                ViewSupports.visibilitySlideAnimation(Gravity.BOTTOM, 600, viewPager,
+                        (ViewGroup) viewPager.getRootView(), View.VISIBLE);
             }
-
-            @Override
-            public void onFinish() {
-                ViewSupports.visibilitySlideAnimation(Gravity.BOTTOM, 600, viewPager, (ViewGroup) viewPager.getRootView(), View.VISIBLE);
-            }
-        }.start();
-
+        }, 200);
 
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +120,6 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
                 finish();
             }
         });
-
 
         viewPagerAdapter.addFragment(new PersonalInfoFragment(mContext), "Personal Info");
         viewPagerAdapter.addFragment(new CollegeInfoFragment(mContext), "Academic Info");
@@ -138,6 +138,8 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
         SharedPreferences preferences = mContext.getSharedPreferences(USER_INFO_SP, MODE_PRIVATE);
         return preferences.getString(key, "none");
     }
+
+
 
     @Override
     public void setEdits(final String key, final String data) {

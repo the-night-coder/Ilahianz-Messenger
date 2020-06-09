@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.nightcoder.ilahianz.R;
+import com.nightcoder.ilahianz.Supports.Graphics;
+import com.squareup.picasso.Picasso;
 
 public class SlideAdapter extends PagerAdapter {
 
@@ -47,8 +49,8 @@ public class SlideAdapter extends PagerAdapter {
         ImageView imageView = view.findViewById(R.id.imageView);
         TextView heading = view.findViewById(R.id.heading);
         TextView contents = view.findViewById(R.id.contents);
+        Graphics.setGifImage(context, mImages[position], imageView);
         heading.setText(mHeadings[position]);
-        imageView.setImageResource(mImages[position]);
         contents.setText(mContents[position]);
         container.addView(view);
         return view;

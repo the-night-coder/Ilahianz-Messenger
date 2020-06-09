@@ -35,20 +35,19 @@ public class StartupActivity extends AppCompatActivity {
         back_btn = findViewById(R.id.back_btn);
         back_btn.setVisibility(View.GONE);
         int[] slideImages = {
-                R.mipmap.welcome,
-                R.mipmap.chat_onboard,
-                R.mipmap.location,
-                R.mipmap.helpline
+                R.raw.hello,
+                R.raw.chat_anim2,
+                R.raw.event_anim,
+                R.raw.events
         };
         String[] SlideHeading = {
-                "Welcome", "Chat", "Location", "Help"
+                "Welcome", "Chat", "Events", "Noticeboard"
         };
         String[] slide_contents = {
-                "To make better Community. and Friendship",
-                "Chat with your Ilahianz , loved once " +
-                        "And Teachers",
-                "Locate your friends.",
-                "Use Help if you need Check it out our Help Center"
+                "",
+                "Chat with your Friends , loved once And Teachers",
+                "Share Your events to your friends \n To make better Community. and Friendship",
+                "See notices published by the College staff"
         };
         SlideAdapter slideAdapter = new SlideAdapter(this, SlideHeading, slide_contents, slideImages);
         viewPager.setAdapter(slideAdapter);

@@ -62,7 +62,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
         readUsers();
-        setUserData();
+        //setUserData();
     }
 
     private void init() {
@@ -84,7 +84,7 @@ public class SearchActivity extends AppCompatActivity {
                             UserData userData = snapshot.getValue(UserData.class);
                             if (userData != null) {
                                 if (!userData.getId().equals(MemorySupports.getUserInfo(mContext, KEY_ID))) {
-                                    usersDBHelper.addUser(userData);
+                                    //usersDBHelper.addUser(userData);
                                 }
                             }
                         }

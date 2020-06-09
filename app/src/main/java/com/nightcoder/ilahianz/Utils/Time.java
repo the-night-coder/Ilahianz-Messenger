@@ -53,6 +53,51 @@ public class Time {
         return timeAgo;
     }
 
+    public static String getTimeChatList(double dataDate) {
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        String time = dateFormat1.format(dataDate);
+
+        String timeAgo = null;
+
+        String suffix = "ago";
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+            Date pasTime = dateFormat.parse(time);
+
+            Date nowTime = new Date();
+            assert pasTime != null;
+            long dateDiff = nowTime.getTime() - pasTime.getTime();
+
+            long second = TimeUnit.MILLISECONDS.toSeconds(dateDiff);
+            long minute = TimeUnit.MILLISECONDS.toMinutes(dateDiff);
+            long hour = TimeUnit.MILLISECONDS.toHours(dateDiff);
+            long day = TimeUnit.MILLISECONDS.toDays(dateDiff);
+
+            if (second < 60) {
+                timeAgo = second + " seconds " + suffix;
+            } else if (minute < 60) {
+                timeAgo = minute + " minutes " + suffix;
+            } else if (hour < 24) {
+                timeAgo = hour + " hours " + suffix;
+            } else if (day >= 7) {
+                if (day > 360) {
+                    timeAgo = (day / 30) + " years " + suffix;
+                } else if (day > 30) {
+                    timeAgo = (day / 360) + " months " + suffix;
+                } else {
+                    timeAgo = (day / 7) + " week " + suffix;
+                }
+            } else {
+                timeAgo = day + " days " + suffix;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeAgo;
+    }
+
     public static String getTextShortTime(double dataDate) {
 
         SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
@@ -63,6 +108,8 @@ public class Time {
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+            SimpleDateFormat dateFormat11 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            String date = dateFormat1.format(time);
             Date pasTime = dateFormat.parse(time);
 
             Date nowTime = new Date();

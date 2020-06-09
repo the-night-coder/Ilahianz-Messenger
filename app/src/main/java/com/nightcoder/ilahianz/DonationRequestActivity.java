@@ -1,5 +1,6 @@
 package com.nightcoder.ilahianz;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,12 +24,35 @@ public class DonationRequestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donation_request);
         ViewPager viewPager = findViewById(R.id.view_pager);
-        TabLayout tabLayout = findViewById(R.id.tab);
+        final TabLayout tabLayout = findViewById(R.id.tab);
         tabLayout.setupWithViewPager(viewPager);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new BloodFormFragment(), "Blood");
         viewPagerAdapter.addFragment(new FundFormFragment(), "Fund");
+        viewPagerAdapter.addFragment(new BloodFormFragment(), "Blood");
         viewPager.setAdapter(viewPagerAdapter);
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (position == 1)
+                        tabLayout.setSelectedTabIndicatorColor(getColor(R.color.blood_donation_form_bg));
+                    else tabLayout.setSelectedTabIndicatorColor(getColor(R.color.blue_dark));
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {

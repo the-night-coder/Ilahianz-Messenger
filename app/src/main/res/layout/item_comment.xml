@@ -41,7 +41,7 @@
                 tools:ignore="HardcodedText" />
 
             <com.vanniktech.emoji.EmojiTextView
-                android:id="@+id/message"
+                android:id="@+id/lastMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"

@@ -25,7 +25,7 @@
         android:textStyle="bold"
         android:text="Ladies Helpline"
         android:textColor="#2962FF"
-        android:textSize="20sp"
+        android:textSize="26sp"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -40,7 +40,7 @@
         android:fontFamily="@font/roboto_regular"
         android:gravity="center"
         android:text="Contents"
-        android:textSize="17sp"
+        android:textSize="18sp"
         tools:ignore="HardcodedText" />
 
 </RelativeLayout>

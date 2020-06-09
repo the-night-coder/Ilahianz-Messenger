@@ -1,44 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F6FA"
+    android:background="@color/white"
     tools:context=".StartActivity">
-
-    <Button
-        android:id="@+id/skip_action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"
-        android:background="@android:color/transparent"
-        android:text="@string/skip"
-        android:textColor="@color/blue_dark" />
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/ic_launcher_round"
         android:transitionName="imageTransition"
         android:layout_centerVertical="true" />
 
-    <com.tomer.fadingtextview.FadingTextView
-        android:id="@+id/fad_text"
-        android:layout_width="wrap_content"
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:fontFamily="@font/roboto_bold"
-        android:text="@string/app_name_upper"
-        android:textSize="26sp"
-        app:texts="@array/start_logo_text"
-        app:timeout="1000" />
+        android:layout_below="@id/imageView"
+        android:indeterminate="true" />
 
 </RelativeLayout>

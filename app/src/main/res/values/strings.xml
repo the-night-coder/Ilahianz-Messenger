@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ilahianz Messenger</string>
+    <string name="app_name">CAT Messenger</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="log_in">Log In</string>
@@ -7,7 +7,7 @@
     <string name="messenger_by_nightcoders">Ilahianz by NightCoders</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="app_name_upper">ILAHIANZ</string>
+    <string name="app_name_upper">CAT Messenger</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="forgot_password">Forgot Password</string>
@@ -42,7 +42,6 @@
     <string name="help">Help</string>
     <string name="notifications">Notifications</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="profile">Profile</string>
     <string name="photo">PHOTO</string>

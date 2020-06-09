@@ -4,10 +4,9 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -57,7 +56,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private ImageButton closeBtn;
     private ViewPager viewPager;
     private RelativeLayout container;
-    private Handler handler = new Handler();
+    private Handler handler = new Handler(Looper.getMainLooper());
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private boolean expandedAppBar = false;
     public static final String TAG = "UserProfileActivity";
@@ -72,17 +71,12 @@ public class UserProfileActivity extends AppCompatActivity {
         initInterfaces();
         init();
 
-        new CountDownTimer(600, 600) {
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
+            public void run() {
                 initAnimation();
             }
-        }.start();
+        }, 600);
     }
 
     private void initViews() {
@@ -184,12 +178,10 @@ public class UserProfileActivity extends AppCompatActivity {
                 category.setVisibility(View.GONE);
                 expandedAppBar = false;
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    final Window window = getWindow();
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    window.setStatusBarColor(Color.TRANSPARENT);
-                    ViewSupports.visibilityFadeAnimation(200, nameTop, container, View.GONE);
-                }
+                final Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(Color.TRANSPARENT);
+                ViewSupports.visibilityFadeAnimation(200, nameTop, container, View.GONE);
 
                 if (i == 0) {
                     expandedAppBar = true;
