@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +29,8 @@ import com.nightcoder.ilahianz.Supports.Graphics;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static com.nightcoder.ilahianz.Models.Notice.KEY_ID;
 
@@ -37,10 +38,8 @@ public class ChatFragment extends Fragment {
 
     private Context mContext;
     private LinearLayout noChats;
-    private ImageView imageView;
-    private ImageButton searchButton;
     private RecyclerView recyclerView;
-
+    private LinearLayout loading;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -54,9 +53,10 @@ public class ChatFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_chats, container, false);
         readAllChatList();
         noChats = view.findViewById(R.id.no_chats);
-        imageView = view.findViewById(R.id.imageView);
-        searchButton = view.findViewById(R.id.search_button);
+        ImageView imageView = view.findViewById(R.id.imageView);
+        ImageButton searchButton = view.findViewById(R.id.search_button);
         recyclerView = view.findViewById(R.id.recycler_view);
+        loading = view.findViewById(R.id.loading);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +66,7 @@ public class ChatFragment extends Fragment {
             }
         });
         Graphics.setGifImage(mContext, R.raw.no_chats, imageView);
-        noChats.setVisibility(View.VISIBLE);
+        noChats.setVisibility(View.GONE);
         return view;
     }
 
@@ -83,10 +83,20 @@ public class ChatFragment extends Fragment {
                     chatListModelArrayList.add(chatListModel);
                 }
                 if (!chatListModelArrayList.isEmpty()) {
+                    Collections.sort(chatListModelArrayList, new Comparator<ChatListModel>() {
+                        @Override
+                        public int compare(ChatListModel s1, ChatListModel s2) {
+                            return String.valueOf(s1.getTime()).compareToIgnoreCase(String.valueOf(s2.getTime()));
+                        }
+                    });
+
                     ChatListAdapter chatListAdapter = new ChatListAdapter(mContext, chatListModelArrayList);
                     recyclerView.setAdapter(chatListAdapter);
                     noChats.setVisibility(View.GONE);
+                } else {
+                    noChats.setVisibility(View.VISIBLE);
                 }
+                loading.setVisibility(View.GONE);
             }
 
             @Override

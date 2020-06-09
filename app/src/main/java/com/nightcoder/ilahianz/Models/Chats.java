@@ -5,44 +5,31 @@ public class Chats {
     private String sender;
     private String receiver;
     private String message;
-    private boolean isSeen;
-    private boolean isDelivered;
-    private boolean isSent;
+    private double isSeen;
+    private double isDelivered;
+    private double isSent;
     private String timestamp;
     private String reference;
     private String link;
+    private int type;
+    private String url;
 
-    public Chats() {
-    }
-
-    public Chats(String sender, String receiver, String message,
-                 String timestamp, String reference, String link,
-                 boolean isSeen, boolean isDelivered, boolean isSent) {
+    public Chats(String sender, String receiver, String message, double isSeen,
+                 double isDelivered, double isSent, String timestamp, String reference, String link, int type, String url) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
         this.isSeen = isSeen;
-        this.link = link;
-        this.isSent = isSent;
         this.isDelivered = isDelivered;
+        this.isSent = isSent;
         this.timestamp = timestamp;
         this.reference = reference;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
         this.link = link;
+        this.type = type;
+        this.url = url;
     }
 
-    public boolean isSent() {
-        return isSent;
-    }
-
-    public void setSent(boolean sent) {
-        isSent = sent;
+    public Chats() {
     }
 
     public String getSender() {
@@ -69,20 +56,28 @@ public class Chats {
         this.message = message;
     }
 
-    public boolean getIsSeen() {
+    public double getIsSeen() {
         return isSeen;
     }
 
-    public void setIsSeen(boolean isSeen) {
+    public void setIsSeen(double isSeen) {
         this.isSeen = isSeen;
     }
 
-    public boolean getIsDelivered() {
+    public double getIsDelivered() {
         return isDelivered;
     }
 
-    public void setIsDelivered(boolean isDelivered) {
+    public void setIsDelivered(double isDelivered) {
         this.isDelivered = isDelivered;
+    }
+
+    public double getIsSent() {
+        return isSent;
+    }
+
+    public void setIsSent(double isSent) {
+        this.isSent = isSent;
     }
 
     public String getTimestamp() {
@@ -99,5 +94,29 @@ public class Chats {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

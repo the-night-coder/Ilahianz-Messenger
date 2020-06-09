@@ -42,7 +42,7 @@
         android:src="@drawable/comment" />
 
     <com.vanniktech.emoji.EmojiTextView
-        android:id="@+id/lastMessage"
+        android:id="@+id/message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@id/seen_dot"
@@ -62,7 +62,7 @@
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lastMessage"
+        android:layout_below="@id/message"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="5dp"
         android:layout_toEndOf="@id/profile_image"

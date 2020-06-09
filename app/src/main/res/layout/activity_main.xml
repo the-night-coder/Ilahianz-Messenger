@@ -43,7 +43,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_toEndOf="@id/profile_photo"
                 android:fontFamily="@font/roboto_bold"
-                android:text="@string/ilahianz"
+                android:text="@string/chats"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
