@@ -20,11 +20,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nightcoder.ilahianz.ChatUI.Fragments.ChatFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.EventsFragment;
 import com.nightcoder.ilahianz.MainActivityFragments.NotificationFragment;
+import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiManager;
@@ -33,6 +38,8 @@ import com.vanniktech.emoji.google.GoogleEmojiProvider;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.nightcoder.ilahianz.Models.Notice.KEY_ID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -176,6 +183,25 @@ public class MainActivity extends AppCompatActivity {
         mContext = MainActivity.this;
         heading = findViewById(R.id.heading);
         profileImage = findViewById(R.id.profile_photo);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(MemorySupports.getUserInfo(mContext, KEY_ID));
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UserData userData = dataSnapshot.getValue(UserData.class);
+                assert userData != null;
+                if (userData.getThumbnailURL().equals("default")) {
+                    profileImage.setImageResource(R.drawable.ic_person);
+                } else {
+                    Picasso.with(mContext).load(userData.getThumbnailURL()).into(profileImage);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         searchButton = findViewById(R.id.search_button);
         viewPager = findViewById(R.id.view_pager);
     }

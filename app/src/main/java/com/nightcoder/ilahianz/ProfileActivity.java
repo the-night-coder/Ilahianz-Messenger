@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -69,6 +68,7 @@ import com.yalantis.ucrop.UCrop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -83,8 +83,6 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.DEFAULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_IMAGE_URL;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
-import static com.nightcoder.ilahianz.Models.Notice.KEY_ID;
-import static com.nightcoder.ilahianz.Models.Notice.TYPE_IMAGE;
 
 public class ProfileActivity extends AppCompatActivity implements EditInfoListener, PersonalInfoFragmentListener {
 
@@ -97,6 +95,11 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
     private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
     private EventChangeListener eventChangeListener;
     private Handler handler = new Handler(Looper.getMainLooper());
+
+    File croppedImage, compressedImage, thumbnail, actualImage;
+    StorageReference storageReference;
+    StorageTask uploadTask;
+    FirebaseUser fUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +114,9 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
         name = findViewById(R.id.profile_name);
         viewPager.setVisibility(View.GONE);
         myApp = (MyApp) this.getApplicationContext();
+        fUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
         handler.postDelayed(new Runnable() {
             @Override
@@ -135,9 +141,6 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
         viewPager.setAdapter(viewPagerAdapter);
         name.setText(getUserInfo(KEY_USERNAME));
 
-        if (!getUserInfo(KEY_IMAGE_URL).equals(DEFAULT)) {
-            Glide.with(mContext).load(getUserInfo(KEY_IMAGE_URL)).into(profileImage);
-        }
     }
 
     private String getUserInfo(String key) {
@@ -266,9 +269,8 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @SuppressLint("CheckResult")
-    public void compressImage(File actualImage) {
+    public void compressImage() {
         if (actualImage != null) {
             final ProgressDialog pd = new ProgressDialog(mContext);
             pd.setMessage("Compressing...");
@@ -285,7 +287,8 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
                         @Override
                         public void accept(File file) {
                             pd.dismiss();
-                            myApp.uploadMedia(Uri.fromFile(file));
+                            compressedImage = file;
+                            startCrop(Uri.fromFile(compressedImage));
                         }
                     }, new Consumer<Throwable>() {
                         @Override
@@ -297,8 +300,6 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
 
         }
     }
-
-
 
     private void startCrop(Uri uri) {
         String destination = MemorySupports.getUserInfo(mContext, KEY_USERNAME);
@@ -321,34 +322,55 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
         return options;
     }
 
+    private void thumbnailCompress() {
+        if (croppedImage != null) //noinspection ResultOfMethodCallIgnored
+            new Compressor(this)
+                    .setMaxWidth(140)
+                    .setMaxHeight(140)
+                    .setQuality(50)
+                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                    .compressToFileAsFlowable(croppedImage)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<File>() {
+                        @Override
+                        public void accept(File file) {
+                            thumbnail = file;
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) {
+                            throwable.printStackTrace();
 
+                        }
+                    });
+        else thumbnail = null;
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Uri imageUri;
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
-
             if (imageUri != null) {
-                startCrop(imageUri);
+                try {
+                    if (Build.VERSION.SDK_INT != Build.VERSION_CODES.LOLLIPOP) {
+                        if (ContextCompat.checkSelfPermission(this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                            actualImage = FileUtils.from(this, imageUri);
+                        } else {
+                            Toast.makeText(this, "Storage permission not granted", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        actualImage = FileUtils.from(this, imageUri);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                compressImage();
             }
-//            if (imageUri != null) {
-//                try {
-//                    if (Build.VERSION.SDK_INT != Build.VERSION_CODES.LOLLIPOP) {
-//                        if (ContextCompat.checkSelfPermission(this,
-//                                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                            compressImage(FileUtils.from(this, imageUri));
-//                            //startCrop(imageUri);
-//                        } else {
-//                            Toast.makeText(this, "Storage permission not granted", Toast.LENGTH_SHORT).show();
-//                        }
-//                    } else {
-//                        compressImage(FileUtils.from(this, imageUri));
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
         }
         if (requestCode == IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
@@ -357,22 +379,130 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
                     if (Build.VERSION.SDK_INT != Build.VERSION_CODES.LOLLIPOP) {
                         if (ContextCompat.checkSelfPermission(this,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                            compressImage(FileUtils.from(this, imageUri));
+                            actualImage = FileUtils.from(this, imageUri);
                         }
                     } else {
-                        compressImage(FileUtils.from(this, imageUri));
+                        actualImage = FileUtils.from(this, imageUri);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                compressImage();
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
-            Log.d("Scrop", "null");
             assert data != null;
             Uri uri = UCrop.getOutput(data);
             if (uri != null) {
-                Log.d("Scrop", "Croped");
+                try {
+                    croppedImage = FileUtils.from(this, uri);
+                    thumbnailCompress();
+                    if (uploadTask != null && uploadTask.isInProgress()) {
+                        Toast.makeText(this, "Upload in Progress..", Toast.LENGTH_SHORT).show();
+                    } else {
+                        uploadImage();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
+        }
+    }
+
+    private void uploadImage() {
+        final ProgressDialog pd = new ProgressDialog(mContext);
+        pd.setMessage("Uploading...");
+        pd.show();
+        if (croppedImage != null) {
+            final StorageReference fileReference = storageReference.child("profile")
+                    .child(fUser.getUid() + ".jpg");
+            uploadTask = fileReference.putFile(Uri.fromFile(croppedImage));
+
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw Objects.requireNonNull(task.getException());
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = (Uri) task.getResult();
+                        assert downloadUri != null;
+                        String mUri = downloadUri.toString();
+                        UpdateInfo("imageURL", mUri);
+                        pd.dismiss();
+                        uploadThumbnail();
+                    } else {
+                        Toast.makeText(mContext, "Failed to upload.!", Toast.LENGTH_SHORT).show();
+                        pd.dismiss();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    pd.dismiss();
+                }
+            });
+        } else {
+            Toast.makeText(this, "No Image Selected", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
+        }
+
+    }
+
+    private void UpdateInfo(String key, String value) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(fUser.getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put(key, value);
+        reference.updateChildren(hashMap);
+    }
+
+    private void uploadThumbnail() {
+        final ProgressDialog pd = new ProgressDialog(mContext);
+        pd.setMessage("Creating Thumbnail...");
+        pd.show();
+        if (thumbnail != null) {
+            final StorageReference fileReference = storageReference.child("profile").child("thumbnails")
+                    .child(fUser.getUid() + ".jpg");
+            uploadTask = fileReference.putFile(Uri.fromFile(thumbnail));
+
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw Objects.requireNonNull(task.getException());
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = (Uri) task.getResult();
+                        assert downloadUri != null;
+                        String mUri = downloadUri.toString();
+                        UpdateInfo("thumbnailURL", mUri);
+                        pd.dismiss();
+                    } else {
+                        Toast.makeText(mContext, "Failed to upload thumbnail.!", Toast.LENGTH_SHORT).show();
+                        pd.dismiss();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    pd.dismiss();
+                }
+            });
+        } else {
+            pd.dismiss();
         }
     }
 
