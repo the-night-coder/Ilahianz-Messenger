@@ -169,6 +169,52 @@ public class MyApp extends Application {
         }
     }
 
+    public void uploadMedia(Uri uri) {
+        if (Network.Connected(this)) {
+            final Dialog dialog = ViewSupports.materialSnackBarDialog(getCurrentActivity(), R.layout.upload_task_progress);
+            Button cancel = dialog.findViewById(R.id.option_close);
+            dialog.setCancelable(false);
+            cancel.setVisibility(View.GONE);
+            dialog.setCancelable(false);
+            dialog.show();
+            final String id = MemorySupports.getUserInfo(getCurrentActivity(), Notice.KEY_ID);
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference("Profile");
+            final StorageReference fileReference = storageReference.child(id).child(id + ".jpg");
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(id);
+            StorageTask uploadTask = fileReference.putFile(uri);
+            //noinspection unchecked
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw Objects.requireNonNull(task.getException());
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = (Uri) task.getResult();
+                        assert downloadUri != null;
+                        String mUri = downloadUri.toString();
+                        reference.child("thumbnailURL").setValue(mUri);
+                        dialog.cancel();
+                    } else {
+                        dialog.cancel();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    dialog.cancel();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Connect to the Internet !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void uploadNotice(Uri uri, final int type, final String subject, final String target, final String content) {
         if (Network.Connected(this)) {
             final Dialog dialog = ViewSupports.materialSnackBarDialog(getCurrentActivity(), R.layout.upload_task_progress);

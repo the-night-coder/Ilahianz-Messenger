@@ -26,7 +26,7 @@
                 android:layout_height="40dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:src="@mipmap/ppro" />
+                android:src="@drawable/ic_person" />
 
             <ImageView
                 android:layout_width="40dp"

@@ -42,8 +42,6 @@ public class EventsFragment extends Fragment {
         initAnimation();
 
         ArrayList<FeatureModel> data = new ArrayList<>();
-        data.add(new FeatureModel("Blood Donation Console", getString(R.string.blood_donation_banner_quotes),
-                R.mipmap.blood_transfusion, "Go to Blood Donation Console"));
         data.add(new FeatureModel("Noticeboard", getString(R.string.notice_quotes),
                 R.mipmap.megaphone, "Go to Noticeboard"));
         data.add(new FeatureModel("Ideas & Thoughts", getString(R.string.ideas_quotes),

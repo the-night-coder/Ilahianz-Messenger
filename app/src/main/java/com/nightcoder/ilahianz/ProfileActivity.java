@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,14 +22,15 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -40,15 +40,19 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.CollegeInfoFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.PersonalInfoFragment;
 import com.nightcoder.ilahianz.ChatUI.Fragments.AccountFragments.PrivacyFragment;
@@ -79,6 +83,8 @@ import static com.nightcoder.ilahianz.Literals.StringConstants.DEFAULT;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_IMAGE_URL;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_USERNAME;
 import static com.nightcoder.ilahianz.Literals.StringConstants.USER_INFO_SP;
+import static com.nightcoder.ilahianz.Models.Notice.KEY_ID;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_IMAGE;
 
 public class ProfileActivity extends AppCompatActivity implements EditInfoListener, PersonalInfoFragmentListener {
 
@@ -260,40 +266,13 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @SuppressLint("CheckResult")
     public void compressImage(File actualImage) {
         if (actualImage != null) {
-            final ProgressDialog pd = new ProgressDialog(ProfileActivity.this);
+            final ProgressDialog pd = new ProgressDialog(mContext);
             pd.setMessage("Compressing...");
             pd.show();
-            // Compress image in main thread
-            //compressedImage = new Compressor(this).compressToFile(actualImage);
-            //setCompressedImage();
-
-            // Compress image to bitmap in main thread
-            //compressedImageView.setImageBitmap(new Compressor(this).compressToBitmap(actualImage));
-
-            // Compress image using RxJava in background thread
-            /*new Compressor(this)
-                    .compressToFileAsFlowable(actualImage)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<File>() {
-                        @Override
-                        public void accept(File file) {
-                            compressedImage = file;
-                            startCrop(Uri.fromFile(compressedImage));
-                            pd.dismiss();
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) {
-                            throwable.printStackTrace();
-                            pd.dismiss();
-                        }
-                    });*/
-            // Compress image using RxJava in background thread with custom Compressor
-            //noinspection ResultOfMethodCallIgnored
             new Compressor(this)
                     .setQuality(50)
                     .setCompressFormat(Bitmap.CompressFormat.JPEG)
@@ -306,7 +285,7 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
                         @Override
                         public void accept(File file) {
                             pd.dismiss();
-                            startCrop(Uri.fromFile(file));
+                            myApp.uploadMedia(Uri.fromFile(file));
                         }
                     }, new Consumer<Throwable>() {
                         @Override
@@ -318,6 +297,8 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
 
         }
     }
+
+
 
     private void startCrop(Uri uri) {
         String destination = MemorySupports.getUserInfo(mContext, KEY_USERNAME);
@@ -386,19 +367,11 @@ public class ProfileActivity extends AppCompatActivity implements EditInfoListen
                 }
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            Log.d("Scrop", "null");
+            assert data != null;
             Uri uri = UCrop.getOutput(data);
             if (uri != null) {
-//                try {
-////                    croppedImage = FileUtil.from(this, uri);
-////                    if (uploadTask != null && uploadTask.isInProgress()) {
-////                        Toast.makeText(this, "Upload in Progress..", Toast.LENGTH_SHORT).show();
-////                    } else {
-////                        uploadImage();
-////                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
+                Log.d("Scrop", "Croped");
             }
         }
     }
