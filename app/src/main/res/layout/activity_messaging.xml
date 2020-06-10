@@ -27,16 +27,6 @@
                 android:src="@drawable/ic_arrow_back_black_24dp"
                 android:tint="@color/white" />
 
-            <ImageButton
-                android:id="@+id/call_btn"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/button_material_circle"
-                android:src="@drawable/ic_call_black_24dp" />
-
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
                 android:layout_width="40dp"
@@ -54,7 +44,6 @@
                 android:layout_marginTop="6dp"
                 android:layout_toEndOf="@id/profile_image"
                 android:fontFamily="@font/roboto_bold"
-                android:text="@string/night_coder"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
 
@@ -67,8 +56,9 @@
                 android:layout_marginTop="3dp"
                 android:layout_toEndOf="@id/profile_image"
                 android:fontFamily="@font/roboto_regular"
-                android:text="@string/active"
-                android:textColor="@color/blue_dark" />
+                android:text="Offline"
+                android:textColor="@color/blue_dark"
+                tools:ignore="HardcodedText" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -238,6 +228,7 @@
             android:layout_height="50dp"
             android:layout_alignParentEnd="true"
             android:layout_margin="10dp"
+            android:tag="SENT"
             android:layout_marginEnd="10dp"
             android:background="@drawable/button_material_circle"
             android:src="@drawable/ic_mic_black_24dp"

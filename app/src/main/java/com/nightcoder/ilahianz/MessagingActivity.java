@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -115,7 +116,6 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
     private final String TAG = "MESSAGE_ACTIVITY";
     protected Context mContext;
     private RelativeLayout toolbarContainer;
-    public static String MESSAGE_LINK = "null";
     private EmojiPopup emojiPopup;
     private ArrayList<Chats> chats;
     private MessageAdapter messageAdapter;
@@ -126,6 +126,9 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
     private TextView mediaSize;
     private Uri attachUri;
     private RelativeLayout mediaContainer;
+    private MediaRecorder mRecorder = null;
+    private MediaPlayer mPlayer = null;
+    private String mFileName;
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -147,7 +150,10 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                     emojiButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_insert_emoticon_black_24dp));
                     break;
                 case R.id.btn_sent:
-                    getMessage();
+                    if (sentButton.getTag().equals("SENT"))
+                        getMessage();
+                    else if (sentButton.getTag().equals("RECORDING"))
+                        stopRecording();
                     break;
                 case R.id.back_btn:
                     onBackPressed();
@@ -162,6 +168,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                     type = TYPE_TEXT;
                     mediaContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_down));
                     mediaContainer.setVisibility(View.GONE);
+                    message.setText("");
                     break;
             }
         }
@@ -261,6 +268,15 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         cameraButton.setOnClickListener(clickListener);
         backButton.setOnClickListener(clickListener);
         closeMedia.setOnClickListener(clickListener);
+        recyclerView.setItemViewCacheSize(100);
+
+        sentButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                startRecording();
+                return true;
+            }
+        });
 
     }
 
@@ -393,24 +409,33 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
             cancel.setVisibility(View.GONE);
             dialog.setCancelable(false);
             dialog.show();
-
+            final String note;
             StorageReference storageReference = FirebaseStorage.getInstance().getReference("Chats");
             final StorageReference fileReference;
             if (type == TYPE_IMAGE) {
                 fileReference = storageReference.child(myId).child(key + ".jpg");
                 message.put("type", TYPE_IMAGE);
+                note = "Photo";
             } else if (type == TYPE_AUDIO) {
                 fileReference = storageReference.child(myId).child(key + ".3gp");
                 message.put("type", TYPE_AUDIO);
+                note = "Audio clip";
+                message.put(MESSAGE, mediaName.getText().toString() + "," + mediaSize.getText().toString());
             } else if (type == TYPE_DOC) {
                 fileReference = storageReference.child(myId).child(key + ".pdf");
                 message.put("type", TYPE_DOC);
+                note = "Document";
+                message.put(MESSAGE, mediaName.getText().toString() + "," + mediaSize.getText().toString());
             } else {
                 fileReference = storageReference.child(myId).child(key + ".jpg");
                 message.put("type", TYPE_IMAGE);
+                note = "Photo";
             }
             StorageTask uploadTask = fileReference.putFile(uri);
-
+            type = TYPE_TEXT;
+            this.message.setText("");
+            this.sentButton.setTag("SENT");
+            this.mediaContainer.setVisibility(View.GONE);
             //noinspection unchecked
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -436,7 +461,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                                     reference.child(key).child("isSent").setValue(ServerValue.TIMESTAMP);
                                     mp = MediaPlayer.create(MessagingActivity.this, R.raw.tik);
                                     mp.start();
-                                    createChatList(userId, myId, Objects.requireNonNull(message.get(MESSAGE)).toString());
+                                    createChatList(userId, myId, note);
                                 }
                             }
                         });
@@ -456,7 +481,69 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private void prepareRecord() {
 
+        mPlayer = MediaPlayer.create(mContext, R.raw.when);
+        mPlayer.start();
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/recode.3gp";
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+            mRecorder.start();
+            message.setEnabled(false);
+            message.setText("Recording audio...");
+            sentButton.setTag("RECORDING");
+        } catch (IOException e) {
+            Log.e("TAG", "prepare() failed");
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void stopRecording() {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
+        message.setEnabled(true);
+        message.setText("Audio Ready");
+        sentButton.setTag("SENT");
+        type = TYPE_AUDIO;
+        setAttach(Uri.fromFile(new File(mFileName)));
+        mPlayer = MediaPlayer.create(mContext, R.raw.tik);
+        mPlayer.start();
+    }
+
+    private void startRecording() {
+
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.LOLLIPOP) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 45);
+                } else {
+                    prepareRecord();
+                }
+
+            } else
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECORD_AUDIO}, 32);
+        } else {
+            prepareRecord();
+        }
+
+
+    }
 
     private void createChatList(String uid, String id, String lMessage) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList").child(uid);
@@ -643,10 +730,11 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
 
     }
 
-    private void askPermission(int requestCode) {
+    private void askPermission() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode);
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                com.nightcoder.ilahianz.Literals.IntegerConstants.IMAGE_REQUEST);
     }
 
     @Override
@@ -665,7 +753,7 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
                     Toast.makeText(mContext, "Attachment failed !", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                askPermission(IMAGE_REQUEST);
+                askPermission();
             }
         } else if (requestCode == DOC_REQUEST && resultCode == RESULT_OK && data != null) {
             type = TYPE_DOC;
@@ -725,6 +813,19 @@ public class MessagingActivity extends AppCompatActivity implements DataChangeCa
             mediaContainer.setVisibility(View.VISIBLE);
             mediaContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_up));
             mediaImage.setImageDrawable(getResources().getDrawable(R.mipmap.doc));
+            FileUtils.FileDetail fileDetail = FileUtils.getFileDetailFromUri(mContext, fromFile);
+            mediaName.setText(fileDetail.fileName);
+            mediaSize.setText(FileUtils.getFileSize(fileDetail.fileSize));
+            attachUri = fromFile;
+            sentButtonAnimation(R.drawable.ic_send_black_24dp);
+            cameraButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+            cameraButton.setVisibility(View.GONE);
+            attachButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+            attachButton.setVisibility(View.GONE);
+        } else if (type == TYPE_AUDIO) {
+            mediaContainer.setVisibility(View.VISIBLE);
+            mediaContainer.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_up));
+            mediaImage.setImageDrawable(getResources().getDrawable(R.mipmap.mic));
             FileUtils.FileDetail fileDetail = FileUtils.getFileDetailFromUri(mContext, fromFile);
             mediaName.setText(fileDetail.fileName);
             mediaSize.setText(FileUtils.getFileSize(fileDetail.fileSize));

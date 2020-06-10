@@ -108,8 +108,6 @@ public class Time {
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-            SimpleDateFormat dateFormat11 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            String date = dateFormat1.format(time);
             Date pasTime = dateFormat.parse(time);
 
             Date nowTime = new Date();

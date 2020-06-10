@@ -27,7 +27,7 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:scaleType="centerCrop"
-                    android:src="@mipmap/ppro"
+                    android:src="@drawable/ic_person"
                     android:transitionName="profileImage" />
 
                 <ImageView
@@ -53,7 +53,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="3dp"
-                android:src="@mipmap/ppro" />
+                android:src="@drawable/ic_person" />
 
             <TextView
                 android:id="@+id/profile_name"
@@ -164,12 +164,173 @@
             </LinearLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.viewpager.widget.ViewPager
+        <ScrollView
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/personal_info_outline"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/academic_info"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/roboto_light"
+                        android:text="@string/academic_information_quotes" />
+
+                    <View style="@style/profileBottomLineStyle" />
+                    <!---->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:selectableItemBackground"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp">
+
+                        <TextView
+                            style="@style/profileTitleTextStyle"
+                            android:text="@string/department_upper" />
+
+                        <TextView
+                            android:id="@+id/profile_department"
+                            style="@style/profileNoEditableContentTextStyle" />
+                    </LinearLayout>
+
+                    <View style="@style/profileBottomLineStyle" />
+                    <!---->
+
+                    <!---->
+
+                    <View style="@style/profileBottomLineStyle" />
+                    <!---->
+                    <LinearLayout
+                        android:id="@+id/academic_year"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:selectableItemBackground"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp">
+
+                        <TextView
+                            style="@style/profileTitleTextStyle"
+                            android:text="@string/academic_year_upper" />
+
+                        <TextView
+                            android:id="@+id/profile_academic_year"
+                            style="@style/profileNoEditableContentTextStyle" />
+                    </LinearLayout>
+
+                    <View style="@style/profileBottomLineStyle" />
+                    <!---->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:selectableItemBackground"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp">
+
+                        <TextView
+                            style="@style/profileTitleTextStyle"
+                            android:text="@string/id_number" />
+
+                        <TextView
+                            android:id="@+id/profile_id"
+                            style="@style/profileNoEditableContentTextStyle" />
+                    </LinearLayout>
+                    <!---->
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/personal_info_outline"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/contact_info"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+                    <!---->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:selectableItemBackground"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp">
+
+                        <TextView
+                            style="@style/profileTitleTextStyle"
+                            android:text="@string/email_upper" />
+
+                        <TextView
+                            android:id="@+id/profile_email"
+                            style="@style/profileNoEditableContentTextStyle" />
+                    </LinearLayout>
+
+                    <View style="@style/profileBottomLineStyle" />
+                    <!---->
+
+                    <LinearLayout
+                        android:id="@+id/edit_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:foreground="?android:selectableItemBackground"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp">
+
+                        <TextView
+                            style="@style/profileTitleTextStyle"
+                            android:text="@string/phone_upper" />
+
+                        <TextView
+                            android:id="@+id/profile_phone"
+                            style="@style/profileContentTextStyle" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <TextView

@@ -29,7 +29,7 @@
         android:layout_marginTop="5dp"
         android:textSize="17sp"
         android:fontFamily="@font/roboto_regular"
-        android:text="Delivering your Notice..."
+        android:text="Delivering your Media..."
         tools:ignore="HardcodedText" />
 
     <Button

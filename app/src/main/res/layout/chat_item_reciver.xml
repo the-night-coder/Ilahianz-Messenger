@@ -37,9 +37,95 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/audio_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="5dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/attach_image1"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="6dp"
+                    android:elevation="5dp"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/mic" />
+
+                <SeekBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_toStartOf="@id/play_button"
+                    android:layout_toEndOf="@id/attach_image1"
+                    android:elevation="5dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="@color/green"
+                    android:thumbTint="@color/green" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/progressBar"
+                    android:layout_marginStart="20dp"
+                    android:layout_toEndOf="@id/attach_image1"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="1:20"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    tools:ignore="HardcodedText" />
+
+                <RelativeLayout
+                    android:id="@+id/play_button"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/online_dot"
+                    android:elevation="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+
+                    <ImageView
+                        android:id="@+id/play_button_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_arrow_downward_black_24dp"
+                        android:tag="DOWNLOAD"
+                        android:tint="@color/white"
+                        android:visibility="visible" />
+
+                    <ProgressBar
+                        android:id="@+id/download_progress"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_centerInParent="true"
+                        android:indeterminateTint="@color/white"
+                        android:visibility="gone" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/attach_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <RelativeLayout
@@ -68,6 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:singleLine="true"
                         android:layout_toEndOf="@id/attach_image"
                         android:fontFamily="@font/roboto_regular"
                         android:text="@string/attachment_not_found"
@@ -134,8 +221,8 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:visibility="gone"
-                app:cardBackgroundColor="@color/blue_dark"
+                android:layout_marginBottom="5dp"
+                android:visibility="visible"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="5dp">
 
@@ -147,7 +234,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/white_circle_fill" />
+                        android:background="@drawable/button_material_circle" />
 
                     <ImageView
                         android:id="@+id/imageView"
@@ -155,8 +242,8 @@
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:minHeight="200dp"
+                        android:minWidth="200dp"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/ppro"
                         android:visibility="visible" />
 
                 </RelativeLayout>
@@ -167,14 +254,14 @@
                 android:id="@+id/message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:layout_gravity="start"
                 android:fontFamily="@font/roboto_regular"
                 android:paddingStart="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:paddingEnd="10dp"
-                android:visibility="gone"
-                android:text="cvcbsajfbsdkfdjbvbzsZJVChzXVznXVVcZX hsvfchvakVFCcvvb"
+                android:visibility="visible"
+                android:text="hsvfchvakVFCcvvb"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 tools:ignore="HardcodedText" />

@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,11 +54,14 @@ import com.vanniktech.emoji.EmojiTextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.view.Gravity.CENTER;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
+import static com.nightcoder.ilahianz.Models.Notice.TYPE_AUDIO;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_DOC;
 import static com.nightcoder.ilahianz.Models.Notice.TYPE_IMAGE;
 
@@ -126,14 +133,48 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         });
         if (chat.getType() == TYPE_IMAGE) {
             holder.imageContainer.setVisibility(View.VISIBLE);
-            holder.message.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(chat.getUrl()).into(holder.imageView);
+            if (chat.getMessage().isEmpty())
+                holder.message.setVisibility(View.GONE);
+            else
+                holder.message.setVisibility(View.VISIBLE);
+            holder.docContainer.setVisibility(View.GONE);
+            holder.audioContainer.setVisibility(View.GONE);
+            final File localFile = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), chat.getReference());
+            if (localFile.exists()) {
+                Picasso.with(mContext).load(localFile).into(holder.imageView);
+            } else {
+                FirebaseStorage mStorage = FirebaseStorage.getInstance();
+                StorageReference down = mStorage.getReferenceFromUrl(chat.getUrl());
+                try {
+                    if (localFile.createNewFile()) {
+                        down.getFile(localFile).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Picasso.with(mContext).load(localFile).into(holder.imageView);
+                                }
+                            }
+                        });
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         } else if (chat.getType() == TYPE_DOC) {
             holder.docContainer.setVisibility(View.VISIBLE);
+            holder.message.setVisibility(View.GONE);
+            holder.imageContainer.setVisibility(View.GONE);
+            holder.audioContainer.setVisibility(View.GONE);
             final String[] fileDetails = chat.getMessage().split(",");
-            holder.fileName.setText(fileDetails[1]);
-            holder.fileSize.setText(fileDetails[0]);
-
+            holder.fileName.setText(fileDetails[0]);
+            holder.fileSize.setText(fileDetails[1]);
+            File localFile = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), fileDetails[0]);
+            if (localFile.exists()) {
+                changeDocOpenButtonIcon(holder, "OPEN", R.drawable.ic_insert_drive_file_black_24dp, View.GONE);
+            }
             holder.openButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -146,7 +187,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         StorageReference down = mStorage.getReferenceFromUrl(chat.getUrl());
                         try {
                             File localFile = new File(Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_DOWNLOADS), fileDetails[1]);
+                                    Environment.DIRECTORY_DOWNLOADS), fileDetails[0]);
                             if (localFile.createNewFile()) {
                                 down.getFile(localFile).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
                                     @Override
@@ -166,7 +207,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         }
                     } else if (holder.openButton.getTag().equals("OPEN")) {
                         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()
-                                + "/Download/" + fileDetails[1];
+                                + "/Download/" + fileDetails[0];
                         File file = new File(filePath);
                         Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
                         pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -189,10 +230,69 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     }
                 }
             });
+        } else if (chat.getType() == TYPE_AUDIO) {
+            holder.docContainer.setVisibility(View.GONE);
+            holder.message.setVisibility(View.GONE);
+            holder.imageContainer.setVisibility(View.GONE);
+            holder.audioContainer.setVisibility(View.VISIBLE);
+            holder.mediaPlayer = new MediaPlayer();
+            String fileName = Environment.getExternalStorageDirectory().getAbsolutePath()
+                    + "/Download/" + chat.getReference() + ".3gp";
+            Log.d("FileNamePath", fileName);
+            try {
+                holder.mediaPlayer.setDataSource(fileName);
+                holder.mediaPlayer.prepare();
+                holder.playButtonIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
+                holder.playButtonIcon.setTag("PLAY");
+                holder.duration.setText(Time.formateMilliSeccond(holder.mediaPlayer.getDuration()));
+                holder.seekBar.setMax(holder.mediaPlayer.getDuration());
+                holder.mediaPlayer.release();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            holder.playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (holder.playButtonIcon.getTag().equals("DOWNLOAD")) {
+                        FirebaseStorage mStorage = FirebaseStorage.getInstance();
+                        StorageReference down = mStorage.getReferenceFromUrl(chat.getUrl());
+                        try {
+                            File localFile = new File(Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_DOWNLOADS), chat.getReference() + ".3gp");
+                            Log.d("Path", Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_DOWNLOADS).toString());
+                            if (localFile.createNewFile()) {
+                                down.getFile(localFile).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            changeAudioPlayerIcon(R.drawable.ic_play_arrow_black_24dp, holder, "PLAY");
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (holder.playButtonIcon.getTag().equals("PLAY")) {
+                        startPlaying(holder, chat.getReference());
+                        changeAudioPlayerIcon(R.drawable.ic_stop_black_24dp, holder, "STOP");
+                    } else if (holder.playButtonIcon.getTag().equals("STOP")) {
+                        holder.mediaPlayer.release();
+                        holder.timer.cancel();
+                        holder.timer.purge();
+                        holder.seekBar.setOnSeekBarChangeListener(null);
+                        changeAudioPlayerIcon(R.drawable.ic_play_arrow_black_24dp, holder, "PLAY");
+                    }
+                }
+            });
         } else {
             holder.imageContainer.setVisibility(View.GONE);
             holder.docContainer.setVisibility(View.GONE);
             holder.message.setVisibility(View.VISIBLE);
+            holder.audioContainer.setVisibility(View.GONE);
         }
 
         holder.container.setOnLongClickListener(new View.OnLongClickListener() {
@@ -260,6 +360,83 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         });
     }
 
+    private void syncDuration(final ViewHolder holder) {
+        holder.timer = new Timer();
+        holder.timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                holder.handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.seekBar.setProgress(holder.mediaPlayer.getCurrentPosition());
+                        holder.duration.setText(Time.formateMilliSeccond(holder.mediaPlayer.getCurrentPosition()));
+                        Log.d("MediaPlayer At", Time.formateMilliSeccond(holder.mediaPlayer.getCurrentPosition()));
+                    }
+                });
+            }
+        }, 0, 1000);
+    }
+
+    private void startPlaying(final ViewHolder holder, String key) {
+        holder.mediaPlayer = new MediaPlayer();
+        String fileName = Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/Download/" + key + ".3gp";
+        Log.d("FileNamePath", fileName);
+        try {
+            holder.mediaPlayer.setDataSource(fileName);
+            holder.mediaPlayer.prepare();
+            holder.duration.setText(Time.formateMilliSeccond(holder.mediaPlayer.getDuration()));
+            holder.seekBar.setMax(holder.mediaPlayer.getDuration());
+            holder.mediaPlayer.start();
+            syncDuration(holder);
+
+            holder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    holder.mediaPlayer.pause();
+                    changeAudioPlayerIcon(R.drawable.ic_pause_black_24dp, holder, "PLAY");
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    holder.mediaPlayer.seekTo(seekBar.getProgress());
+                    holder.mediaPlayer.start();
+                    changeAudioPlayerIcon(R.drawable.ic_stop_black_24dp, holder, "STOP");
+                }
+            });
+
+            holder.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if (!mp.isPlaying()) {
+                        holder.mediaPlayer.release();
+                        changeAudioPlayerIcon(R.drawable.ic_play_arrow_black_24dp, holder, "PLAY");
+                        holder.timer.cancel();
+                        holder.timer.purge();
+                        holder.seekBar.setOnSeekBarChangeListener(null);
+                    }
+                }
+            });
+            changeAudioPlayerIcon(R.drawable.ic_stop_black_24dp, holder, "STOP");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void changeAudioPlayerIcon(int icon, ViewHolder holder, String tag) {
+        holder.playButtonIcon.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
+        holder.playButtonIcon.setVisibility(View.GONE);
+        holder.playButtonIcon.setImageDrawable(mContext.getResources().getDrawable(icon));
+        holder.playButtonIcon.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_enter_animation));
+        holder.playButtonIcon.setVisibility(View.VISIBLE);
+        holder.playButtonIcon.setTag(tag);
+    }
+
     private void changeDocOpenButtonIcon(ViewHolder holder, String tag, int drawable, int progressVisible) {
         holder.openButton.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.error_dialog_exit_animation));
         holder.openButton.setVisibility(View.GONE);
@@ -293,7 +470,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         private ProgressBar loading;
         private ImageButton openButton;
         private TextView fileName, fileSize;
-        private RelativeLayout docContainer;
+        private RelativeLayout docContainer, audioContainer;
+        private SeekBar seekBar;
+        private ImageView playButtonIcon;
+        private RelativeLayout playButton;
+        private TextView duration;
+        private MediaPlayer mediaPlayer;
+        private Timer timer;
+        private Handler handler = new Handler(Looper.getMainLooper());
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -312,6 +496,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             fileSize = itemView.findViewById(R.id.file_size);
             openButton = itemView.findViewById(R.id.open_button_icon);
             docContainer = itemView.findViewById(R.id.attach_container);
+            seekBar = itemView.findViewById(R.id.progressBar);
+            playButtonIcon = itemView.findViewById(R.id.play_button_icon);
+            playButton = itemView.findViewById(R.id.play_button);
+            duration = itemView.findViewById(R.id.duration);
+            audioContainer = itemView.findViewById(R.id.audio_container);
         }
     }
 }

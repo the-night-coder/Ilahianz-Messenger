@@ -30,6 +30,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.nightcoder.ilahianz.Databases.NotificationDBHelper;
+import com.nightcoder.ilahianz.Models.Chats;
 import com.nightcoder.ilahianz.Models.Notice;
 import com.nightcoder.ilahianz.Models.Notification;
 import com.nightcoder.ilahianz.Supports.MemorySupports;
@@ -39,6 +40,7 @@ import com.nightcoder.ilahianz.Supports.ViewSupports;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_CHATS;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_LAST_SEEN_DATE;
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_STATUS;
@@ -50,14 +52,6 @@ public class MyApp extends Application {
     NotificationDBHelper notificationDBHelper;
     String id;
     Handler handler = new Handler(Looper.getMainLooper());
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        notificationDBHelper = new NotificationDBHelper(this);
-        id = MemorySupports.getUserInfo(this, KEY_ID);
-        syncNotifications();
-
-    }
 
     private Activity mCurrentActivity = null;
 
@@ -67,6 +61,14 @@ public class MyApp extends Application {
 
     public void setCurrentActivity(Activity mCurrentActivity) {
         this.mCurrentActivity = mCurrentActivity;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        notificationDBHelper = new NotificationDBHelper(this);
+        id = MemorySupports.getUserInfo(this, KEY_ID);
+        syncNotifications();
     }
 
     public void setOnline() {
@@ -200,6 +202,7 @@ public class MyApp extends Application {
 
             StorageTask uploadTask = fileReference.putFile(uri);
 
+            //noinspection unchecked
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {

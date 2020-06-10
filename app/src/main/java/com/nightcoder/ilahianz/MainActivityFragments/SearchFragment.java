@@ -73,7 +73,6 @@ public class SearchFragment extends Fragment {
             }
         });
         readUsers();
-        setUserData();
         return root;
     }
 
@@ -109,16 +108,6 @@ public class SearchFragment extends Fragment {
                 });
             }
         }.run();
-
-    }
-
-    private void setUserData() {
-        ArrayList<UserModel> users;
-        users = usersDBHelper.getUsers();
-        if (users != null) {
-            userAdapter = new UserAdapter(mContext, users);
-            recyclerView.setAdapter(userAdapter);
-        }
 
     }
 }

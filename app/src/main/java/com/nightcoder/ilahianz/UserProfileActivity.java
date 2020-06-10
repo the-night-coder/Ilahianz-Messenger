@@ -21,26 +21,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.nightcoder.ilahianz.Models.UserData;
 import com.nightcoder.ilahianz.Supports.Graphics;
-import com.nightcoder.ilahianz.Supports.MemorySupports;
 import com.nightcoder.ilahianz.Supports.ViewSupports;
-
-import java.util.ArrayList;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.nightcoder.ilahianz.Literals.StringConstants.KEY_ID;
-import static com.nightcoder.ilahianz.MessagingActivity.USER_ID_BUFFER;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -54,7 +52,6 @@ public class UserProfileActivity extends AppCompatActivity {
     protected Context mContext;
     private LinearLayout toolbarLayout;
     private ImageButton closeBtn;
-    private ViewPager viewPager;
     private RelativeLayout container;
     private Handler handler = new Handler(Looper.getMainLooper());
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -87,7 +84,6 @@ public class UserProfileActivity extends AppCompatActivity {
         collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
         container = findViewById(R.id.container);
         tabLayout = findViewById(R.id.tab_profile);
-        viewPager = findViewById(R.id.view_pager);
         appBarLayout = findViewById(R.id.appbar);
         closeBtn = findViewById(R.id.close_btn);
         nameTop = findViewById(R.id.name_top);
@@ -150,7 +146,6 @@ public class UserProfileActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT, dimen[0] - 200
         ));
         toolbarLayout.setLayoutParams(params);
-        tabLayout.setupWithViewPager(viewPager);
         nameTop.setVisibility(View.GONE);
         container.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -208,69 +203,24 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
     private void init() {
-        try {
-            MemorySupports.setUserInfo(this, USER_ID_BUFFER, getIntent().getStringExtra(KEY_ID));
-        } catch (Exception e) {
-            Log.d(TAG, "No Extras");
-        }
+        userId = getIntent().getStringExtra(KEY_ID);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UserData userData = dataSnapshot.getValue(UserData.class);
+                assert userData != null;
+                if (userData.getThumbnailURL().equals("default")) {
+                    profileImage.setImageResource(R.drawable.ic_person);
+                } else {
+                    Picasso.with(mContext).load(userData.getThumbnailURL()).into(profileImage);
+                }
+            }
 
-//        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        viewPager.setAdapter(viewPagerAdapter);
-    }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
-
-        private ArrayList<Fragment> fragments;
-        private ArrayList<String> titles;
-
-        ViewPagerAdapter(@NonNull FragmentManager fm) {
-            super(fm);
-            this.fragments = new ArrayList<>();
-            this.titles = new ArrayList<>();
-        }
-
-        @NonNull
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
-
-        void addFragment(Fragment fragment, String title) {
-            fragments.add(fragment);
-            titles.add(title);
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return titles.get(position);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        init();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        init();
-        initAnimation();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!expandedAppBar) {
-            appBarLayout.setExpanded(true);
-        } else {
-            super.onBackPressed();
-        }
+            }
+        });
     }
 }

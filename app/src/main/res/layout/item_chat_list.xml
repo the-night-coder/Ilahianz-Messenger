@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/container"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginBottom="5dp"
     android:background="@drawable/item_content_background"
     android:foreground="?android:selectableItemBackground"
     android:orientation="vertical">
@@ -14,7 +17,7 @@
         android:layout_height="50dp"
         android:layout_centerVertical="true"
         android:layout_margin="10dp"
-        android:src="@mipmap/ppro" />
+        android:src="@drawable/ic_person" />
 
     <View
         android:id="@+id/online"
@@ -23,6 +26,7 @@
         android:layout_below="@id/profile_image"
         android:layout_marginStart="-22dp"
         android:layout_marginTop="-22dp"
+        android:visibility="gone"
         android:layout_toEndOf="@id/profile_image"
         android:background="@drawable/online_dot" />
 
@@ -33,7 +37,6 @@
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@id/profile_image"
         android:fontFamily="@font/roboto_regular"
-        android:text="User Name"
         android:textColor="@color/black"
         android:textSize="17sp"
         tools:ignore="HardcodedText" />
@@ -49,7 +52,6 @@
         android:maxLength="20"
         android:textColor="@color/blue_dark"
         android:singleLine="true"
-        android:text="Last Message"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -61,7 +63,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20sp"
         android:fontFamily="@font/roboto_regular"
-        android:text="Last time"
         tools:ignore="HardcodedText" />
 
 </RelativeLayout>
